@@ -1,0 +1,9 @@
+<dependencies>
+  <androidPackages>
+    <androidPackage spec="org.jetbrains.kotlin:kotlin-stdlib:1.6.20"/>
+    <androidPackage spec="androidx.core:core-ktx:1.7.0"/>
+    <androidPackage spec="androidx.activity:activity:1.2.0"/>
+    <androidPackage spec="com.google.android.gms:play-services-location:21.0.1"/>
+    <androidPackage spec="com.google.android.play:integrity:1.2.0"/>
+  </androidPackages>
+</dependencies>

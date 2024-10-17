@@ -1,0 +1,16 @@
+{
+    "name": "RadarSDK",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0aa87ff1ca994fd498c9185c01f0e340"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
