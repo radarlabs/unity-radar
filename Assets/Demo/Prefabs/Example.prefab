@@ -741,7 +741,7 @@ MonoBehaviour:
   _trackVerifiedImage: {fileID: 2165065659006706083}
   _startTrackingImage: {fileID: 2165065658421343155}
   _stopTrackingImage: {fileID: 2514608943852089490}
-  _getVerifiedLocationTokenImage: {fileID: 0}
+  _getVerifiedLocationTokenImage: {fileID: 420103647403829641}
   _setUserIdButton: {fileID: 146035620062368486}
   _verifyTrackButton: {fileID: 2165065658752445148}
   _startTrackingButton: {fileID: 7694505932229522995}
@@ -751,38 +751,39 @@ MonoBehaviour:
   _time: {fileID: 4282958529910262331}
   _text: {fileID: 2165065659146746447}
   _userId: {fileID: 8255534723602199433}
+  _onTokenUpdatedText: {fileID: 4887130764205483388}
   _status: {fileID: 5496094677640295713}
-  _jso: "<color=#20FF26FF>{\r\n<color=#5A8BFFFF>    \"user\": {\r\n<color=#FFED40FF>       
-    \"_id\": \"\",\r\n<color=#FFED40FF>        \"userId\": \"\",\r\n<color=#FFED40FF>       
-    \"deviceId\": \"\",\r\n<color=#FFED40FF>        \"location\": {\r\n<color=#FF4082FF>           
-    \"type\": \"\",\r\n<color=#FF4082FF>            \"coordinates\": [\r\n<color=#20FF26FF>               
-    \r\n<color=#FF4082FF>            ]\r\n<color=#FFED40FF>        },\r\n<color=#FFED40FF>       
-    \"stopped\": false,\r\n<color=#FFED40FF>        \"foreground\": false,\r\n<color=#FFED40FF>       
-    \"country\": {\r\n<color=#FF4082FF>            \"_id\": \"\",\r\n<color=#FF4082FF>           
-    \"name\": \"\",\r\n<color=#FF4082FF>            \"code\": \"\",\r\n<color=#FF4082FF>           
-    \"type\": \"\",\r\n<color=#FF4082FF>            \"flag\": \"\",\r\n<color=#FF4082FF>           
-    \"allowed\": false,\r\n<color=#FF4082FF>            \"passed\": false,\r\n<color=#FF4082FF>           
-    \"inExclusionZone\": false,\r\n<color=#FF4082FF>            \"inBufferZone\":
-    false,\r\n<color=#FF4082FF>            \"distanceToBorder\": 0.0\r\n<color=#FFED40FF>       
-    },\r\n<color=#FFED40FF>        \"state\": {\r\n<color=#FF4082FF>            \"_id\":
-    \"\",\r\n<color=#FF4082FF>            \"name\": \"\",\r\n<color=#FF4082FF>           
-    \"code\": \"\",\r\n<color=#FF4082FF>            \"type\": \"\",\r\n<color=#FF4082FF>           
-    \"flag\": \"\",\r\n<color=#FF4082FF>            \"allowed\": false,\r\n<color=#FF4082FF>           
-    \"passed\": false,\r\n<color=#FF4082FF>            \"inExclusionZone\": false,\r\n<color=#FF4082FF>           
-    \"inBufferZone\": false,\r\n<color=#FF4082FF>            \"distanceToBorder\":
-    0.0\r\n<color=#FFED40FF>        },\r\n<color=#FFED40FF>        \"source\": \"\",\r\n<color=#FFED40FF>       
-    \"debug\": false,\r\n<color=#FFED40FF>        \"fraud\": {\r\n<color=#FF4082FF>           
-    \"passed\": false,\r\n<color=#FF4082FF>            \"bypassed\": false,\r\n<color=#FF4082FF>           
-    \"verified\": false,\r\n<color=#FF4082FF>            \"proxy\": false,\r\n<color=#FF4082FF>           
-    \"mocked\": false,\r\n<color=#FF4082FF>            \"compromised\": false,\r\n<color=#FF4082FF>           
-    \"jumped\": false,\r\n<color=#FF4082FF>            \"sharing\": false,\r\n<color=#FF4082FF>           
-    \"inaccurate\": false,\r\n<color=#FF4082FF>            \"blocked\": false\r\n<color=#FFED40FF>       
-    }\r\n<color=#5A8BFFFF>    },\r\n<color=#5A8BFFFF>    \"passed\": false\r\n<color=#20FF26FF>}"
+  _jso: "<color=#21FF20FF>{\r\n<color=#3B96FFFF>    \"user\": {\r\n<color=#FF2419FF>       
+    \"_id\": \"\",\r\n<color=#FF2419FF>        \"userId\": \"\",\r\n<color=#FF2419FF>       
+    \"deviceId\": \"\",\r\n<color=#FF2419FF>        \"location\": {\r\n<color=#FFFB86FF>           
+    \"type\": \"\",\r\n<color=#FFFB86FF>            \"coordinates\": [\r\n<color=#21FF20FF>               
+    \r\n<color=#FFFB86FF>            ]\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>       
+    \"stopped\": false,\r\n<color=#FF2419FF>        \"foreground\": false,\r\n<color=#FF2419FF>       
+    \"country\": {\r\n<color=#FFFB86FF>            \"_id\": \"\",\r\n<color=#FFFB86FF>           
+    \"name\": \"\",\r\n<color=#FFFB86FF>            \"code\": \"\",\r\n<color=#FFFB86FF>           
+    \"type\": \"\",\r\n<color=#FFFB86FF>            \"flag\": \"\",\r\n<color=#FFFB86FF>           
+    \"allowed\": false,\r\n<color=#FFFB86FF>            \"passed\": false,\r\n<color=#FFFB86FF>           
+    \"inExclusionZone\": false,\r\n<color=#FFFB86FF>            \"inBufferZone\":
+    false,\r\n<color=#FFFB86FF>            \"distanceToBorder\": 0.0\r\n<color=#FF2419FF>       
+    },\r\n<color=#FF2419FF>        \"state\": {\r\n<color=#FFFB86FF>            \"_id\":
+    \"\",\r\n<color=#FFFB86FF>            \"name\": \"\",\r\n<color=#FFFB86FF>           
+    \"code\": \"\",\r\n<color=#FFFB86FF>            \"type\": \"\",\r\n<color=#FFFB86FF>           
+    \"flag\": \"\",\r\n<color=#FFFB86FF>            \"allowed\": false,\r\n<color=#FFFB86FF>           
+    \"passed\": false,\r\n<color=#FFFB86FF>            \"inExclusionZone\": false,\r\n<color=#FFFB86FF>           
+    \"inBufferZone\": false,\r\n<color=#FFFB86FF>            \"distanceToBorder\":
+    0.0\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>        \"source\": \"\",\r\n<color=#FF2419FF>       
+    \"debug\": false,\r\n<color=#FF2419FF>        \"fraud\": {\r\n<color=#FFFB86FF>           
+    \"passed\": false,\r\n<color=#FFFB86FF>            \"bypassed\": false,\r\n<color=#FFFB86FF>           
+    \"verified\": false,\r\n<color=#FFFB86FF>            \"proxy\": false,\r\n<color=#FFFB86FF>           
+    \"mocked\": false,\r\n<color=#FFFB86FF>            \"compromised\": false,\r\n<color=#FFFB86FF>           
+    \"jumped\": false,\r\n<color=#FFFB86FF>            \"sharing\": false,\r\n<color=#FFFB86FF>           
+    \"inaccurate\": false,\r\n<color=#FFFB86FF>            \"blocked\": false\r\n<color=#FF2419FF>       
+    }\r\n<color=#3B96FFFF>    },\r\n<color=#3B96FFFF>    \"passed\": false\r\n<color=#21FF20FF>}"
   _colors:
-  - {r: 0.12549019, g: 1, b: 0.14982708, a: 1}
-  - {r: 0.3537736, g: 0.54469395, b: 1, a: 1}
-  - {r: 1, g: 0.9312311, b: 0.25, a: 1}
-  - {r: 1, g: 0.25098038, b: 0.5095427, a: 1}
+  - {r: 0.12754516, g: 1, b: 0.12549019, a: 1}
+  - {r: 0.23113209, g: 0.5894635, b: 1, a: 1}
+  - {r: 1, g: 0.14295088, b: 0.0990566, a: 1}
+  - {r: 1, g: 0.9830807, b: 0.5235849, a: 1}
 --- !u!1 &2165065658421342284
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,6 +1333,7 @@ RectTransform:
   - {fileID: 3573794320844968100}
   - {fileID: 4532124060215079472}
   - {fileID: 4071944449979347662}
+  - {fileID: 6200237844361217498}
   - {fileID: 6530308025135785341}
   - {fileID: 77881716688520957}
   - {fileID: 5175279711025846642}
@@ -1475,32 +1477,32 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<color=#20FF26FF>{\r\n<color=#5A8BFFFF>    \"user\": {\r\n<color=#FFED40FF>       
-    \"_id\": \"\",\r\n<color=#FFED40FF>        \"userId\": \"\",\r\n<color=#FFED40FF>       
-    \"deviceId\": \"\",\r\n<color=#FFED40FF>        \"location\": {\r\n<color=#FF4082FF>           
-    \"type\": \"\",\r\n<color=#FF4082FF>            \"coordinates\": [\r\n<color=#20FF26FF>               
-    \r\n<color=#FF4082FF>            ]\r\n<color=#FFED40FF>        },\r\n<color=#FFED40FF>       
-    \"stopped\": false,\r\n<color=#FFED40FF>        \"foreground\": false,\r\n<color=#FFED40FF>       
-    \"country\": {\r\n<color=#FF4082FF>            \"_id\": \"\",\r\n<color=#FF4082FF>           
-    \"name\": \"\",\r\n<color=#FF4082FF>            \"code\": \"\",\r\n<color=#FF4082FF>           
-    \"type\": \"\",\r\n<color=#FF4082FF>            \"flag\": \"\",\r\n<color=#FF4082FF>           
-    \"allowed\": false,\r\n<color=#FF4082FF>            \"passed\": false,\r\n<color=#FF4082FF>           
-    \"inExclusionZone\": false,\r\n<color=#FF4082FF>            \"inBufferZone\":
-    false,\r\n<color=#FF4082FF>            \"distanceToBorder\": 0.0\r\n<color=#FFED40FF>       
-    },\r\n<color=#FFED40FF>        \"state\": {\r\n<color=#FF4082FF>            \"_id\":
-    \"\",\r\n<color=#FF4082FF>            \"name\": \"\",\r\n<color=#FF4082FF>           
-    \"code\": \"\",\r\n<color=#FF4082FF>            \"type\": \"\",\r\n<color=#FF4082FF>           
-    \"flag\": \"\",\r\n<color=#FF4082FF>            \"allowed\": false,\r\n<color=#FF4082FF>           
-    \"passed\": false,\r\n<color=#FF4082FF>            \"inExclusionZone\": false,\r\n<color=#FF4082FF>           
-    \"inBufferZone\": false,\r\n<color=#FF4082FF>            \"distanceToBorder\":
-    0.0\r\n<color=#FFED40FF>        },\r\n<color=#FFED40FF>        \"source\": \"\",\r\n<color=#FFED40FF>       
-    \"debug\": false,\r\n<color=#FFED40FF>        \"fraud\": {\r\n<color=#FF4082FF>           
-    \"passed\": false,\r\n<color=#FF4082FF>            \"bypassed\": false,\r\n<color=#FF4082FF>           
-    \"verified\": false,\r\n<color=#FF4082FF>            \"proxy\": false,\r\n<color=#FF4082FF>           
-    \"mocked\": false,\r\n<color=#FF4082FF>            \"compromised\": false,\r\n<color=#FF4082FF>           
-    \"jumped\": false,\r\n<color=#FF4082FF>            \"sharing\": false,\r\n<color=#FF4082FF>           
-    \"inaccurate\": false,\r\n<color=#FF4082FF>            \"blocked\": false\r\n<color=#FFED40FF>       
-    }\r\n<color=#5A8BFFFF>    },\r\n<color=#5A8BFFFF>    \"passed\": false\r\n<color=#20FF26FF>}"
+  m_text: "<color=#21FF20FF>{\r\n<color=#3B96FFFF>    \"user\": {\r\n<color=#FF2419FF>       
+    \"_id\": \"\",\r\n<color=#FF2419FF>        \"userId\": \"\",\r\n<color=#FF2419FF>       
+    \"deviceId\": \"\",\r\n<color=#FF2419FF>        \"location\": {\r\n<color=#FFFB86FF>           
+    \"type\": \"\",\r\n<color=#FFFB86FF>            \"coordinates\": [\r\n<color=#21FF20FF>               
+    \r\n<color=#FFFB86FF>            ]\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>       
+    \"stopped\": false,\r\n<color=#FF2419FF>        \"foreground\": false,\r\n<color=#FF2419FF>       
+    \"country\": {\r\n<color=#FFFB86FF>            \"_id\": \"\",\r\n<color=#FFFB86FF>           
+    \"name\": \"\",\r\n<color=#FFFB86FF>            \"code\": \"\",\r\n<color=#FFFB86FF>           
+    \"type\": \"\",\r\n<color=#FFFB86FF>            \"flag\": \"\",\r\n<color=#FFFB86FF>           
+    \"allowed\": false,\r\n<color=#FFFB86FF>            \"passed\": false,\r\n<color=#FFFB86FF>           
+    \"inExclusionZone\": false,\r\n<color=#FFFB86FF>            \"inBufferZone\":
+    false,\r\n<color=#FFFB86FF>            \"distanceToBorder\": 0.0\r\n<color=#FF2419FF>       
+    },\r\n<color=#FF2419FF>        \"state\": {\r\n<color=#FFFB86FF>            \"_id\":
+    \"\",\r\n<color=#FFFB86FF>            \"name\": \"\",\r\n<color=#FFFB86FF>           
+    \"code\": \"\",\r\n<color=#FFFB86FF>            \"type\": \"\",\r\n<color=#FFFB86FF>           
+    \"flag\": \"\",\r\n<color=#FFFB86FF>            \"allowed\": false,\r\n<color=#FFFB86FF>           
+    \"passed\": false,\r\n<color=#FFFB86FF>            \"inExclusionZone\": false,\r\n<color=#FFFB86FF>           
+    \"inBufferZone\": false,\r\n<color=#FFFB86FF>            \"distanceToBorder\":
+    0.0\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>        \"source\": \"\",\r\n<color=#FF2419FF>       
+    \"debug\": false,\r\n<color=#FF2419FF>        \"fraud\": {\r\n<color=#FFFB86FF>           
+    \"passed\": false,\r\n<color=#FFFB86FF>            \"bypassed\": false,\r\n<color=#FFFB86FF>           
+    \"verified\": false,\r\n<color=#FFFB86FF>            \"proxy\": false,\r\n<color=#FFFB86FF>           
+    \"mocked\": false,\r\n<color=#FFFB86FF>            \"compromised\": false,\r\n<color=#FFFB86FF>           
+    \"jumped\": false,\r\n<color=#FFFB86FF>            \"sharing\": false,\r\n<color=#FFFB86FF>           
+    \"inaccurate\": false,\r\n<color=#FFFB86FF>            \"blocked\": false\r\n<color=#FF2419FF>       
+    }\r\n<color=#3B96FFFF>    },\r\n<color=#3B96FFFF>    \"passed\": false\r\n<color=#21FF20FF>}"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1984,7 +1986,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -4.4699707, y: 58.299988}
+  m_AnchoredPosition: {x: -4.4699707, y: 58.299927}
   m_SizeDelta: {x: 79.75, y: 521.5}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &5580431212642395331
@@ -2350,6 +2352,155 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &7626452876866524657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6200237844361217498}
+  - component: {fileID: 4741720168177709451}
+  - component: {fileID: 4887130764205483388}
+  - component: {fileID: 6769162304462262940}
+  m_Layer: 5
+  m_Name: OnTokenUpdated_Txt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6200237844361217498
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7626452876866524657}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2165065659140098055}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -1.5999756, y: -205}
+  m_SizeDelta: {x: -43.9, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!222 &4741720168177709451
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7626452876866524657}
+  m_CullTransparentMesh: 1
+--- !u!114 &4887130764205483388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7626452876866524657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: '-'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 30
+  m_fontSizeBase: 30
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 0
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 4
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6769162304462262940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7626452876866524657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &7913024331019622692
 GameObject:
   m_ObjectHideFlags: 0

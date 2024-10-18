@@ -30,6 +30,7 @@ namespace RadarSDKBridge
         [SerializeField] private TextMeshProUGUI _time;
         [SerializeField] private TextMeshProUGUI _text;
         [SerializeField] private TextMeshProUGUI _userId;
+        [SerializeField] private TextMeshProUGUI _onTokenUpdatedText;
 
         [SerializeField] private TextMeshProUGUI _status;
         [SerializeField, TextArea] private string _jso;
@@ -272,6 +273,7 @@ namespace RadarSDKBridge
                 Debug.Log("Access denied. Token is invalid or expired.");
                 // Show error or restrict access to features
             }
+            _onTokenUpdatedText.text = "OnTokenUpdated Callback!!!";
         }
 
 
