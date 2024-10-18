@@ -131,17 +131,37 @@ namespace RadarSDK.Android
         }
 
 
+        // public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
+        // {
+        //     Debug.Log("AndroidAdapter.SetVerifiedReceiver() called");
+
+        //     // Create a proxy for the RadarVerifiedReceiver
+        //     var receiverProxy = new RadarVerifiedReceiverProxy(onTokenUpdated);
+
+        //     // Call the setVerifiedReceiver method on the Radar SDK
+        //     //! Error Unity AndroidJavaException: java.lang.IllegalArgumentException: io.radar.sdk.RadarVerifiedReceiver is not an interface
+        //     _instance.CallStatic("setVerifiedReceiver", receiverProxy);
+
+
+        //     Debug.Log("AndroidAdapter.SetVerifiedReceiver() ---end");
+        // }
+
+
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
             Debug.Log("AndroidAdapter.SetVerifiedReceiver() called");
 
-            // Create a proxy for the RadarVerifiedReceiver
-            var receiverProxy = new RadarVerifiedReceiverProxy(onTokenUpdated);
+            // Get the current Unity Android activity
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            {
+                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
-            // Call the setVerifiedReceiver method on the Radar SDK
-            //! Error Unity AndroidJavaException: java.lang.IllegalArgumentException: io.radar.sdk.RadarVerifiedReceiver is not an interface
-            _instance.CallStatic("setVerifiedReceiver", receiverProxy);
+                // Create a custom Java receiver instance with the callback
+                var receiver = new AndroidJavaObject("io.radar.sdk.CustomVerifiedReceiver", new CustomVerifiedReceiverCallback(onTokenUpdated));
 
+                // Call the setVerifiedReceiver method on the Radar SDK
+                _instance.CallStatic("setVerifiedReceiver", receiver);
+            }
 
             Debug.Log("AndroidAdapter.SetVerifiedReceiver() ---end");
         }
@@ -175,29 +195,84 @@ namespace RadarSDK.Android
     }
 
 
-    public class RadarVerifiedReceiverProxy : AndroidJavaProxy
+    // public class RadarVerifiedReceiverProxy : AndroidJavaProxy
+    // {
+    //     private readonly Action<RadarVerifiedLocationToken> _onTokenUpdated;
+
+    //     public RadarVerifiedReceiverProxy(Action<RadarVerifiedLocationToken> onTokenUpdated)
+    //         : base("io.radar.sdk.RadarVerifiedReceiver")
+    //     {
+    //         Debug.Log("RadarVerifiedReceiverProxy Constructor");
+    //         _onTokenUpdated = onTokenUpdated;
+    //     }
+
+    //     public void onTokenUpdated(AndroidJavaObject context, AndroidJavaObject token)
+    //     {
+    //         Debug.Log("RadarVerifiedReceiverProxy onTokenUpdated");
+    //         // Convert the Java token object to a C# object
+    //         var verifiedLocationToken = new RadarVerifiedLocationToken
+    //         {
+    //             Passed = token.Call<bool>("getPassed"),
+    //             Token = token.Call<string>("getToken"),
+    //             ExpiresAt = token.Call<long>("getExpiresAt"),
+    //             ExpiresIn = token.Call<long>("getExpiresIn")
+    //         };
+    //         Debug.Log("_onTokenUpdated?.Invoke(verifiedLocationToken); " + (_onTokenUpdated == null));
+
+    //         _onTokenUpdated?.Invoke(verifiedLocationToken);
+    //     }
+    // }
+
+
+    // public class OnTokenUpdatedCallbackProxy : AndroidJavaProxy
+    // {
+    //     private readonly Action<string> _onTokenUpdated;
+
+    //     public OnTokenUpdatedCallbackProxy(Action<string> onTokenUpdated)
+    //         : base("io.radar.sdk.CustomRadarVerifiedReceiver$OnTokenUpdatedCallback")
+    //     {
+    //         _onTokenUpdated = onTokenUpdated;
+    //     }
+
+    //     // This method will be called by the Android SDK when the token is updated
+    //     public void onTokenUpdated(AndroidJavaObject context, AndroidJavaObject token)
+    //     {
+    //         Debug.Log("OnTokenUpdatedCallbackProxy.onTokenUpdated called");
+
+    //         // Extract the token data from the Android object and pass it to Unity
+    //         string tokenData = token.Call<string>("getToken"); // Assuming token is a string
+    //         _onTokenUpdated?.Invoke(tokenData);
+    //     }
+    // }
+
+
+    public class CustomVerifiedReceiverCallback : AndroidJavaProxy
     {
         private readonly Action<RadarVerifiedLocationToken> _onTokenUpdated;
 
-        public RadarVerifiedReceiverProxy(Action<RadarVerifiedLocationToken> onTokenUpdated)
-            : base("io.radar.sdk.RadarVerifiedReceiver")
+        public CustomVerifiedReceiverCallback(Action<RadarVerifiedLocationToken> onTokenUpdated)
+            : base("io.radar.sdk.CustomVerifiedReceiver$OnTokenUpdatedListener")
         {
-            Debug.Log("RadarVerifiedReceiverProxy Constructor");
             _onTokenUpdated = onTokenUpdated;
         }
 
-        public void onTokenUpdated(AndroidJavaObject context, AndroidJavaObject token) //! Not being called :(
+        public void onTokenUpdated(AndroidJavaObject context, AndroidJavaObject token)
         {
-            Debug.Log("RadarVerifiedReceiverProxy onTokenUpdated");
+            // Retrieve the Date object for expiresAt
+            var expiresAtDate = token.Call<AndroidJavaObject>("getExpiresAt");
+
+            Debug.Log("CustomVerifiedReceiverCallback onTokenUpdated");
+            // Convert the Date object to a long (Unix timestamp)
+            long expiresAt = expiresAtDate.Call<long>("getTime");
+            int expiresIn = token.Call<int>("getExpiresIn");
             // Convert the Java token object to a C# object
             var verifiedLocationToken = new RadarVerifiedLocationToken
             {
                 Passed = token.Call<bool>("getPassed"),
                 Token = token.Call<string>("getToken"),
-                ExpiresAt = token.Call<long>("getExpiresAt"),
-                ExpiresIn = token.Call<long>("getExpiresIn")
+                ExpiresAt = expiresAt, // Use the converted Unix timestamp
+                ExpiresIn = expiresIn // Retrieve as int
             };
-            Debug.Log("_onTokenUpdated?.Invoke(verifiedLocationToken); " + (_onTokenUpdated == null));
 
             _onTokenUpdated?.Invoke(verifiedLocationToken);
         }
