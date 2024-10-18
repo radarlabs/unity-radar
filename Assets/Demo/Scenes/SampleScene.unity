@@ -130,18 +130,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 420103647403829641, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 420103647403829641, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 420103647403829641, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 942358176918489166, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -190,96 +178,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2165065657524119927, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065657524119927, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065657524119927, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _jso
-      value: "<color=#21FF20FF>{\r\n<color=#3B96FFFF>    \"user\": {\r\n<color=#FF2419FF>       
-        \"_id\": \"\",\r\n<color=#FF2419FF>        \"userId\": \"\",\r\n<color=#FF2419FF>       
-        \"deviceId\": \"\",\r\n<color=#FF2419FF>        \"location\": {\r\n<color=#FFFB86FF>           
-        \"type\": \"\",\r\n<color=#FFFB86FF>            \"coordinates\": [\r\n<color=#21FF20FF>               
-        \r\n<color=#FFFB86FF>            ]\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>       
-        \"stopped\": false,\r\n<color=#FF2419FF>        \"foreground\": false,\r\n<color=#FF2419FF>       
-        \"country\": {\r\n<color=#FFFB86FF>            \"_id\": \"\",\r\n<color=#FFFB86FF>           
-        \"name\": \"\",\r\n<color=#FFFB86FF>            \"code\": \"\",\r\n<color=#FFFB86FF>           
-        \"type\": \"\",\r\n<color=#FFFB86FF>            \"flag\": \"\",\r\n<color=#FFFB86FF>           
-        \"allowed\": false,\r\n<color=#FFFB86FF>            \"passed\": false,\r\n<color=#FFFB86FF>           
-        \"inExclusionZone\": false,\r\n<color=#FFFB86FF>            \"inBufferZone\":
-        false,\r\n<color=#FFFB86FF>            \"distanceToBorder\": 0.0\r\n<color=#FF2419FF>       
-        },\r\n<color=#FF2419FF>        \"state\": {\r\n<color=#FFFB86FF>           
-        \"_id\": \"\",\r\n<color=#FFFB86FF>            \"name\": \"\",\r\n<color=#FFFB86FF>           
-        \"code\": \"\",\r\n<color=#FFFB86FF>            \"type\": \"\",\r\n<color=#FFFB86FF>           
-        \"flag\": \"\",\r\n<color=#FFFB86FF>            \"allowed\": false,\r\n<color=#FFFB86FF>           
-        \"passed\": false,\r\n<color=#FFFB86FF>            \"inExclusionZone\": false,\r\n<color=#FFFB86FF>           
-        \"inBufferZone\": false,\r\n<color=#FFFB86FF>            \"distanceToBorder\":
-        0.0\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>        \"source\":
-        \"\",\r\n<color=#FF2419FF>        \"debug\": false,\r\n<color=#FF2419FF>       
-        \"fraud\": {\r\n<color=#FFFB86FF>            \"passed\": false,\r\n<color=#FFFB86FF>           
-        \"bypassed\": false,\r\n<color=#FFFB86FF>            \"verified\": false,\r\n<color=#FFFB86FF>           
-        \"proxy\": false,\r\n<color=#FFFB86FF>            \"mocked\": false,\r\n<color=#FFFB86FF>           
-        \"compromised\": false,\r\n<color=#FFFB86FF>            \"jumped\": false,\r\n<color=#FFFB86FF>           
-        \"sharing\": false,\r\n<color=#FFFB86FF>            \"inaccurate\": false,\r\n<color=#FFFB86FF>           
-        \"blocked\": false\r\n<color=#FF2419FF>        }\r\n<color=#3B96FFFF>   
-        },\r\n<color=#3B96FFFF>    \"passed\": false\r\n<color=#21FF20FF>}"
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[0].b
-      value: 0.12549019
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[0].r
-      value: 0.12754516
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[1].b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[1].g
-      value: 0.5894635
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[1].r
-      value: 0.23113209
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[2].b
-      value: 0.0990566
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[2].g
-      value: 0.14295088
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[2].r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[3].b
-      value: 0.5235849
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[3].g
-      value: 0.9830807
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _colors.Array.data[3].r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658417967364, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: _getVerifiedLocationTokenImage
-      value: 
-      objectReference: {fileID: 1423454787}
     - target: {fileID: 2165065658417967365, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -340,30 +238,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2165065658421343155, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658421343155, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065658421343155, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065659006706083, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065659006706083, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065659006706083, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2165065659006706109, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -384,64 +258,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 963194227}
-    - target: {fileID: 2165065659146746440, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2165065659146746447, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_text
-      value: "<color=#21FF20FF>{\r\n<color=#3B96FFFF>    \"user\": {\r\n<color=#FFED40FF>       
-        \"_id\": \"\",\r\n<color=#FFED40FF>        \"userId\": \"\",\r\n<color=#FFED40FF>       
-        \"deviceId\": \"\",\r\n<color=#FFED40FF>        \"location\": {\r\n<color=#FF0008FF>           
-        \"type\": \"\",\r\n<color=#FF0008FF>            \"coordinates\": [\r\n<color=#21FF20FF>               
-        \r\n<color=#FF0008FF>            ]\r\n<color=#FFED40FF>        },\r\n<color=#FFED40FF>       
-        \"stopped\": false,\r\n<color=#FFED40FF>        \"foreground\": false,\r\n<color=#FFED40FF>       
-        \"country\": {\r\n<color=#FF0008FF>            \"_id\": \"\",\r\n<color=#FF0008FF>           
-        \"name\": \"\",\r\n<color=#FF0008FF>            \"code\": \"\",\r\n<color=#FF0008FF>           
-        \"type\": \"\",\r\n<color=#FF0008FF>            \"flag\": \"\",\r\n<color=#FF0008FF>           
-        \"allowed\": false,\r\n<color=#FF0008FF>            \"passed\": false,\r\n<color=#FF0008FF>           
-        \"inExclusionZone\": false,\r\n<color=#FF0008FF>            \"inBufferZone\":
-        false,\r\n<color=#FF0008FF>            \"distanceToBorder\": 0.0\r\n<color=#FFED40FF>       
-        },\r\n<color=#FFED40FF>        \"state\": {\r\n<color=#FF0008FF>           
-        \"_id\": \"\",\r\n<color=#FF0008FF>            \"name\": \"\",\r\n<color=#FF0008FF>           
-        \"code\": \"\",\r\n<color=#FF0008FF>            \"type\": \"\",\r\n<color=#FF0008FF>           
-        \"flag\": \"\",\r\n<color=#FF0008FF>            \"allowed\": false,\r\n<color=#FF0008FF>           
-        \"passed\": false,\r\n<color=#FF0008FF>            \"inExclusionZone\": false,\r\n<color=#FF0008FF>           
-        \"inBufferZone\": false,\r\n<color=#FF0008FF>            \"distanceToBorder\":
-        0.0\r\n<color=#FFED40FF>        },\r\n<color=#FFED40FF>        \"source\":
-        \"\",\r\n<color=#FFED40FF>        \"debug\": false,\r\n<color=#FFED40FF>       
-        \"fraud\": {\r\n<color=#FF0008FF>            \"passed\": false,\r\n<color=#FF0008FF>           
-        \"bypassed\": false,\r\n<color=#FF0008FF>            \"verified\": false,\r\n<color=#FF0008FF>           
-        \"proxy\": false,\r\n<color=#FF0008FF>            \"mocked\": false,\r\n<color=#FF0008FF>           
-        \"compromised\": false,\r\n<color=#FF0008FF>            \"jumped\": false,\r\n<color=#FF0008FF>           
-        \"sharing\": false,\r\n<color=#FF0008FF>            \"inaccurate\": false,\r\n<color=#FF0008FF>           
-        \"blocked\": false\r\n<color=#FFED40FF>        }\r\n<color=#3B96FFFF>   
-        },\r\n<color=#3B96FFFF>    \"passed\": false\r\n<color=#21FF20FF>}"
-      objectReference: {fileID: 0}
-    - target: {fileID: 2514608943852089490, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2514608943852089490, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2514608943852089490, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3573794320844968100, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4071944449979347662, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4532124060215079472, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7064627200547441005, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -457,18 +273,6 @@ PrefabInstance:
     - target: {fileID: 7064627200547441005, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8160304479401161953, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8160304479401161953, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8160304479401161953, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-      propertyPath: m_Color.r
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -635,17 +439,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1423454787 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 420103647403829641, guid: 7187431d529324ad6b6fe0718800ad9f, type: 3}
-  m_PrefabInstance: {fileID: 533246670}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
