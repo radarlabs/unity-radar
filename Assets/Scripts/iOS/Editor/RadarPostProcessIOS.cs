@@ -15,7 +15,7 @@ namespace RadarSDK.iOS.Editor
             {
                 return;
             }
-            
+
             AddSslPinning(pathToBuiltProject);
         }
 
@@ -26,7 +26,7 @@ namespace RadarSDK.iOS.Editor
             {
                 return dict.values.ContainsKey(key) ? dict[key].AsDict() : dict.CreateDict(key);
             }
-            
+
             string plistPath = Path.Combine(pathToBuiltProject, "Info.plist");
             PlistDocument plist = new PlistDocument();
             plist.ReadFromFile(plistPath);

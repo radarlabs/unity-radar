@@ -7,6 +7,9 @@ namespace RadarSDKBridge
 {
     public static class RadarServiceWrapper
     {
+        public static Action<string> OnError;
+
+
         public static void Initialize()
         {
             const string TEST_PUBLISHABLE_KEY = "prj_test_pk_0eac9fa8b8a4abcfcb40be269396e21fdca21b53";
@@ -14,62 +17,88 @@ namespace RadarSDKBridge
             Radar.Initialize(TEST_PUBLISHABLE_KEY, fraud: true);
         }
 
+
+        public static void SetErrorCallback(Action<string> errorCallback)
+        {
+            OnError = errorCallback;
+        }
+
+
         public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> TrackVerified(string uniqueUserId)
         {
-            if (!Radar.Initialized)
+            try
             {
-                Initialize();
+                if (!Radar.Initialized) { Initialize(); }
+
+                TryUpdateUserId(uniqueUserId);
+                return await Radar.TrackVerified();
             }
-            TryUpdateUserId(uniqueUserId);
-            return await Radar.TrackVerified();
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"Error during TrackVerified: {ex.Message}");
+                return null;
+            }
         }
 
 
         public static async Task StartTrackingVerified(int interval, bool beacons)
         {
-            if (!Radar.Initialized)
+            try
             {
-                Initialize();
-            }
+                if (!Radar.Initialized) { Initialize(); }
 
-            // Call the platform adapter asynchronously
-            await Radar.StartTrackingVerified(interval, beacons);
+                await Radar.StartTrackingVerified(interval, beacons);
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"Error during StartTrackingVerified: {ex.Message}");
+            }
         }
 
 
         public static async Task StopTracking()
         {
-            if (!Radar.Initialized)
+            try
             {
-                Initialize();
-            }
+                if (!Radar.Initialized) { Initialize(); }
 
-            // Call the platform adapter asynchronously
-            await Radar.StopTracking();
+                await Radar.StopTracking();
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"Error during StopTracking: {ex.Message}");
+            }
         }
 
 
         public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> GetVerifiedLocationToken()
         {
-            if (!Radar.Initialized)
+            try
             {
-                Initialize();
-            }
+                if (!Radar.Initialized) { Initialize(); }
 
-            // Call the platform adapter asynchronously
-            return await Radar.GetVerifiedLocationToken();
+                return await Radar.GetVerifiedLocationToken();
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"Error getting verified location token: {ex.Message}");
+                return null;
+            }
         }
 
 
         public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
-            if (!Radar.Initialized)
+            try
             {
-                Initialize();
-            }
+                if (!Radar.Initialized) { Initialize(); }
 
-            // Set the receiver for token updates
-            Radar.SetVerifiedReceiver(onTokenUpdated);
+                Radar.SetVerifiedReceiver(onTokenUpdated);
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"Error setting verified receiver: {ex.Message}");
+            }
         }
 
 

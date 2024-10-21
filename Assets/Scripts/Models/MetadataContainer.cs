@@ -1,7 +1,9 @@
+using UnityEngine;
+
 namespace RadarSDK
 {
-    [System.Serializable]
-    public class MetadataContainer // Move to different location
+    [CreateAssetMenu(fileName = "MetadataContainer", menuName = "RadarSDK/Create Metadata Container")]
+    public class MetadataContainer : ScriptableObject
     {
         public int someNumber;
     }

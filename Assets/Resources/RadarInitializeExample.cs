@@ -43,11 +43,7 @@ namespace RadarSDKBridge
         private readonly Color _orangeColor = new Color(1f, 0.65f, 0f); // Orange
         private readonly Color _greenColor = Color.green;
 
-
-        MetadataContainer exampleMetadata = new MetadataContainer
-        {
-            someNumber = 999
-        };
+        MetadataContainer exampleMetadata;
 
 
         private void OnValidate()
@@ -63,6 +59,11 @@ namespace RadarSDKBridge
         {
             _status.text = "";
             _text.text = "";
+
+            exampleMetadata = new MetadataContainer
+            {
+                someNumber = 999
+            };
 
             _setUserIdButton.onClick.AddListener(() => SetUserId());
             _setMetadataButton.onClick.AddListener(() => SetMetadata());
@@ -231,7 +232,8 @@ namespace RadarSDKBridge
                 if (tokenResult.Value.Status == RadarStatus.SUCCESS)
                 {
                     Debug.Log("Token received: " + tokenResult.Value.Data);
-                    _text.text = JsonUtility.ToJson(tokenResult.Value.Data);
+                    var json = JsonUtility.ToJson(tokenResult.Value.Data);
+                    _text.text = JsonFormatter.FormatJson(json, _colors);
                     SetImageColor(_getVerifiedLocationTokenImage.GetComponent<Image>(), _greenColor); // Task success
                 }
                 else
