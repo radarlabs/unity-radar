@@ -13,41 +13,35 @@ namespace RadarSDK.Android
 
         public void Initialize(string publishableKey)
         {
-            Debug.Log("Initialize " + publishableKey);
+            Debug.Log("AndroidAdapter.Initialize(publishableKey) " + publishableKey);
             using var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             using var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
             using var context = activity.Call<AndroidJavaObject>("getApplicationContext");
-            Debug.Log("Initialize2 " + publishableKey);
             using (var radarClass = new AndroidJavaClass("io.radar.sdk.Radar"))
             {
                 _instance = radarClass.GetStatic<AndroidJavaObject>("INSTANCE");
             }
-            Debug.Log("Initialize3 " + publishableKey);
             // Correct enum conversion and method calls
             var locationServicesProvider2 = new AndroidJavaClass("io.radar.sdk.Radar$RadarLocationServicesProvider");
-            Debug.Log("Initialize4 " + publishableKey);
             var locationServicesProvider = locationServicesProvider2.GetStatic<AndroidJavaObject>("GOOGLE");
-            Debug.Log("Initialize5 " + publishableKey);
             object[] @params = { context, publishableKey, null, locationServicesProvider, Radar.Settings.Fraud };
-            Debug.Log("initializeeeeeeeeeeeeeeeeeee1 ");
             _instance.CallStatic("initialize", @params);
-            Debug.Log("initializeeeeeeeeeeeeeeeeeee2! ");
         }
 
 
         public void SetUserID(string userId)
         {
+            Debug.Log("AndroidAdapter.SetUserID(userId) " + userId);
             object[] parameters = new object[1];
             parameters[0] = userId;
             _instance.CallStatic("setUserId", parameters);
-            Debug.Log("AndroidAdapter.SetUserID " + userId);
         }
 
 
         public string GetUserID()
         {
             string userId = _instance.CallStatic<string>("getUserId");
-            Debug.Log("AndroidAdapter.GetUserID " + userId);
+            Debug.Log("AndroidAdapter.GetUserID() -> " + userId);
             return userId;
         }
 
@@ -60,7 +54,20 @@ namespace RadarSDK.Android
 
             // Call the setMetadata method in Radar.kt
             _instance.CallStatic("setMetadata", jsonObject);
-            Debug.Log("AndroidAdapter.SetMetadata called with: " + jsonString);
+            Debug.Log("AndroidAdapter.SetMetadata() -> " + jsonString);
+        }
+
+
+        public void GetLocation(Action<Location> onLocationReceived)
+        {
+            if (_instance == null)
+            {
+                Debug.LogError("Radar SDK is not initialized");
+                return;
+            }
+            // Create a proxy for the RadarLocationCallback
+            AndroidJavaProxy callbackProxy = new RadarLocationCallbackProxy(onLocationReceived);
+            _instance.CallStatic("getLocation", callbackProxy);
         }
 
 
@@ -181,6 +188,39 @@ namespace RadarSDK.Android
             }
             // Call the action passed in the constructor
             _onComplete?.Invoke(radarStatus, locationData);
+        }
+    }
+
+
+    public class RadarLocationCallbackProxy : AndroidJavaProxy
+    {
+        private Action<Location> _onLocationReceived;
+
+        public RadarLocationCallbackProxy(Action<Location> onLocationReceived)
+            : base("io.radar.sdk.Radar$RadarLocationCallback")
+        {
+            _onLocationReceived = onLocationReceived;
+        }
+
+        public void onComplete(AndroidJavaObject status, AndroidJavaObject location, bool stopped)
+        {
+            if (location != null)
+            {
+                double latitude = location.Call<double>("getLatitude");
+                double longitude = location.Call<double>("getLongitude");
+                // Create the Location struct and assign the coordinates
+                var radarLocation = new Location
+                {
+                    type = "Point",
+                    coordinates = new double[] { longitude, latitude }
+                };
+                // Invoke the callback to pass the location data to Unity
+                _onLocationReceived?.Invoke(radarLocation);
+            }
+            else
+            {
+                Debug.LogError("Location is null");
+            }
         }
     }
 

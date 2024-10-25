@@ -27,6 +27,7 @@ public class LogManager : MonoBehaviour
 
     public void Log(string message, LogType logType = LogType.Log)
     {
+        Debug.Log(message);
         string formattedMessage = FormatMessage(message, logType);
         logContent += formattedMessage + "\n"; // Append the new message
 

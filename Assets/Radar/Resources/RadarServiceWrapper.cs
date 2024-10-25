@@ -33,9 +33,9 @@ namespace RadarSDKBridge
                 TryUpdateUserId(uniqueUserId);
                 return await Radar.TrackVerified();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                OnError?.Invoke($"Error during TrackVerified: {ex.Message}");
+                OnError?.Invoke($"Error during TrackVerified: {e.Message}");
                 return null;
             }
         }
@@ -49,9 +49,9 @@ namespace RadarSDKBridge
 
                 await Radar.StartTrackingVerified(interval, beacons);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                OnError?.Invoke($"Error during StartTrackingVerified: {ex.Message}");
+                OnError?.Invoke($"Error during StartTrackingVerified: {e.Message}");
             }
         }
 
@@ -64,9 +64,9 @@ namespace RadarSDKBridge
 
                 await Radar.StopTracking();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                OnError?.Invoke($"Error during StopTracking: {ex.Message}");
+                OnError?.Invoke($"Error during StopTracking: {e.Message}");
             }
         }
 
@@ -79,11 +79,32 @@ namespace RadarSDKBridge
 
                 return await Radar.GetVerifiedLocationToken();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                OnError?.Invoke($"Error getting verified location token: {ex.Message}");
+                OnError?.Invoke($"Error getting verified location token: {e.Message}");
                 return null;
             }
+        }
+
+
+        public static Task<Location?> GetLocation()
+        {
+            var tcs = new TaskCompletionSource<Location?>();
+
+            Radar.GetLocation(location =>
+            {
+                if (location.coordinates != null)
+                {
+                    LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
+                    tcs.SetResult(location);
+                }
+                else
+                {
+                    LogManager.Instance.Log("Failed to get location", LogType.Error);
+                    tcs.SetResult(null);
+                }
+            });
+            return tcs.Task;
         }
 
 
@@ -94,9 +115,9 @@ namespace RadarSDKBridge
                 if (!Radar.Initialized) { Initialize(); }
                 Radar.SetVerifiedReceiver(onTokenUpdated);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                OnError?.Invoke($"Error setting verified receiver: {ex.Message}");
+                OnError?.Invoke($"Error setting verified receiver: {e.Message}");
             }
         }
 

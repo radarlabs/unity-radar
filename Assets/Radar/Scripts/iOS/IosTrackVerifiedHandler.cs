@@ -6,6 +6,11 @@ using AOT;
 
 namespace RadarSDK.iOS
 {
+    internal enum RadarRequestType
+    {
+        TrackVerified,
+        GetVerifiedLocationToken
+    }
     /// <summary>
     /// Handles the radar track verification callback from the Radar sdk.
     /// </summary>
@@ -14,8 +19,11 @@ namespace RadarSDK.iOS
         private delegate void CompletionResponseDict(int requestId, string statusStr, string jsonStr);
 
         [DllImport("__Internal")]
-        private static extern void Radar_trackVerifiedWithCompletionHandler(int requestId,
-            CompletionResponseDict response);
+        private static extern void Radar_trackVerifiedWithCompletionHandler(int requestId, CompletionResponseDict response);
+
+        [DllImport("__Internal")]
+        private static extern void Radar_getVerifiedLocationTokenWithCompletionHandler(int requestId, CompletionResponseDict response);
+
 
         private static event Action<(int requestId, string statusStr, string jsonStr)> OnResponse;
 
@@ -28,22 +36,30 @@ namespace RadarSDK.iOS
             OnResponse?.Invoke((requestId, statusStr, jsonStr));
         }
 
-
         private readonly TaskCompletionSource<(RadarStatus, VerifiedLocationData?)> _currentTcs;
-
         public Task<(RadarStatus, VerifiedLocationData?)> CompletionTask => _currentTcs.Task;
         private readonly int _id;
+        private readonly RadarRequestType _requestType;
 
-        public IosTrackVerifiedHandler()
+
+        public IosTrackVerifiedHandler(RadarRequestType requestType)
         {
             _id = GetHashCode();
+            _requestType = requestType;
 
             _currentTcs = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
 
             OnResponse += ResponseReceiveCallback;
 
-            // Send request
-            Radar_trackVerifiedWithCompletionHandler(_id, TrackVerifiedResponseCallback);
+            // Send the appropriate request based on the request type
+            if (_requestType == RadarRequestType.TrackVerified)
+            {
+                Radar_trackVerifiedWithCompletionHandler(_id, TrackVerifiedResponseCallback);
+            }
+            else if (_requestType == RadarRequestType.GetVerifiedLocationToken)
+            {
+                Radar_getVerifiedLocationTokenWithCompletionHandler(_id, TrackVerifiedResponseCallback);
+            }
         }
 
         private void ResponseReceiveCallback((int requestId, string statusStr, string jsonStr) r)

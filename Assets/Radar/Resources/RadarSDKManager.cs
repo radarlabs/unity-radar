@@ -19,31 +19,25 @@ namespace RadarSDKBridge
             get { return radarSettings != null ? radarSettings.metadata : null; }
         }
 
+        public static int TrackingInterval
+        {
+            get { return radarSettings != null ? radarSettings.trackingInterval : 60; }
+        }
+
+        public static bool UseBeacons
+        {
+            get { return radarSettings != null ? radarSettings.useBeacons : true; }
+        }
+
+
         private static RadarSettingsData radarSettings;
+
 
         public static void Initialize()
         {
             LogManager.Instance.Log("RadarSDKManager Initialize()", LogType.Log);
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
-            // RadarServiceWrapper.Initialize();
-
-            // if (radarSettings != null)
-            // {
-            //     Debug.Log("radarSettings != null " + radarSettings.userId + " | " + radarSettings.metadata);
-
-            //     if (!string.IsNullOrEmpty(radarSettings.userId))
-            //     {
-            //         Radar.SetUserId(radarSettings.userId);
-            //     }
-            //     if (radarSettings.metadata != null)
-            //     {
-            //         Radar.SetMetadata(radarSettings.metadata);
-            //     }
-            // }
-            // else
-            // {
-            //     Debug.LogWarning("RadarSettings asset not found.");
-            // }
+            RadarErrorHandler.InitializeErrorHandling();
         }
 
         // Coroutine wrapper for asynchronous methods
@@ -74,7 +68,7 @@ namespace RadarSDKBridge
             }
         }
 
-        // Async versions of the methods
+        // Example of async versions of the methods
         public static async Task TrackUserAsync(string userId)
         {
             await RadarServiceWrapper.TrackVerified(userId);

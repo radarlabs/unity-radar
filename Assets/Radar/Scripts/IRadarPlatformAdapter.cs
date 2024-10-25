@@ -15,6 +15,8 @@ namespace RadarSDK
 
         void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated);
 
+        void GetLocation(Action<Location> onLocationReceived);
+
         Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync();
 
         Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false);

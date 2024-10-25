@@ -10,6 +10,11 @@ namespace RadarSDK.ProxyPlatform
         private string _mockUserId = "proxy_user_id";
         private MetadataContainer _mockMetadata;
 
+        public void GetLocation(Action<Location> onLocationReceived)
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetUserID()
         {
             Debug.Log("ProxyAdapter.GetUserID called");

@@ -4,6 +4,10 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Headers/CustomVerifiedDelegate.h</key>
+		<data>
+		1QuHhwb/hCvykbdRrFdIWzAtRuU=
+		</data>
 		<key>Headers/Radar.h</key>
 		<data>
 		H9SHc8P/EU9vmLKi6FF+sy4B30k=
@@ -46,7 +50,7 @@
 		</data>
 		<key>Headers/RadarGeofence.h</key>
 		<data>
-		BS8oFCfUXSVqrZDgSD2ppjw3zt8=
+		pkzlSWE+MKlzsXF+9m1m5TMBYks=
 		</data>
 		<key>Headers/RadarGeofenceGeometry.h</key>
 		<data>
@@ -60,9 +64,9 @@
 		<data>
 		BxVMX4o05/G4s/5ALkd7+4lvzNY=
 		</data>
-		<key>Headers/RadarOperatingHour.h</key>
+		<key>Headers/RadarOperatingHours.h</key>
 		<data>
-		VbFBIugqyoN41TcPwUuwa7pSEbM=
+		IZCCfILzk2W6ez7iCNyRMC6TI/k=
 		</data>
 		<key>Headers/RadarPlace.h</key>
 		<data>
@@ -142,7 +146,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		lLhmgt43m/50ne3gWuX4h4GbMoI=
+		HQcDnh0uxwh1FlaBw7ILFVvswGo=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -155,6 +159,17 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Headers/CustomVerifiedDelegate.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			1QuHhwb/hCvykbdRrFdIWzAtRuU=
+			</data>
+			<key>hash2</key>
+			<data>
+			YxJrI211wgwgi6o5FiNOlyu8M49bE/Pk14c1dx3GHf4=
+			</data>
+		</dict>
 		<key>Headers/Radar.h</key>
 		<dict>
 			<key>hash</key>
@@ -269,11 +284,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			BS8oFCfUXSVqrZDgSD2ppjw3zt8=
+			pkzlSWE+MKlzsXF+9m1m5TMBYks=
 			</data>
 			<key>hash2</key>
 			<data>
-			/Gs12vYt203NFUVa6PWdjfhQBuvOu+wgB5D0wq2j31o=
+			C95qvtVkHUS0LYOwyWd2CNHYYq+I+CymDYUQrV+jG80=
 			</data>
 		</dict>
 		<key>Headers/RadarGeofenceGeometry.h</key>
@@ -309,15 +324,15 @@
 			omPbdT4QIpP2uvzi7h3uDMbKhuGRIbElXKOUMnsWRIg=
 			</data>
 		</dict>
-		<key>Headers/RadarOperatingHour.h</key>
+		<key>Headers/RadarOperatingHours.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			VbFBIugqyoN41TcPwUuwa7pSEbM=
+			IZCCfILzk2W6ez7iCNyRMC6TI/k=
 			</data>
 			<key>hash2</key>
 			<data>
-			6Lp2O4BCHNZKy1vrbpszrzSUBy/FWMMoQEPhAA7Nfj4=
+			oPQ5ua9daRrmvdG5k/nzUablXe9NCQ807xZuxJJSmPg=
 			</data>
 		</dict>
 		<key>Headers/RadarPlace.h</key>

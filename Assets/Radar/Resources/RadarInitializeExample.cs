@@ -11,19 +11,27 @@ namespace RadarSDKBridge
 {
     public class RadarInitializeExample : MonoBehaviour
     {
+        private static RadarInitializeExample _instance;
+
+        #region Variables
+
+        [Header("Status Lights")]
         [SerializeField] private Image _setUserIdImage;
         [SerializeField] private Image _setMetadataImage;
         [SerializeField] private Image _trackVerifiedImage;
         [SerializeField] private Image _startTrackingImage;
         [SerializeField] private Image _stopTrackingImage;
         [SerializeField] private Image _getVerifiedLocationTokenImage;
+        [SerializeField] private Image _getLocationImage;
 
+        [Header("Test Buttons")]
         [SerializeField] private Button _setUserIdButton;
         [SerializeField] private Button _verifyTrackButton;
         [SerializeField] private Button _startTrackingButton;
         [SerializeField] private Button _stopTrackingButton;
         [SerializeField] private Button _setMetadataButton;
         [SerializeField] private Button _getVerifiedLocationTokenButton;
+        [SerializeField] private Button _getLocationButton;
 
         [SerializeField] private TextMeshProUGUI _status;
         [SerializeField] private TextMeshProUGUI _time;
@@ -48,6 +56,8 @@ namespace RadarSDKBridge
         private Queue<System.Action> TODO = new Queue<System.Action>();
         int callbacksTotal = 0;
 
+        #endregion
+
 
         private void OnValidate()
         {
@@ -58,10 +68,17 @@ namespace RadarSDKBridge
         }
 
 
+        private void Awake()
+        {
+            _instance = this;
+        }
+
+
         private void Start()
         {
-            _setUserIdButton.onClick.AddListener(() => SetUserId());
+            _setUserIdButton.onClick.AddListener(() => { SetUserIdButtonHandler(); });
             _setMetadataButton.onClick.AddListener(() => SetMetadata());
+            _getLocationButton.onClick.AddListener(() => GetLocation());
             _verifyTrackButton.onClick.AddListener(() => _ = TrackVerified());
             _startTrackingButton.onClick.AddListener(() => _ = StartTrackingVerified());
             _stopTrackingButton.onClick.AddListener(() => _ = StopTracking());
@@ -70,8 +87,11 @@ namespace RadarSDKBridge
             RadarSDKManager.Initialize();
 
             RadarServiceWrapper.Initialize();
-
+#if UNITY_IOS
+            RadarServiceWrapper.SetVerifiedReceiver(DidUpdateToken);
+#else
             RadarServiceWrapper.SetVerifiedReceiver(OnTokenUpdated);
+#endif
             LogManager.Instance.Log("RadarInitializeExample Start ---end", LogType.Log);
         }
 
@@ -85,6 +105,38 @@ namespace RadarSDKBridge
                     TODO.Dequeue()();
                 }
             }
+        }
+
+
+        private async void GetLocation()
+        {
+            SetImageColor(_getLocationImage, _redColor);
+            StartLoadingAnimation(_time, ref _timeLoadingCoroutine);
+
+            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
+
+            var location = await RadarServiceWrapper.GetLocation();
+
+            if (location != null)
+            {
+                LogManager.Instance.Log($"Successfully got location: Latitude = {location.Value.latitude}, Longitude = {location.Value.longitude}", LogType.Warning);
+            }
+            else
+            {
+                LogManager.Instance.Log("Failed to retrieve location", LogType.Error);
+            }
+            stopWatch.Stop();
+            _time.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
+            SetImageColor(_getLocationImage, _greenColor);
+            StopLoadingAnimation(ref _timeLoadingCoroutine);
+
+        }
+
+
+        private void SetUserIdButtonHandler()
+        {
+            SetUserId();
         }
 
 
@@ -103,18 +155,22 @@ namespace RadarSDKBridge
 
             var uniqueUserId = $"{userId}_{Enum.GetName(typeof(RuntimePlatform), Application.platform)}";
             Radar.SetUserId(uniqueUserId);
+
             stopWatch.Stop();
+            _time.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
 
             StopLoadingAnimation(ref _timeLoadingCoroutine);
             StopLoadingAnimation(ref _statusLoadingCoroutine);
             SetImageColor(_setUserIdImage, _greenColor); // Task completed successfully
 
-            var totalSeconds = stopWatch.Elapsed.TotalSeconds;
-            _time.text = string.Format("Time taken: {0:N3} seconds", totalSeconds);
+
             LogManager.Instance.Log("SetUserId()  ---end", LogType.Log);
             Debug.Log("SetUserId()  ---end");
+
+#if UNITY_ANDROID
             userId = Radar.GetUserId();
             _userId.text = "UserId: " + userId;
+#endif
             return userId;
         }
 
@@ -136,17 +192,14 @@ namespace RadarSDKBridge
             Radar.SetMetadata(metadata);
             // Call the extended TrackVerifiedWithFraudDetection method
             stopWatch.Stop();
+            _time.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
 
             StopLoadingAnimation(ref _timeLoadingCoroutine);
             StopLoadingAnimation(ref _statusLoadingCoroutine);
             SetImageColor(_setMetadataImage, _greenColor); // Task completed successfully
 
-            var totalSeconds = stopWatch.Elapsed.TotalSeconds;
-            _time.text = string.Format("Time taken: {0:N3} seconds", totalSeconds);
             LogManager.Instance.Log("SetMetadata()  ---end", LogType.Log);
             Debug.Log("SetMetadata()  ---end");
-            userId = Radar.GetUserId();
-            _userId.text = "UserId: " + userId;
         }
 
 
@@ -187,8 +240,8 @@ namespace RadarSDKBridge
             StopLoadingAnimation(ref _statusLoadingCoroutine);
 
             stopWatch.Stop();
-            var totalSeconds = stopWatch.Elapsed.TotalSeconds;
-            _time.text = string.Format("Time taken: {0:N3} seconds", totalSeconds);
+            _time.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
             LogManager.Instance.Log("TrackVerified()  ---end", LogType.Log);
             Debug.Log("TrackVerified()  ---end");
         }
@@ -208,7 +261,7 @@ namespace RadarSDKBridge
             StartLoadingAnimation(_onTokenUpdatedText, ref _callbackLoadingCoroutine);
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-            await RadarServiceWrapper.StartTrackingVerified(60, true); // 60 seconds interval, with beacons
+            await RadarServiceWrapper.StartTrackingVerified(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
 
             SetImageColor(_startTrackingImage, _greenColor); // Task completed successfully
             StopLoadingAnimation(ref _timeLoadingCoroutine);
@@ -216,8 +269,8 @@ namespace RadarSDKBridge
 
             _status.text = "Started Tracking";
             stopWatch.Stop();
-            var totalSeconds = stopWatch.Elapsed.TotalSeconds;
-            _time.text = string.Format("Time taken: {0:N3} seconds", totalSeconds);
+            _time.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
             LogManager.Instance.Log("StartTracking()  ---end", LogType.Log);
             Debug.Log("StartTracking()  ---end");
         }
@@ -242,8 +295,8 @@ namespace RadarSDKBridge
 
             _status.text = "Stopped Tracking";
             stopWatch.Stop();
-            var totalSeconds = stopWatch.Elapsed.TotalSeconds;
-            _time.text = string.Format("Time taken: {0:N3} seconds", totalSeconds);
+            _time.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
             LogManager.Instance.Log("StopTracking()  ---end", LogType.Log);
             Debug.Log("StopTracking()  ---end");
         }
@@ -292,14 +345,18 @@ namespace RadarSDKBridge
             StopLoadingAnimation(ref _statusLoadingCoroutine);
 
             stopWatch.Stop();
-            var totalSeconds = stopWatch.Elapsed.TotalSeconds;
-            _time.text = $"Time taken: {totalSeconds:N3} seconds";
+            _time.text = $"Time taken: {stopWatch.Elapsed.TotalSeconds:N3} seconds";
 
             LogManager.Instance.Log("GetVerifiedLocationToken() completed.", LogType.Log);
             Debug.Log("GetVerifiedLocationToken() completed.");
         }
 
 
+        [MonoPInvokeCallback(typeof(Action<RadarVerifiedLocationToken>))]
+        public static void DidUpdateToken(RadarVerifiedLocationToken token)
+        {
+            _instance?.OnTokenUpdated(token);
+        }
 
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {

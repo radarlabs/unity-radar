@@ -103,41 +103,16 @@ namespace RadarSDK
             CheckInitializedOrThrow();
 
             var startTask = StartTrackingVerified_Internal(interval, beacons);
-            var timeOut = DefaultOnTimeOut<bool>(11); // Timeout in 11 seconds if there's an issue
+            var timeOut = DefaultOnTimeOut<bool>(15); // Timeout in 15 seconds if there's an issue
             await Task.WhenAny(startTask, timeOut);
         }
 
         private static Task StartTrackingVerified_Internal(int interval, bool beacons)
         {
+            CheckInitializedOrThrow();
             return _platformAdapter.StartTrackingVerifiedAsync(interval, beacons);
         }
 
-        public static async Task StopTracking()
-        {
-            Debug.Log("Radar.StopTracking()");
-            CheckInitializedOrThrow();
-
-            var stopTask = StopTracking_Internal();
-            var timeOut = DefaultOnTimeOut<bool>(11); // Timeout in 11 seconds if there's an issue
-            await Task.WhenAny(stopTask, timeOut);
-        }
-
-        private static Task StopTracking_Internal()
-        {
-            return _platformAdapter.StopTrackingAsync();
-        }
-
-
-        public static Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationToken()
-        {
-            return _platformAdapter.GetVerifiedLocationTokenAsync();
-        }
-
-
-        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
-        {
-            _platformAdapter.SetVerifiedReceiver(onTokenUpdated);
-        }
 
         /// <summary>
         /// Tracks the user's location with device integrity information for location verification use cases.
@@ -164,12 +139,6 @@ namespace RadarSDK
             return completedTask;
         }
 
-        private static async Task<T> DefaultOnTimeOut<T>(int seconds)
-        {
-            await Task.Delay(TimeSpan.FromSeconds(seconds));
-            return default;
-        }
-
         private static Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
             bool beacons = false)
         {
@@ -177,10 +146,61 @@ namespace RadarSDK
             return _platformAdapter.TrackVerifiedAsync(beacons);
         }
 
+
+        public static async Task StopTracking()
+        {
+            Debug.Log("Radar.StopTracking()");
+            CheckInitializedOrThrow();
+
+            var stopTask = StopTracking_Internal();
+            var timeOut = DefaultOnTimeOut<bool>(11); // Timeout in 11 seconds if there's an issue
+            await Task.WhenAny(stopTask, timeOut);
+        }
+
+        private static Task StopTracking_Internal()
+        {
+            return _platformAdapter.StopTrackingAsync();
+        }
+
+
+        public static Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationToken()
+        {
+            return _platformAdapter.GetVerifiedLocationTokenAsync();
+        }
+
+
+        public static void GetLocation(Action<Location> onLocationReceived)
+        {
+            Debug.Log("Radar > GetLocation");
+            if (!Initialized)
+            {
+                Debug.LogError("Radar SDK is not initialized");
+                return;
+            }
+            Debug.Log("Radar > GetLocation pre");
+            _platformAdapter.GetLocation(onLocationReceived);
+            Debug.Log("Radar > GetLocation  ---end!!!");
+        }
+
+
+        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
+        {
+            _platformAdapter.SetVerifiedReceiver(onTokenUpdated);
+        }
+
+
+        private static async Task<T> DefaultOnTimeOut<T>(int seconds)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(seconds));
+            return default;
+        }
+
+
         private static void CheckInitializedOrThrow()
         {
             if (!Initialized)
             {
+                //! Connect to handlers!!!
                 throw new InvalidOperationException(
                     $"Radar: Was not initialized, must first call the '{nameof(Initialize)}' method");
             }

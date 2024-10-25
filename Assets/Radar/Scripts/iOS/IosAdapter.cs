@@ -3,6 +3,8 @@ using System;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+
 
 namespace RadarSDK.iOS
 {
@@ -12,17 +14,24 @@ namespace RadarSDK.iOS
     /// </summary>
     public class IosAdapter : IRadarPlatformAdapter
     {
+        private delegate void RadarTokenUpdatedCallback(IntPtr token, bool passed, long expiresAt, int expiresIn);
+        private delegate void RadarLocationCallback(double latitude, double longitude, int callbackId);
+
+
+        // Store the callback action to invoke later
+        private static Action<RadarVerifiedLocationToken> _onTokenUpdated;
+
+
         [DllImport("__Internal")]
         private static extern void Radar_initializeWithPublishableKey(string publishableKey);
 
         [DllImport("__Internal")]
         private static extern void Radar_setUserId(string userId);
+        [DllImport("__Internal")]
+        private static extern string Radar_getUserId();
 
         [DllImport("__Internal")]
         private static extern void Radar_setMetadata(string metadataJson);
-
-        [DllImport("__Internal")]
-        private static extern void Radar_trackVerified(bool beacons);
 
         [DllImport("__Internal")]
         private static extern void Radar_startTrackingVerified(double interval, bool beacons);
@@ -31,10 +40,22 @@ namespace RadarSDK.iOS
         private static extern void Radar_stopTrackingVerified();
 
         [DllImport("__Internal")]
-        private static extern string Radar_getUserId(); // Added function to get user ID
+        private static extern void Radar_setVerifiedDelegate(RadarTokenUpdatedCallback callback);
 
         [DllImport("__Internal")]
-        private static extern void Radar_setVerifiedReceiver(IntPtr callback); // Assuming you need a callback for receiving tokens
+        private static extern void Radar_getLocation(RadarLocationCallback callback);
+
+
+
+
+        private static Dictionary<int, Action<Location>> locationCallbacks = new Dictionary<int, Action<Location>>();
+        private static int currentCallbackId = 0;
+
+        // P/Invoke for the native getLocation method with the callbackId
+        [DllImport("__Internal")]
+        private static extern void Radar_getLocation(RadarLocationCallback callback, int callbackId);
+
+
 
         public string GetUserID()
         {
@@ -51,13 +72,15 @@ namespace RadarSDK.iOS
             return userId;
         }
 
+
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
         {
             LogManager.Instance.Log("IosAdapter GetVerifiedLocationTokenAsync()", LogType.Attention);
-            // Here we need to implement the logic to retrieve the verified location token
-            // This should bridge to an iOS method that returns location data.
-            throw new NotImplementedException("This method needs to be implemented.");
+            var res = new IosTrackVerifiedHandler(RadarRequestType.GetVerifiedLocationToken).CompletionTask;
+            LogManager.Instance.Log("IosAdapter GetVerifiedLocationTokenAsync() ---end", LogType.Attention);
+            return res;
         }
+
 
         public void Initialize(string publishableKey)
         {
@@ -72,6 +95,7 @@ namespace RadarSDK.iOS
             Radar_initializeWithPublishableKey(publishableKey);
             LogManager.Instance.Log("IosAdapter Initialize()  ---end", LogType.Attention);
         }
+
 
         public void SetMetadata(MetadataContainer metadata)
         {
@@ -96,22 +120,48 @@ namespace RadarSDK.iOS
             LogManager.Instance.Log("IosAdapter SetUserID()  ---end", LogType.Attention);
         }
 
+
+        public void OnTokenUpdated(string token) // This function will be called by UnitySendMessage from iOS
+        {
+            Debug.Log("Received verified token: " + token);
+            // Handle the token as needed
+        }
+
+
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
-            LogManager.Instance.Log("IosAdapter SetVerifiedReceiver", LogType.Attention);
-            if (onTokenUpdated == null)
-            {
-                LogManager.Instance.Log("No callback function provided for receiving verified tokens.", LogType.Error);
-                Debug.LogError("No callback function provided for receiving verified tokens.");
-                return;
-            }
-            LogManager.Instance.Log("IosAdapter SetVerifiedReceiver 2", LogType.Attention);
-            // Assuming that the native iOS SDK accepts a function pointer as a callback for verified tokens
-            IntPtr callbackPtr = Marshal.GetFunctionPointerForDelegate(onTokenUpdated);
-            LogManager.Instance.Log("IosAdapter SetVerifiedReceiver 3", LogType.Attention);
-            Radar_setVerifiedReceiver(callbackPtr);
-            LogManager.Instance.Log("IosAdapter SetVerifiedReceiver ---end", LogType.Attention);
+            Debug.Log("IosAdapter.SetVerifiedReceiver() called");
+
+            _onTokenUpdated = onTokenUpdated;
+
+            // Set up the delegate to be called when a new token is available
+            Radar_setVerifiedDelegate(OnTokenUpdated);
+
+            Debug.Log("IosAdapter.SetVerifiedReceiver() ---end");
         }
+
+        // This function will be called by the native code
+        [AOT.MonoPInvokeCallback(typeof(RadarTokenUpdatedCallback))]
+        private static void OnTokenUpdated(IntPtr tokenPtr, bool passed, long expiresAt, int expiresIn)
+        {
+            // Convert the IntPtr to a string (token)
+            string token = Marshal.PtrToStringAnsi(tokenPtr);
+
+            // Create a new RadarVerifiedLocationToken object and populate it with the received data
+            var verifiedLocationToken = new RadarVerifiedLocationToken
+            {
+                Passed = passed,
+                Token = token,
+                ExpiresAt = expiresAt, // Unix timestamp (milliseconds)
+                ExpiresIn = expiresIn
+            };
+
+            Debug.Log($"Token updated: {verifiedLocationToken.Token}, Passed: {verifiedLocationToken.Passed}, ExpiresAt: {verifiedLocationToken.ExpiresAt}, ExpiresIn: {verifiedLocationToken.ExpiresIn}");
+
+            // Call the C# callback action
+            _onTokenUpdated?.Invoke(verifiedLocationToken);
+        }
+
 
         public async Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
@@ -132,15 +182,89 @@ namespace RadarSDK.iOS
             LogManager.Instance.Log("IosAdapter StopTrackingAsync ---end", LogType.Attention);
             return (RadarStatus.SUCCESS, null);
         }
-
-        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
         {
             LogManager.Instance.Log("IosAdapter TrackVerifiedAsync " + beacons, LogType.Attention);
-            Radar_trackVerified(beacons);
-            LogManager.Instance.Log("IosAdapter TrackVerifiedAsync2", LogType.Attention);
-            await Task.Delay(10); // Mocking asynchronous behavior for demonstration
-            LogManager.Instance.Log("IosAdapter TrackVerifiedAsync ---end", LogType.Attention);
-            return (RadarStatus.SUCCESS, null); // Placeholder for actual location data
+            var res = new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
+            LogManager.Instance.Log("IosAdapter TrackVerifiedAsync ---end" + beacons, LogType.Attention);
+            return res;
+        }
+        // public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        // {
+        //     LogManager.Instance.Log("IosAdapter TrackVerifiedAsync " + beacons, LogType.Attention);
+        //     Radar_trackVerified(beacons);
+        //     LogManager.Instance.Log("IosAdapter TrackVerifiedAsync2", LogType.Attention);
+        //     await Task.Delay(10); // Mocking asynchronous behavior for demonstration
+        //     LogManager.Instance.Log("IosAdapter TrackVerifiedAsync ---end", LogType.Attention);
+        //     return (RadarStatus.SUCCESS, new IosTrackVerifiedHandler().CompletionTask); // Placeholder for actual location data
+        // }
+
+        // public void GetLocation(Action<Location> onLocationReceived)
+        // {
+        //     Radar_getLocation((latitude, longitude) =>
+        //     {
+        //         if (latitude != -91 && longitude != -181)
+        //         {
+        //             // Create a Location struct with the coordinates
+        //             var location = new Location
+        //             {
+        //                 type = "Point",
+        //                 coordinates = new double[] { longitude, latitude }
+        //             };
+
+        //             onLocationReceived?.Invoke(location);
+        //         }
+        //         else
+        //         {
+        //             Debug.LogError("Failed to get location");
+        //             onLocationReceived?.Invoke(default);
+        //         }
+        //     });
+        // }
+
+        public void GetLocation(Action<Location> onLocationReceived)
+        {
+            // Increment the callback ID and store the callback in the dictionary
+            int callbackId = currentCallbackId++;
+            locationCallbacks[callbackId] = onLocationReceived;
+
+            // Call the native method with the static callback and the callbackId
+            Radar_getLocation(OnLocationUpdated, callbackId);
+        }
+
+        // Static method that will be called by native code when location is received
+        [AOT.MonoPInvokeCallback(typeof(RadarLocationCallback))]
+        private static void OnLocationUpdated(double latitude, double longitude, int callbackId)
+        {
+            LogManager.Instance.Log("IosAdapter > OnLocationUpdated", LogType.Attention);
+            // Check if valid coordinates were received
+            if (locationCallbacks.TryGetValue(callbackId, out var callback))
+            {
+                LogManager.Instance.Log("IosAdapter > TryGetValue " + callbackId + "    | " + latitude + " | " + longitude, LogType.Attention);
+                if (latitude != -91 && longitude != -181)
+                {
+                    LogManager.Instance.Log("IosAdapter > TryGetValue", LogType.Attention);
+                    // Create a Location struct to pass the location back to Unity
+                    var location = new Location
+                    {
+                        type = "Point",
+                        coordinates = new double[] { longitude, latitude }
+                    };
+
+                    // Invoke the C# callback with the location
+                    LogManager.Instance.Log("IosAdapter > callback?.Invoke " + (callback == null), LogType.Attention);
+                    callback?.Invoke(location);
+                }
+                else
+                {
+                    // Handle location failure
+                    Debug.LogError("Failed to get location");
+                    callback?.Invoke(default);
+                }
+                LogManager.Instance.Log("IosAdapter > Remove", LogType.Attention);
+                // Remove the callback from the dictionary once it's invoked
+                locationCallbacks.Remove(callbackId);
+            }
         }
     }
 }
