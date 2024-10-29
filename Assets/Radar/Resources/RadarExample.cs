@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using RadarSDKBridge;
+using System.Threading.Tasks;
 
 namespace RadarSDK
 {
@@ -11,25 +12,36 @@ namespace RadarSDK
             InitializeRadar();
         }
 
+
         private void InitializeRadar()
         {
             RadarSDKManager.Initialize();
-            RadarErrorHandler.InitializeErrorHandling();
         }
 
-        public void StartUserTracking()
+
+        public void StartTrackingVerified()
         {
-            StartCoroutine(RadarSDKManager.TrackUser());
+            StartCoroutine(RadarSDKManager.StartTrackingVerified());
         }
 
-        public void StartTracking()
+
+        private async Task StartTrackingVerifiedAsync()
         {
-            StartCoroutine(RadarSDKManager.StartTracking());
+            await RadarSDKManager.StartTrackingVerifiedAsync(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
         }
+
 
         public void StopTracking()
         {
             StartCoroutine(RadarSDKManager.StopTracking());
         }
+
+
+        private async Task StopTrackingAsync()
+        {
+            await RadarSDKManager.StopTrackingAsync();
+        }
+
+        //... TrackVerified()
     }
 }

@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace RadarSDK
 {
+    /// <summary>
+    /// Provides utility methods for converting JSON data into VerifiedLocationData objects and 
+    /// mapping status strings to RadarStatus enums.
+    /// </summary>
     public static class Utils
     {
         public static VerifiedLocationData GetTrackDataFromJson(string jsonStr)

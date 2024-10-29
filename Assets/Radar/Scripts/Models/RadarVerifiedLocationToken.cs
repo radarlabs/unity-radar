@@ -7,6 +7,7 @@ namespace RadarSDK
         public long ExpiresAt { get; set; }
         public long ExpiresIn { get; set; }
 
+
         public override string ToString()
         {
             return $"Token: {Token}, Passed: {Passed}, ExpiresAt: {ExpiresAt}, ExpiresIn: {ExpiresIn}";

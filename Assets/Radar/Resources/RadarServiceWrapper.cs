@@ -2,19 +2,27 @@ using System.Threading.Tasks;
 using RadarSDK;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace RadarSDKBridge
 {
+    /// <summary>
+    /// Provides a wrapper around the Radar SDK's core functionality, including methods for 
+    /// initializing the SDK, setting user ID and metadata, and managing tracking operations.
+    /// Supports error callbacks for centralized error handling through RadarErrorHandler.
+    /// </summary>
     public static class RadarServiceWrapper
     {
         public static Action<string> OnError;
+        public static Queue<System.Action> _mainThreadActions = new Queue<System.Action>();
+
 
 
         public static void Initialize()
         {
-            const string TEST_PUBLISHABLE_KEY = "prj_test_pk_0eac9fa8b8a4abcfcb40be269396e21fdca21b53";
             Debug.Log($"{nameof(RadarServiceWrapper)}.{nameof(Initialize)}({"TEST_KEY"})");
-            Radar.Initialize(TEST_PUBLISHABLE_KEY, fraud: true);
+            string publishableKey = Debug.isDebugBuild ? RadarSDKManager.TestPublishableKey : RadarSDKManager.LivePublishableKey;
+            Radar.Initialize(publishableKey, fraud: true);
         }
 
 
@@ -95,16 +103,32 @@ namespace RadarSDKBridge
             {
                 if (location.coordinates != null)
                 {
-                    LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
-                    tcs.SetResult(location);
+                    EnqueueMainThreadAction(() =>
+                    {
+                        LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
+                        tcs.SetResult(location); // Set the result on the main thread
+                    });
                 }
                 else
                 {
-                    LogManager.Instance.Log("Failed to get location", LogType.Error);
-                    tcs.SetResult(null);
+                    EnqueueMainThreadAction(() =>
+                    {
+                        LogManager.Instance.Log("Failed to get location", LogType.Error);
+                        tcs.SetResult(null); // Set the result on the main thread
+                    });
                 }
             });
+
             return tcs.Task;
+        }
+
+
+        private static void EnqueueMainThreadAction(System.Action action)
+        {
+            lock (_mainThreadActions)
+            {
+                _mainThreadActions.Enqueue(action);
+            }
         }
 
 

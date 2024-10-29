@@ -5,13 +5,39 @@ using UnityEngine;
 
 namespace RadarSDKBridge
 {
+    /// <summary>
+    /// Manages the initialization and configuration of the Radar SDK. 
+    /// Loads user-configurable settings from the RadarSettings asset and initializes 
+    /// the Radar SDK with the appropriate settings, such as user ID and tracking options.
+    /// </summary>
     public static class RadarSDKManager
     {
+        #region Variables
         public const string TEMP_UNIQUE_USER_ID = "TEST_uniqueUserId_001";
 
         public static string UserId
         {
             get { return radarSettings != null ? radarSettings.userId : TEMP_UNIQUE_USER_ID; }
+        }
+
+        public static bool AddUserIdExtension
+        {
+            get { return radarSettings.addUserIdExtension; }
+        }
+
+        public static bool IsDebuggingEnabled
+        {
+            get { return radarSettings.enableDebugging; }
+        }
+
+        public static string TestPublishableKey
+        {
+            get { return radarSettings.testPublishableKey; }
+        }
+
+        public static string LivePublishableKey
+        {
+            get { return radarSettings.livePublishableKey; }
         }
 
         public static MetadataContainer Metadata
@@ -29,8 +55,9 @@ namespace RadarSDKBridge
             get { return radarSettings != null ? radarSettings.useBeacons : true; }
         }
 
-
         private static RadarSettingsData radarSettings;
+
+        #endregion
 
 
         public static void Initialize()
@@ -41,23 +68,25 @@ namespace RadarSDKBridge
         }
 
         // Coroutine wrapper for asynchronous methods
-        public static IEnumerator TrackUser()
+        public static IEnumerator TrackVerified()
         {
-            var task = TrackUserAsync(radarSettings.userId);
+            var task = TrackVerifiedAsync(radarSettings.userId);
             while (!task.IsCompleted)
             {
                 yield return null;
             }
         }
 
-        public static IEnumerator StartTracking()
+
+        public static IEnumerator StartTrackingVerified()
         {
-            var task = StartTrackingAsync(radarSettings.trackingInterval, radarSettings.useBeacons);
+            var task = StartTrackingVerifiedAsync(radarSettings.trackingInterval, radarSettings.useBeacons);
             while (!task.IsCompleted)
             {
                 yield return null;
             }
         }
+
 
         public static IEnumerator StopTracking()
         {
@@ -69,15 +98,17 @@ namespace RadarSDKBridge
         }
 
         // Example of async versions of the methods
-        public static async Task TrackUserAsync(string userId)
+        public static async Task TrackVerifiedAsync(string userId)
         {
             await RadarServiceWrapper.TrackVerified(userId);
         }
 
-        public static async Task StartTrackingAsync(int interval, bool useBeacons)
+
+        public static async Task StartTrackingVerifiedAsync(int interval, bool useBeacons)
         {
             await RadarServiceWrapper.StartTrackingVerified(interval, useBeacons);
         }
+
 
         public static async Task StopTrackingAsync()
         {

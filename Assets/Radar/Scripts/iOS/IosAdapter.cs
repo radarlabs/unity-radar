@@ -10,10 +10,11 @@ namespace RadarSDK.iOS
 {
     /// <summary>
     /// Adapter for the Radar SDK on iOS.
-    /// Bridges with a .xcframework file.
+    /// Bridges with .xcframework file.
     /// </summary>
     public class IosAdapter : IRadarPlatformAdapter
     {
+        #region Variables
         private delegate void RadarTokenUpdatedCallback(IntPtr token, bool passed, long expiresAt, int expiresIn);
         private delegate void RadarLocationCallback(double latitude, double longitude, int callbackId);
 
@@ -45,9 +46,6 @@ namespace RadarSDK.iOS
         [DllImport("__Internal")]
         private static extern void Radar_getLocation(RadarLocationCallback callback);
 
-
-
-
         private static Dictionary<int, Action<Location>> locationCallbacks = new Dictionary<int, Action<Location>>();
         private static int currentCallbackId = 0;
 
@@ -55,6 +53,7 @@ namespace RadarSDK.iOS
         [DllImport("__Internal")]
         private static extern void Radar_getLocation(RadarLocationCallback callback, int callbackId);
 
+        #endregion
 
 
         public string GetUserID()
@@ -76,9 +75,7 @@ namespace RadarSDK.iOS
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
         {
             LogManager.Instance.Log("IosAdapter GetVerifiedLocationTokenAsync()", LogType.Attention);
-            var res = new IosTrackVerifiedHandler(RadarRequestType.GetVerifiedLocationToken).CompletionTask;
-            LogManager.Instance.Log("IosAdapter GetVerifiedLocationTokenAsync() ---end", LogType.Attention);
-            return res;
+            return new IosTrackVerifiedHandler(RadarRequestType.GetVerifiedLocationToken).CompletionTask;
         }
 
 
@@ -105,6 +102,7 @@ namespace RadarSDK.iOS
             Radar_setMetadata(metadataJson);
             LogManager.Instance.Log("IosAdapter SetMetadata()  ---end", LogType.Attention);
         }
+
 
         public void SetUserID(string userId)
         {
@@ -173,6 +171,7 @@ namespace RadarSDK.iOS
             return (RadarStatus.SUCCESS, null); // Placeholder for actual verified location data
         }
 
+
         public async Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
         {
             LogManager.Instance.Log("IosAdapter StopTrackingAsync", LogType.Attention);
@@ -182,45 +181,14 @@ namespace RadarSDK.iOS
             LogManager.Instance.Log("IosAdapter StopTrackingAsync ---end", LogType.Attention);
             return (RadarStatus.SUCCESS, null);
         }
+
+
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
         {
             LogManager.Instance.Log("IosAdapter TrackVerifiedAsync " + beacons, LogType.Attention);
-            var res = new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
-            LogManager.Instance.Log("IosAdapter TrackVerifiedAsync ---end" + beacons, LogType.Attention);
-            return res;
+            return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
         }
-        // public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
-        // {
-        //     LogManager.Instance.Log("IosAdapter TrackVerifiedAsync " + beacons, LogType.Attention);
-        //     Radar_trackVerified(beacons);
-        //     LogManager.Instance.Log("IosAdapter TrackVerifiedAsync2", LogType.Attention);
-        //     await Task.Delay(10); // Mocking asynchronous behavior for demonstration
-        //     LogManager.Instance.Log("IosAdapter TrackVerifiedAsync ---end", LogType.Attention);
-        //     return (RadarStatus.SUCCESS, new IosTrackVerifiedHandler().CompletionTask); // Placeholder for actual location data
-        // }
 
-        // public void GetLocation(Action<Location> onLocationReceived)
-        // {
-        //     Radar_getLocation((latitude, longitude) =>
-        //     {
-        //         if (latitude != -91 && longitude != -181)
-        //         {
-        //             // Create a Location struct with the coordinates
-        //             var location = new Location
-        //             {
-        //                 type = "Point",
-        //                 coordinates = new double[] { longitude, latitude }
-        //             };
-
-        //             onLocationReceived?.Invoke(location);
-        //         }
-        //         else
-        //         {
-        //             Debug.LogError("Failed to get location");
-        //             onLocationReceived?.Invoke(default);
-        //         }
-        //     });
-        // }
 
         public void GetLocation(Action<Location> onLocationReceived)
         {

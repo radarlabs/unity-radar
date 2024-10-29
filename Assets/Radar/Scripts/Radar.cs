@@ -15,6 +15,7 @@ namespace RadarSDK
         public static bool Initialized { get; private set; }
         public static ClientSettings Settings { get; private set; }
 
+
         /// <summary>
         /// Creates and initializes the platform-specific adapter for the Radar SDK.
         /// This method is called automatically at the load time of the subsystem registration.
@@ -82,13 +83,13 @@ namespace RadarSDK
             Console.WriteLine($"Radar.SetUserId({userId})");
         }
 
+
         public static string GetUserId()
         {
             CheckInitializedOrThrow();
-            string userId = _platformAdapter.GetUserID();
-            Console.WriteLine($"Radar.GetUserId({userId})");
-            return userId;
+            return _platformAdapter.GetUserID();
         }
+
 
         public static void SetMetadata(MetadataContainer metadata)
         {
@@ -96,6 +97,7 @@ namespace RadarSDK
             _platformAdapter.SetMetadata(metadata);
             Console.WriteLine($"Radar.SetMetadata({metadata})");
         }
+
 
         public static async Task StartTrackingVerified(int interval, bool beacons)
         {
@@ -107,12 +109,12 @@ namespace RadarSDK
             await Task.WhenAny(startTask, timeOut);
         }
 
+
         private static Task StartTrackingVerified_Internal(int interval, bool beacons)
         {
             CheckInitializedOrThrow();
             return _platformAdapter.StartTrackingVerifiedAsync(interval, beacons);
         }
-
 
         /// <summary>
         /// Tracks the user's location with device integrity information for location verification use cases.
@@ -139,6 +141,7 @@ namespace RadarSDK
             return completedTask;
         }
 
+
         private static Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
             bool beacons = false)
         {
@@ -156,6 +159,7 @@ namespace RadarSDK
             var timeOut = DefaultOnTimeOut<bool>(11); // Timeout in 11 seconds if there's an issue
             await Task.WhenAny(stopTask, timeOut);
         }
+
 
         private static Task StopTracking_Internal()
         {
@@ -200,7 +204,6 @@ namespace RadarSDK
         {
             if (!Initialized)
             {
-                //! Connect to handlers!!!
                 throw new InvalidOperationException(
                     $"Radar: Was not initialized, must first call the '{nameof(Initialize)}' method");
             }

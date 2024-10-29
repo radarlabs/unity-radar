@@ -11,6 +11,7 @@ namespace RadarSDK.iOS
         TrackVerified,
         GetVerifiedLocationToken
     }
+
     /// <summary>
     /// Handles the radar track verification callback from the Radar sdk.
     /// </summary>
@@ -23,7 +24,6 @@ namespace RadarSDK.iOS
 
         [DllImport("__Internal")]
         private static extern void Radar_getVerifiedLocationTokenWithCompletionHandler(int requestId, CompletionResponseDict response);
-
 
         private static event Action<(int requestId, string statusStr, string jsonStr)> OnResponse;
 
@@ -40,6 +40,7 @@ namespace RadarSDK.iOS
         public Task<(RadarStatus, VerifiedLocationData?)> CompletionTask => _currentTcs.Task;
         private readonly int _id;
         private readonly RadarRequestType _requestType;
+
 
 
         public IosTrackVerifiedHandler(RadarRequestType requestType)
@@ -62,19 +63,16 @@ namespace RadarSDK.iOS
             }
         }
 
+
         private void ResponseReceiveCallback((int requestId, string statusStr, string jsonStr) r)
         {
             if (r.requestId != _id)
-            {
                 return;
-            }
 
             OnResponse -= ResponseReceiveCallback;
 
             if (_currentTcs == null || _currentTcs.Task.IsCompleted)
-            {
                 return;
-            }
 
             var status = Utils.StatusStringToEnum(r.statusStr);
             if (status == RadarStatus.SUCCESS)

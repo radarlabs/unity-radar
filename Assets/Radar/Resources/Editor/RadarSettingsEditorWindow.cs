@@ -11,22 +11,21 @@ public class RadarSettingsEditorWindow : EditorWindow
 
     private Editor metadataEditor;
 
+
+
     [MenuItem("Radar/Settings")]
     public static void ShowWindow()
     {
         GetWindow<RadarSettingsEditorWindow>("Radar SDK Settings");
     }
 
-
     private void OnEnable()
     {
         string path = GetScriptFolderPath();
 
-        // Set the settings path relative to the "Settings" folder
         settingsPath = Path.Combine(path, "RadarSettings.asset");
         metadataPath = Path.Combine(path, "MetadataContainer.asset");
 
-        // Load the RadarSettings asset, or create one if it doesn't exist
         radarSettings = AssetDatabase.LoadAssetAtPath<RadarSettingsData>(settingsPath);
         if (radarSettings == null)
         {
@@ -34,57 +33,113 @@ public class RadarSettingsEditorWindow : EditorWindow
         }
     }
 
-
     private string GetScriptFolderPath()
     {
-        // Get the script path using AssetDatabase
         string scriptFilePath = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(this));
-
-        // Get the directory of the script
         string scriptDirectory = Path.GetDirectoryName(scriptFilePath);
-
-        // Move two directories back
         string twoDirectoriesBack = Directory.GetParent(Directory.GetParent(scriptDirectory).FullName).FullName;
-
-        // Convert the full path back to a relative path that Unity understands
         int assetsIndex = twoDirectoriesBack.IndexOf("Assets");
         string relativePath = twoDirectoriesBack.Substring(assetsIndex);
 
-        // Ensure the Resources folder exists
         string resourcesFolderPath = Path.Combine(relativePath, "Resources");
         if (!AssetDatabase.IsValidFolder(resourcesFolderPath))
         {
             AssetDatabase.CreateFolder(relativePath, "Resources");
         }
 
-        // Ensure the SO folder exists inside Resources
         string soFolderPath = Path.Combine(resourcesFolderPath, "Settings");
         if (!AssetDatabase.IsValidFolder(soFolderPath))
         {
             AssetDatabase.CreateFolder(resourcesFolderPath, "Settings");
         }
 
-        // Return the path to the SO folder
         return soFolderPath;
     }
-
-
 
     private void OnGUI()
     {
         if (radarSettings == null) return;
 
-        GUILayout.Label("Radar SDK Settings", EditorStyles.boldLabel); // Header
+        // Custom header style
+        GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel)
+        {
+            fontSize = 15,
+            alignment = TextAnchor.MiddleCenter,
+            normal = { textColor = Color.cyan }
+        };
 
-        radarSettings.userId = EditorGUILayout.TextField("User ID", radarSettings.userId);
+        // Section header style
+        GUIStyle sectionStyle = new GUIStyle(EditorStyles.boldLabel)
+        {
+            fontSize = 12,
+            normal = { textColor = Color.white }
+        };
 
-        radarSettings.trackingInterval = EditorGUILayout.IntSlider("Tracking Interval (seconds)", radarSettings.trackingInterval, 10, 3600);
+        // Read-only label style
+        GUIStyle greyLabelStyle = new GUIStyle(EditorStyles.label)
+        {
+            normal = { textColor = Color.gray }
+        };
 
-        radarSettings.useBeacons = EditorGUILayout.Toggle("Use Beacons", radarSettings.useBeacons);
+        // Save button style
+        GUIStyle saveButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontSize = 14,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.green }
+        };
 
-        EditorGUILayout.LabelField("Metadata", EditorStyles.boldLabel);
+        GUILayout.Space(10);
+        GUILayout.Label("Radar SDK Settings", headerStyle); // Header
+        GUILayout.Space(10);
 
-        // Check if radarSettings.metadata is null, if so create a new one
+        EditorGUILayout.BeginVertical("box");
+
+        GUILayout.Label("General Settings", sectionStyle);
+
+        radarSettings.userId = EditorGUILayout.TextField(new GUIContent("User ID", "Unique identifier for the user, required for tracking purposes."), radarSettings.userId);
+
+        EditorGUILayout.BeginHorizontal();
+        radarSettings.addUserIdExtension = EditorGUILayout.Toggle(new GUIContent("Add Extension", "Option to add an extension to the userId (e.g., '_Android')."), radarSettings.addUserIdExtension);
+
+        // Display the full user ID with extension if addUserIdExtension is checked
+        if (radarSettings.addUserIdExtension)
+        {
+            string fullUserId = $"{radarSettings.userId}_{Application.platform}";
+            EditorGUILayout.LabelField(fullUserId, greyLabelStyle, GUILayout.Width(200));
+        }
+        EditorGUILayout.EndHorizontal();
+
+        radarSettings.enableDebugging = EditorGUILayout.Toggle(new GUIContent("Enable Debugging", "Enable debugging to show logs in the console."), radarSettings.enableDebugging);
+
+        radarSettings.testPublishableKey = EditorGUILayout.TextField(new GUIContent("Test Publishable Key", "Test mode publishable key, used for testing purposes."), radarSettings.testPublishableKey);
+
+        radarSettings.livePublishableKey = EditorGUILayout.TextField(new GUIContent("Live Publishable Key", "Live mode publishable key, used in production for live tracking."), radarSettings.livePublishableKey);
+
+        radarSettings.trackingInterval = EditorGUILayout.IntSlider(new GUIContent("Tracking Interval (seconds)", "Interval in seconds for tracking updates."), radarSettings.trackingInterval, 10, 3600);
+
+        radarSettings.useBeacons = EditorGUILayout.Toggle(new GUIContent("Use Beacons", "Toggle to enable or disable beacon usage in tracking."), radarSettings.useBeacons);
+
+        EditorGUILayout.EndVertical();
+
+        GUILayout.Space(15);
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider); // Separator line
+
+        // Metadata Section
+        EditorGUILayout.BeginVertical("box");
+
+        GUILayout.Label("Metadata", sectionStyle);
+
+        // Display metadata preview if it exists
+        if (radarSettings.metadata != null)
+        {
+            // Display metadata contents as a read-only preview
+            string metadataPreview = JsonUtility.ToJson(radarSettings.metadata, true);
+            EditorGUILayout.LabelField(metadataPreview, greyLabelStyle, GUILayout.MaxHeight(100));
+        }
+
+        // Edit metadata button
         if (radarSettings.metadata == null)
         {
             if (GUILayout.Button("Create Metadata"))
@@ -97,24 +152,43 @@ public class RadarSettingsEditorWindow : EditorWindow
         }
         else
         {
-            // If metadata exists, create an editor for it and display its fields
             if (metadataEditor == null || metadataEditor.target != radarSettings.metadata)
             {
                 metadataEditor = Editor.CreateEditor(radarSettings.metadata);
             }
 
-            if (metadataEditor != null)
+            if (GUILayout.Button("Edit Metadata", GUILayout.Height(30)))
             {
-                metadataEditor.OnInspectorGUI();
+                Selection.activeObject = radarSettings.metadata;
             }
         }
 
-        if (GUILayout.Button("Save Settings"))
+        EditorGUILayout.EndVertical();
+
+        GUILayout.Space(15);
+
+        // Save button
+        if (GUILayout.Button("Save Settings", saveButtonStyle))
         {
             SaveSettings();
         }
 
-        EditorUtility.SetDirty(radarSettings); // Apply changes to the ScriptableObject
+        GUILayout.Space(10);
+
+        // Create label for the clickable link
+        GUILayout.Label("Unity SDK Documentation", EditorStyles.linkLabel);
+
+        // Add cursor change to indicate clickable area
+        var rect = GUILayoutUtility.GetLastRect();
+        EditorGUIUtility.AddCursorRect(rect, MouseCursor.Link);
+
+        // Detect mouse click on the label
+        if (Event.current.type == EventType.MouseUp && rect.Contains(Event.current.mousePosition))
+        {
+            Application.OpenURL("https://radar.com/documentation/sdk/unity"); // Replace with your URL
+        }
+
+        EditorUtility.SetDirty(radarSettings);
     }
 
     private void CreateSettingsAsset()

@@ -112,7 +112,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &8310144215604297701
 CanvasRenderer:
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -173,8 +173,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -310,7 +310,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -446,7 +446,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -505,7 +505,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &5929305073078219208
 CanvasRenderer:
@@ -528,7 +528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -566,8 +566,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -733,7 +733,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &6057012013056854162
 CanvasRenderer:
@@ -756,7 +756,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -794,8 +794,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -1118,37 +1118,13 @@ MonoBehaviour:
   _setMetadataButton: {fileID: 4673886208546429092}
   _getVerifiedLocationTokenButton: {fileID: 2319944376865765953}
   _getLocationButton: {fileID: 4566206155798191895}
-  _status: {fileID: 5496094677640295713}
-  _time: {fileID: 4282958529910262331}
-  _userId: {fileID: 8255534723602199433}
+  _statusText: {fileID: 5496094677640295713}
+  _timeText: {fileID: 4282958529910262331}
+  _userIdText: {fileID: 8255534723602199433}
   _onTokenUpdatedText: {fileID: 4887130764205483388}
-  _text: {fileID: 2165065659146746447}
-  _jso: "<color=#21FF20FF>{\r\n<color=#3B96FFFF>    \"user\": {\r\n<color=#FF2419FF>       
-    \"_id\": \"\",\r\n<color=#FF2419FF>        \"userId\": \"\",\r\n<color=#FF2419FF>       
-    \"deviceId\": \"\",\r\n<color=#FF2419FF>        \"location\": {\r\n<color=#FFFB86FF>           
-    \"type\": \"\",\r\n<color=#FFFB86FF>            \"coordinates\": [\r\n<color=#21FF20FF>               
-    \r\n<color=#FFFB86FF>            ]\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>       
-    \"stopped\": false,\r\n<color=#FF2419FF>        \"foreground\": false,\r\n<color=#FF2419FF>       
-    \"country\": {\r\n<color=#FFFB86FF>            \"_id\": \"\",\r\n<color=#FFFB86FF>           
-    \"name\": \"\",\r\n<color=#FFFB86FF>            \"code\": \"\",\r\n<color=#FFFB86FF>           
-    \"type\": \"\",\r\n<color=#FFFB86FF>            \"flag\": \"\",\r\n<color=#FFFB86FF>           
-    \"allowed\": false,\r\n<color=#FFFB86FF>            \"passed\": false,\r\n<color=#FFFB86FF>           
-    \"inExclusionZone\": false,\r\n<color=#FFFB86FF>            \"inBufferZone\":
-    false,\r\n<color=#FFFB86FF>            \"distanceToBorder\": 0.0\r\n<color=#FF2419FF>       
-    },\r\n<color=#FF2419FF>        \"state\": {\r\n<color=#FFFB86FF>            \"_id\":
-    \"\",\r\n<color=#FFFB86FF>            \"name\": \"\",\r\n<color=#FFFB86FF>           
-    \"code\": \"\",\r\n<color=#FFFB86FF>            \"type\": \"\",\r\n<color=#FFFB86FF>           
-    \"flag\": \"\",\r\n<color=#FFFB86FF>            \"allowed\": false,\r\n<color=#FFFB86FF>           
-    \"passed\": false,\r\n<color=#FFFB86FF>            \"inExclusionZone\": false,\r\n<color=#FFFB86FF>           
-    \"inBufferZone\": false,\r\n<color=#FFFB86FF>            \"distanceToBorder\":
-    0.0\r\n<color=#FF2419FF>        },\r\n<color=#FF2419FF>        \"source\": \"\",\r\n<color=#FF2419FF>       
-    \"debug\": false,\r\n<color=#FF2419FF>        \"fraud\": {\r\n<color=#FFFB86FF>           
-    \"passed\": false,\r\n<color=#FFFB86FF>            \"bypassed\": false,\r\n<color=#FFFB86FF>           
-    \"verified\": false,\r\n<color=#FFFB86FF>            \"proxy\": false,\r\n<color=#FFFB86FF>           
-    \"mocked\": false,\r\n<color=#FFFB86FF>            \"compromised\": false,\r\n<color=#FFFB86FF>           
-    \"jumped\": false,\r\n<color=#FFFB86FF>            \"sharing\": false,\r\n<color=#FFFB86FF>           
-    \"inaccurate\": false,\r\n<color=#FFFB86FF>            \"blocked\": false\r\n<color=#FF2419FF>       
-    }\r\n<color=#3B96FFFF>    },\r\n<color=#3B96FFFF>    \"passed\": false\r\n<color=#21FF20FF>}"
+  _metadataText: {fileID: 4483424741373487108}
+  _locationText: {fileID: 6278144134343573}
+  _jsonText: {fileID: 2165065659146746447}
   _colors:
   - {r: 0.12754516, g: 1, b: 0.12549019, a: 1}
   - {r: 0.23113209, g: 0.5894635, b: 1, a: 1}
@@ -1292,7 +1268,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &2165065658752445122
 CanvasRenderer:
@@ -1315,7 +1291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1353,8 +1329,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -1565,7 +1541,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -1815,7 +1791,7 @@ GameObject:
   - component: {fileID: 2165065659146746447}
   - component: {fileID: 2165065659146746441}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: JsonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1942,7 +1918,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -2093,7 +2069,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -2278,7 +2254,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -84.21997, y: 58.299805}
-  m_SizeDelta: {x: 174.9686, y: 521.5}
+  m_SizeDelta: {x: 169.375, y: 521.5}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &9075308755417879870
 CanvasRenderer:
@@ -2535,7 +2511,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -2672,7 +2648,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -2932,7 +2908,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -3083,7 +3059,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -3459,7 +3435,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -3650,7 +3626,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: setUserId
+  m_text: 'Set & Get
+
+    UserId'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3699,7 +3677,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -3835,7 +3813,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -3894,7 +3872,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &8052412874644392770
 CanvasRenderer:
@@ -3917,7 +3895,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3955,8 +3933,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -3991,7 +3969,7 @@ GameObject:
   - component: {fileID: 6154021477180863676}
   - component: {fileID: 6641045753066182153}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: LogText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4109,7 +4087,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &5810748125652394747
 CanvasRenderer:
@@ -4132,7 +4110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4170,8 +4148,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -4308,7 +4286,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -4381,7 +4359,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 159.977, y: 75}
+  m_SizeDelta: {x: 160, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &3116243425224726719
 CanvasRenderer:
@@ -4404,7 +4382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.88235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4442,8 +4420,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 1}
+    m_NormalColor: {r: 0.047058824, g: 0.32941177, b: 0.15686275, a: 0.78431374}
+    m_HighlightedColor: {r: 0, g: 0.5471698, b: 0.010283281, a: 0.88235295}
     m_PressedColor: {r: 0, g: 1, b: 0.21176481, a: 1}
     m_SelectedColor: {r: 0, g: 0.54901963, b: 0.011764706, a: 1}
     m_DisabledColor: {r: 0, g: 0.2264151, b: 0.088050306, a: 1}
@@ -4579,7 +4557,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
