@@ -9,10 +9,10 @@ namespace RadarSDK
     public class LogManager : MonoBehaviour
     {
         public static LogManager Instance { get; private set; }
-
         public Text logTextBox;
         public int maxLines = 20;
         private string logContent = ""; // To keep track of all messages
+        private bool logConsole;
 
 
         private void Awake()
@@ -29,7 +29,13 @@ namespace RadarSDK
         }
 
 
-        public void Log(string message, LogType logType = LogType.Log, bool logConsole = true)
+        public void SetLogConsole(bool isLogEnabled)
+        {
+            logConsole = isLogEnabled;
+        }
+
+
+        public void Log(string message, LogType logType = LogType.Log)
         {
             string formattedMessage = FormatLogMessage(message, logType, logConsole);
             logContent += formattedMessage + "\n"; // Append the new message
@@ -44,7 +50,7 @@ namespace RadarSDK
         }
 
 
-        private string FormatLogMessage(string message, LogType logType, bool logConsole = true)
+        private string FormatLogMessage(string message, LogType logType, bool logConsole)
         {
             switch (logType)
             {

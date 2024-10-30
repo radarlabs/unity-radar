@@ -18,7 +18,8 @@ namespace RadarSDK.Android
 
         public void Initialize(string publishableKey)
         {
-            LogManager.Instance.Log("AndroidAdapter.Initialize(publishableKey) " + publishableKey);
+            LogManager.Instance.Log("AndroidAdapter.Initialize() " + publishableKey, LogType.Attention);
+
             using var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             using var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
             using var context = activity.Call<AndroidJavaObject>("getApplicationContext");
@@ -31,22 +32,25 @@ namespace RadarSDK.Android
             var locationServicesProvider = locationServicesProvider2.GetStatic<AndroidJavaObject>("GOOGLE");
             object[] @params = { context, publishableKey, null, locationServicesProvider, Radar.Settings.Fraud };
             _instance.CallStatic("initialize", @params);
+
+            LogManager.Instance.Log("AndroidAdapter.Initialize() Completed", LogType.Attention);
         }
 
 
         public void SetUserID(string userId)
         {
-            LogManager.Instance.Log("AndroidAdapter.SetUserID(userId) " + userId);
+            LogManager.Instance.Log("AndroidAdapter.SetUserID() " + userId, LogType.Attention);
             object[] parameters = new object[1];
             parameters[0] = userId;
             _instance.CallStatic("setUserId", parameters);
+            LogManager.Instance.Log("AndroidAdapter.SetUserID() Completed", LogType.Attention);
         }
 
 
         public string GetUserID()
         {
             string userId = _instance.CallStatic<string>("getUserId");
-            LogManager.Instance.Log("AndroidAdapter.GetUserID() -> " + userId);
+            LogManager.Instance.Log("AndroidAdapter.GetUserID() -> " + userId, LogType.Attention);
             return userId;
         }
 
@@ -55,16 +59,19 @@ namespace RadarSDK.Android
         {
             // Serialize to JSON using Unity's JsonUtility
             string jsonString = JsonUtility.ToJson(metadata);
+            LogManager.Instance.Log("AndroidAdapter.SetMetadata() " + jsonString, LogType.Attention);
+
             AndroidJavaObject jsonObject = new AndroidJavaObject("org.json.JSONObject", jsonString);
 
             // Call the setMetadata method in Radar.kt
             _instance.CallStatic("setMetadata", jsonObject);
-            LogManager.Instance.Log("AndroidAdapter.SetMetadata() -> " + jsonString);
+            LogManager.Instance.Log("AndroidAdapter.SetMetadata() Completed", LogType.Attention);
         }
 
 
         public void GetLocation(Action<Location> onLocationReceived)
         {
+            LogManager.Instance.Log("AndroidAdapter.GetLocation()", LogType.Attention);
             if (_instance == null)
             {
                 LogManager.Instance.Log("Radar SDK is not initialized", LogType.Error);
@@ -73,6 +80,7 @@ namespace RadarSDK.Android
             // Create a proxy for the RadarLocationCallback
             AndroidJavaProxy callbackProxy = new RadarLocationCallbackProxy(onLocationReceived);
             _instance.CallStatic("getLocation", callbackProxy);
+            LogManager.Instance.Log("AndroidAdapter.GetLocation() Completed", LogType.Attention);
         }
 
 
@@ -88,14 +96,14 @@ namespace RadarSDK.Android
             });
             // Call the trackVerified method on the Radar SDK
             _instance.CallStatic("trackVerified", beacons, callbackProxy);
-            LogManager.Instance.Log("AndroidAdapter.TrackVerifiedAsync()  ---end");
+            LogManager.Instance.Log("AndroidAdapter.TrackVerifiedAsync()  Complete");
             return taskCompletionSource.Task;
         }
 
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
-            LogManager.Instance.Log("AndroidAdapter.StartTrackingVerifiedAsync(interval, beacons)   " + interval + " | " + beacons);
+            LogManager.Instance.Log("AndroidAdapter.StartTrackingVerifiedAsync() " + interval + "; " + beacons);
             var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
 
             // Create a callback proxy to handle the completion
@@ -103,10 +111,9 @@ namespace RadarSDK.Android
             {
                 taskCompletionSource.SetResult((status, locationData));
             });
-            LogManager.Instance.Log("AndroidAdapter.StartTrackingVerifiedAsync(interval, beacons) [before calling]");
             // Call startTrackingVerified on the Radar SDK
             _instance.CallStatic("startTrackingVerified", interval, beacons);
-            LogManager.Instance.Log("AndroidAdapter.StartTrackingVerifiedAsync(interval, beacons)  ---end");
+            LogManager.Instance.Log("AndroidAdapter.StartTrackingVerifiedAsync() Complete");
             return taskCompletionSource.Task;
         }
 
@@ -118,10 +125,9 @@ namespace RadarSDK.Android
 
             // Call stopTracking on the Radar SDK
             _instance.CallStatic("stopTracking");
-            LogManager.Instance.Log("AndroidAdapter.StopTrackingAsync() [before calling]");
             // Assume stop tracking does not return location data, just a status
             taskCompletionSource.SetResult((RadarStatus.SUCCESS, null)); // Replace with appropriate status if needed
-            LogManager.Instance.Log("AndroidAdapter.StopTrackingAsync()  ---end");
+            LogManager.Instance.Log("AndroidAdapter.StopTrackingAsync()  Complete");
             return taskCompletionSource.Task;
         }
 
@@ -143,7 +149,7 @@ namespace RadarSDK.Android
             // Call the getVerifiedLocationToken method on the Radar SDK
             _instance.CallStatic("getVerifiedLocationToken", callbackProxy);
 
-            LogManager.Instance.Log("AndroidAdapter.GetVerifiedLocationTokenAsync() ---end");
+            LogManager.Instance.Log("AndroidAdapter.GetVerifiedLocationTokenAsync() Complete");
 
             return taskCompletionSource.Task;
         }
@@ -151,7 +157,7 @@ namespace RadarSDK.Android
 
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
-            LogManager.Instance.Log("AndroidAdapter.SetVerifiedReceiver() called");
+            LogManager.Instance.Log("AndroidAdapter.SetVerifiedReceiver()");
 
             using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             {
@@ -164,7 +170,7 @@ namespace RadarSDK.Android
                 _instance.CallStatic("setVerifiedReceiver", receiver);
             }
 
-            LogManager.Instance.Log("AndroidAdapter.SetVerifiedReceiver() ---end");
+            LogManager.Instance.Log("AndroidAdapter.SetVerifiedReceiver() Complete");
         }
     }
 
@@ -176,7 +182,6 @@ namespace RadarSDK.Android
         public RadarVerifiedLocationCallbackProxy(Action<RadarStatus, VerifiedLocationData?> onComplete)
             : base("io.radar.sdk.Radar$RadarTrackVerifiedCallback")
         {
-            LogManager.Instance.Log("TrackVerifiedAsyncc  RadarTrackVerifiedCallbackProxy 1");
             _onComplete = onComplete;
         }
 
@@ -255,11 +260,6 @@ namespace RadarSDK.Android
                 ExpiresAt = expiresAt, // Use the converted Unix timestamp
                 ExpiresIn = expiresIn // Retrieve as int
             };
-
-            if (_onTokenUpdated == null)
-            {
-                LogManager.Instance.Log("CustomVerifiedReceiverCallback onTokenUpdated shit", LogType.Warning);
-            }
 
             _onTokenUpdated?.Invoke(verifiedLocationToken);
         }

@@ -183,7 +183,7 @@ namespace RadarSDK
             }
             Debug.Log("Radar > GetLocation pre");
             _platformAdapter.GetLocation(onLocationReceived);
-            Debug.Log("Radar > GetLocation  ---end!!!");
+            Debug.Log("Radar > GetLocation  Complete!!!");
         }
 
 

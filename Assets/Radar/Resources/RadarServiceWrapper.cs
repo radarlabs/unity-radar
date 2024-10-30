@@ -18,17 +18,58 @@ namespace RadarSDKBridge
 
 
 
+        #region Methods
+
         public static void Initialize()
         {
+            Debug.Log("RadarServiceWrapper Initialize()");
             Debug.Log($"{nameof(RadarServiceWrapper)}.{nameof(Initialize)}({"TEST_KEY"})");
             string publishableKey = Debug.isDebugBuild ? RadarSDKManager.TestPublishableKey : RadarSDKManager.LivePublishableKey;
             Radar.Initialize(publishableKey, fraud: true);
+            Debug.Log("RadarServiceWrapper Initialize() Complete");
         }
 
 
-        public static void SetErrorCallback(Action<string> errorCallback)
+        public static void SetUserId(string userId)
         {
-            OnError = errorCallback;
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                Radar.SetUserId(userId);
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error setting user ID: {e.Message}");
+            }
+        }
+
+
+        public static string GetUserId()
+        {
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                return Radar.GetUserId();
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error getting user ID: {e.Message}");
+                return null;
+            }
+        }
+
+
+        public static void SetMetadata(MetadataContainer metadata)
+        {
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                Radar.SetMetadata(metadata);
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error setting metadata: {e.Message}");
+            }
         }
 
 
@@ -95,6 +136,20 @@ namespace RadarSDKBridge
         }
 
 
+        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
+        {
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                Radar.SetVerifiedReceiver(onTokenUpdated);
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error setting verified receiver: {e.Message}");
+            }
+        }
+
+
         public static Task<Location?> GetLocation()
         {
             var tcs = new TaskCompletionSource<Location?>();
@@ -122,7 +177,15 @@ namespace RadarSDKBridge
             return tcs.Task;
         }
 
+        #endregion
 
+        public static void SetErrorCallback(Action<string> errorCallback)
+        {
+            OnError = errorCallback;
+        }
+
+
+        // Helper method to run actions on the main thread
         private static void EnqueueMainThreadAction(System.Action action)
         {
             lock (_mainThreadActions)
@@ -130,43 +193,6 @@ namespace RadarSDKBridge
                 _mainThreadActions.Enqueue(action);
             }
         }
-
-
-        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
-        {
-            try
-            {
-                if (!Radar.Initialized) { Initialize(); }
-                Radar.SetVerifiedReceiver(onTokenUpdated);
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error setting verified receiver: {e.Message}");
-            }
-        }
-
-
-        public static bool IsFraud(Fraud fraud)
-        {
-            // The fraud object contains several flags like mocked, compromised, proxy, etc.
-            if (fraud.bypassed)
-            {
-                return false;
-            }
-            // Return true if any fraud flags indicate tampering
-            return !(fraud is
-            {
-                verified: true,
-                proxy: false,
-                mocked: false,
-                compromised: false,
-                jumped: false,
-                sharing: false,
-                inaccurate: false,
-                blocked: false
-            });
-        }
-
 
         /// <summary>
         /// This function ensures that the `SetUserId` call is only made if the `uniqueUserId` is changed.
