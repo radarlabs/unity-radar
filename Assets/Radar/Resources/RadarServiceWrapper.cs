@@ -22,11 +22,9 @@ namespace RadarSDKBridge
 
         public static void Initialize()
         {
-            Debug.Log("RadarServiceWrapper Initialize()");
-            Debug.Log($"{nameof(RadarServiceWrapper)}.{nameof(Initialize)}({"TEST_KEY"})");
             string publishableKey = Debug.isDebugBuild ? RadarSDKManager.TestPublishableKey : RadarSDKManager.LivePublishableKey;
             Radar.Initialize(publishableKey, fraud: true);
-            Debug.Log("RadarServiceWrapper Initialize() Complete");
+            LogManager.Instance.Log("RadarServiceWrapper.Initialize() Complete");
         }
 
 
@@ -138,6 +136,7 @@ namespace RadarSDKBridge
 
         public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
+            LogManager.Instance.Log($" SetVerifiedReceiver");
             try
             {
                 if (!Radar.Initialized) { Initialize(); }
@@ -145,6 +144,7 @@ namespace RadarSDKBridge
             }
             catch (Exception e)
             {
+                LogManager.Instance.Log($"Error setting verified receiver: {e.Message}", LogType.Error);
                 OnError?.Invoke($"Error setting verified receiver: {e.Message}");
             }
         }

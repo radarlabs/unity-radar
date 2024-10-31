@@ -1449,7 +1449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logTextBox: {fileID: 6641045753066182153}
-  maxLines: 1000
+  maxLines: 6000
 --- !u!114 &3596929107096794704
 MonoBehaviour:
   m_ObjectHideFlags: 0

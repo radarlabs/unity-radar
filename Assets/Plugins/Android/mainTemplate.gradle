@@ -6,6 +6,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.play:integrity:1.2.0'
 **DEPS**}
 
 buildscript {

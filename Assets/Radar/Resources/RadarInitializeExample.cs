@@ -57,7 +57,7 @@ namespace RadarSDKBridge
         private readonly Color _orangeColor = new Color(1f, 0.65f, 0f);
         private readonly Color _greenColor = Color.green;
 
-        private Queue<System.Action> TODO = new Queue<System.Action>();
+        private Queue<Action> TODO = new Queue<Action>();
         int callbacksTotal = 0;
 
         #endregion
@@ -78,7 +78,7 @@ namespace RadarSDKBridge
         }
 
 
-        private void Start()
+        private IEnumerator Start()
         {
             _setUserIdButton.onClick.AddListener(() => { SetUserIdButtonHandler(); });
             _setMetadataButton.onClick.AddListener(() => SetMetadata());
@@ -87,7 +87,7 @@ namespace RadarSDKBridge
             _startTrackingButton.onClick.AddListener(() => _ = StartTrackingVerified());
             _stopTrackingButton.onClick.AddListener(() => _ = StopTracking());
             _getVerifiedLocationTokenButton.onClick.AddListener(() => _ = GetVerifiedLocationToken());
-            RadarSDKManager.Initialize();
+            yield return StartCoroutine(RadarSDKManager.Initialize());
 #if UNITY_IOS
             RadarServiceWrapper.SetVerifiedReceiver(DidUpdateToken);
 #else
@@ -103,8 +103,11 @@ namespace RadarSDKBridge
             {
                 while (TODO.Count > 0)
                 {
-                    TODO.Dequeue()();
+                    TODO.Dequeue().Invoke();
                 }
+            }
+            lock (RadarServiceWrapper._mainThreadActions)
+            {
                 while (RadarServiceWrapper._mainThreadActions.Count > 0)
                 {
                     RadarServiceWrapper._mainThreadActions.Dequeue().Invoke();
@@ -161,7 +164,7 @@ namespace RadarSDKBridge
         {
             LogManager.Instance.Log("SetUserId() " + userId, LogType.Log);
 
-            _timeText.text = _statusText.text = _jsonText.text = _userIdText.text = string.Empty + "...";
+            _timeText.text = _userIdText.text = "...";
 
             SetImageColor(_setUserIdImage, _orangeColor); // Task in progress
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
@@ -200,7 +203,7 @@ namespace RadarSDKBridge
 
             if (metadata == null)
                 metadata = RadarSDKManager.Metadata;
-            _timeText.text = _statusText.text = _jsonText.text = _userIdText.text = string.Empty + "...";
+            _timeText.text = "...";
 
             SetImageColor(_setMetadataImage, _orangeColor); // Task in progress
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
@@ -228,7 +231,7 @@ namespace RadarSDKBridge
         {
             LogManager.Instance.Log("TrackVerified()", LogType.Log);
 
-            _timeText.text = _statusText.text = _jsonText.text = string.Empty + "...";
+            _timeText.text = _statusText.text = _jsonText.text = "...";
 
             SetImageColor(_trackVerifiedImage, _orangeColor); // Task in progress
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
@@ -338,7 +341,6 @@ namespace RadarSDKBridge
                 if (tokenResult.Value.Status == RadarStatus.SUCCESS)
                 {
                     LogManager.Instance.Log("Token received: " + tokenResult.Value.Data, LogType.Log);
-                    Debug.Log("Token received: " + tokenResult.Value.Data);
                     var json = JsonUtility.ToJson(tokenResult.Value.Data);
                     _jsonText.text = JsonFormatter.FormatJson(json, _colors);
                     SetImageColor(_getVerifiedLocationTokenImage.GetComponent<Image>(), _greenColor); // Task success
@@ -361,6 +363,7 @@ namespace RadarSDKBridge
 
             stopWatch.Stop();
             _timeText.text = $"Time taken: {stopWatch.Elapsed.TotalSeconds:N3} seconds";
+            _statusText.text = $"Status:{tokenResult.Value.Status}";
 
             LogManager.Instance.Log("GetVerifiedLocationToken() Completed", LogType.Log);
         }
@@ -375,24 +378,26 @@ namespace RadarSDKBridge
 
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {
-            Debug.Log("Token updated in Unity: " + token);
-
-            // Check if the token passed and take the necessary actions
-            if (token.Passed)
-            {
-                Debug.Log("Access granted. Token is valid.");
-            }
-            else
-            {
-                Debug.Log("Access denied. Token is invalid or expired.");
-            }
-
+            Debug.Log("OnTokenUpdated()");
             EnqueueMainThreadAction(() =>
             {
+                _onTokenUpdatedText.text = $"OnTokenUpdated Callback";
+            });
+            EnqueueMainThreadAction(() =>
+            {
+                LogManager.Instance.Log("Token updated in Unity: " + token);
+
+                // Check if the token passed and take the necessary actions
+                if (token.Passed)
+                    LogManager.Instance.Log("Access granted. Token is valid.");
+                else
+                    LogManager.Instance.Log("Access denied. Token is invalid or expired.", LogType.Error);
+
                 callbacksTotal += 1;
-                _onTokenUpdatedText.text = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
-                LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
                 StopLoadingAnimation(ref _callbackLoadingCoroutine);
+                _onTokenUpdatedText.text = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
+
+                LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
             });
         }
 

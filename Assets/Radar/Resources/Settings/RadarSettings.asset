@@ -16,7 +16,7 @@ MonoBehaviour:
   addUserIdExtension: 1
   enableDebugging: 1
   testPublishableKey: prj_test_pk_0eac9fa8b8a4abcfcb40be269396e21fdca21b53
-  livePublishableKey: prj_live_pk_e48531fb2d1bec8e9dd21b0adc0b19babc4880a5
+  livePublishableKey: prj_live_pk_0000000000000000000000000000000000000000
   trackingInterval: 120
   useBeacons: 1
   metadata: {fileID: 11400000, guid: df9e8af2c75c9814589f71a293a0975d, type: 2}

@@ -85,7 +85,7 @@ namespace RadarSDK
             }
             else
             {
-                Debug.Log("Failed to retrieve verified location token.");
+                Debug.LogError("Failed to retrieve verified location token.");
             }
         }
         
@@ -99,7 +99,7 @@ namespace RadarSDK
             }
             else
             {
-                Debug.Log("Failed to retrieve verified location token.");
+                Debug.LogError("Failed to retrieve verified location token.");
             }
         }
 
@@ -124,7 +124,7 @@ namespace RadarSDK
             }
             else
             {
-                Debug.Log("Failed to retrieve location.");
+                Debug.LogError("Failed to retrieve location.");
             }
         }
 
@@ -138,7 +138,7 @@ namespace RadarSDK
             }
             else
             {
-                Debug.Log("Failed to retrieve location.");
+                Debug.LogError("Failed to retrieve location.");
             }
         }
 

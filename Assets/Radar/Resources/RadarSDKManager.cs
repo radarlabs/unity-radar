@@ -39,6 +39,7 @@ namespace RadarSDKBridge
         {
             get
             {
+                if (radarSettings.testPublishableKey == String.Empty) return "prj_test_pk_0000000000000000000000000000000000000000";
                 return radarSettings.testPublishableKey;
             }
         }
@@ -53,13 +54,18 @@ namespace RadarSDKBridge
                     return PlayerPrefs.GetString("OverrideTestPublishableKey");
                 }
                 // Return the default key from RadarSettingsData
+                if (radarSettings.testPublishableKey == String.Empty) return "prj_test_pk_0000000000000000000000000000000000000000";
                 return radarSettings.testPublishableKey;
             }
         }
 
         public static string LivePublishableKey
         {
-            get { return radarSettings.livePublishableKey; }
+            get 
+            { 
+                if (radarSettings.livePublishableKey == String.Empty) return "prj_live_pk_0000000000000000000000000000000000000000";
+                return radarSettings.livePublishableKey; 
+            }
         }
 
         public static MetadataContainer Metadata
@@ -122,7 +128,6 @@ namespace RadarSDKBridge
 
         public static IEnumerator Initialize()
         {
-            Debug.Log("RadarSDKManager Initialize()");
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
             LogManager.Instance.SetLogConsole(radarSettings.enableDebugging);
             RadarErrorHandler.InitializeErrorHandling();
@@ -131,7 +136,7 @@ namespace RadarSDKBridge
             {
                 yield return null;
             }
-            Debug.Log("RadarSDKManager Initialize() Complete");
+            LogManager.Instance.Log("RadarSDKManager.Initialize() Complete");
         }
 
 
@@ -193,9 +198,7 @@ namespace RadarSDKBridge
 
         public static async Task InitializeAsync()
         {
-            Debug.Log("RadarSDKManager InitializeAsync()");
             await Task.Run(() => RadarServiceWrapper.Initialize());
-            Debug.Log("RadarSDKManager InitializeAsync() Complete");
         }
 
 

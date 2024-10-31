@@ -17,7 +17,7 @@ namespace RadarSDK
         private static void HandleError(string errorMessage)
         {
             // Log the error for debugging purposes
-            LogManager.Instance.Log($"Showing error to user: {errorMessage}", LogType.Error);
+            LogManager.Instance.Log($"ERROR: {errorMessage}", LogType.Error);
         }
     }
 }

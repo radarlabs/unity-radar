@@ -165,7 +165,6 @@ namespace RadarSDK.Android
 
                 // Create a custom Java receiver instance with the callback
                 var receiver = new AndroidJavaObject("io.radar.sdk.CustomVerifiedReceiver", new CustomVerifiedReceiverCallback(onTokenUpdated));
-
                 // Call the setVerifiedReceiver method on the Radar SDK
                 _instance.CallStatic("setVerifiedReceiver", receiver);
             }
@@ -241,17 +240,20 @@ namespace RadarSDK.Android
         public CustomVerifiedReceiverCallback(Action<RadarVerifiedLocationToken> onTokenUpdated)
             : base("io.radar.sdk.CustomVerifiedReceiver$OnTokenUpdatedListener")
         {
+            LogManager.Instance.Log("AndroidAdapter set onTokenUpdated()", LogType.Attention);
             _onTokenUpdated = onTokenUpdated;
         }
 
         public void onTokenUpdated(AndroidJavaObject context, AndroidJavaObject token)
         {
+            LogManager.Instance.Log("AndroidAdapter.onTokenUpdated()", LogType.Attention);
             // Retrieve the Date object for expiresAt
             var expiresAtDate = token.Call<AndroidJavaObject>("getExpiresAt");
-
+            LogManager.Instance.Log("AndroidAdapter.onTokenUpdated()2", LogType.Attention);
             // Convert the Date object to a long (Unix timestamp)
             long expiresAt = expiresAtDate.Call<long>("getTime");
             int expiresIn = token.Call<int>("getExpiresIn");
+            LogManager.Instance.Log("AndroidAdapter.onTokenUpdated()3", LogType.Attention);
             // Convert the Java token object to a C# object
             var verifiedLocationToken = new RadarVerifiedLocationToken
             {
@@ -260,8 +262,9 @@ namespace RadarSDK.Android
                 ExpiresAt = expiresAt, // Use the converted Unix timestamp
                 ExpiresIn = expiresIn // Retrieve as int
             };
-
+            LogManager.Instance.Log("AndroidAdapter._onTokenUpdated?.Invoke(verifiedLocationToken); beforee", LogType.Attention);
             _onTokenUpdated?.Invoke(verifiedLocationToken);
+            LogManager.Instance.Log("AndroidAdapter._onTokenUpdated?.Invoke(verifiedLocationToken); afterr", LogType.Attention);
         }
     }
 }
