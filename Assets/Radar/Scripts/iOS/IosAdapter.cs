@@ -150,7 +150,7 @@ namespace RadarSDK.iOS
                 ExpiresIn = expiresIn
             };
 
-            LogManager.Instance.Log($"Token updated: {verifiedLocationToken.Token}, Passed: {verifiedLocationToken.Passed}, ExpiresAt: {verifiedLocationToken.ExpiresAt}, ExpiresIn: {verifiedLocationToken.ExpiresIn}", LogType.Attention);
+            LogManager.Instance.Log($"Token updated: {verifiedLocationToken.Token.Substring(0, 5)}, Passed: {verifiedLocationToken.Passed}, ExpiresAt: {verifiedLocationToken.ExpiresAt}, ExpiresIn: {verifiedLocationToken.ExpiresIn}", LogType.Attention);
 
             // Call the C# callback action
             _onTokenUpdated?.Invoke(verifiedLocationToken);

@@ -379,20 +379,17 @@ namespace RadarSDKBridge
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {
             Debug.Log("OnTokenUpdated()");
+
+            LogManager.Instance.Log("Token updated in Unity: " + token.Token.Substring(0, 5) + "...");
+
+            // Check if the token passed and take the necessary actions
+            if (token.Passed)
+                LogManager.Instance.Log("Access granted. Token is valid.");
+            else
+                LogManager.Instance.Log("Access denied. Token is invalid or expired.", LogType.Error);
+
             EnqueueMainThreadAction(() =>
             {
-                _onTokenUpdatedText.text = $"OnTokenUpdated Callback";
-            });
-            EnqueueMainThreadAction(() =>
-            {
-                LogManager.Instance.Log("Token updated in Unity: " + token);
-
-                // Check if the token passed and take the necessary actions
-                if (token.Passed)
-                    LogManager.Instance.Log("Access granted. Token is valid.");
-                else
-                    LogManager.Instance.Log("Access denied. Token is invalid or expired.", LogType.Error);
-
                 callbacksTotal += 1;
                 StopLoadingAnimation(ref _callbackLoadingCoroutine);
                 _onTokenUpdatedText.text = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
@@ -456,6 +453,11 @@ namespace RadarSDKBridge
             SetImageColor(_stopTrackingImage, _redColor);
             SetImageColor(_setMetadataImage, _redColor);
             SetImageColor(_getVerifiedLocationTokenImage, _redColor);
+        }
+
+
+        public void ClearConsole(){
+            LogManager.Instance.ClearConsole();
         }
     }
 }

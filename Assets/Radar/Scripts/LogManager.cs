@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,6 +33,13 @@ namespace RadarSDK
         public void SetLogConsole(bool isLogEnabled)
         {
             logConsole = isLogEnabled;
+        }
+
+
+        [ContextMenu("Clear Console")]
+        public void ClearConsole()
+        {
+            logTextBox.text = String.Empty;
         }
 
 
