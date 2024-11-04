@@ -28,16 +28,18 @@ namespace RadarSDKBridge
         }
 
 
-        public static void SetUserId(string userId)
+        public static bool SetUserId(string userId)
         {
             try
             {
                 if (!Radar.Initialized) { Initialize(); }
                 Radar.SetUserId(userId);
+                return true;
             }
             catch (Exception e)
             {
                 OnError?.Invoke($"Error setting user ID: {e.Message}");
+                return false;
             }
         }
 
@@ -57,16 +59,18 @@ namespace RadarSDKBridge
         }
 
 
-        public static void SetMetadata(MetadataContainer metadata)
+        public static bool SetMetadata(MetadataContainer metadata)
         {
             try
             {
                 if (!Radar.Initialized) { Initialize(); }
                 Radar.SetMetadata(metadata);
+                return true;
             }
             catch (Exception e)
             {
                 OnError?.Invoke($"Error setting metadata: {e.Message}");
+                return false;
             }
         }
 
@@ -140,6 +144,7 @@ namespace RadarSDKBridge
             try
             {
                 if (!Radar.Initialized) { Initialize(); }
+                LogManager.Instance.Log(" -> onTokenUpdated -> " + onTokenUpdated.ToString());
                 Radar.SetVerifiedReceiver(onTokenUpdated);
             }
             catch (Exception e)

@@ -44,6 +44,9 @@ namespace RadarSDKBridge
         [SerializeField] private TextMeshProUGUI _locationText;
         [SerializeField] private TextMeshProUGUI _jsonText;
 
+        private string _onTokenUpdatedTempText;
+
+
         [Header("Visuals")]
         [SerializeField] private Color[] _colors;
 
@@ -113,6 +116,7 @@ namespace RadarSDKBridge
                     RadarServiceWrapper._mainThreadActions.Dequeue().Invoke();
                 }
             }
+            _onTokenUpdatedText.text = _onTokenUpdatedTempText;
         }
 
 
@@ -126,6 +130,10 @@ namespace RadarSDKBridge
             var location = await RadarServiceWrapper.GetLocation();
 
             stopWatch.Stop();
+            _timeText.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
+            SetImageColor(_getLocationImage, _greenColor);
+            StopLoadingAnimation(ref _timeLoadingCoroutine);
 
             if (location != null)
             {
@@ -139,9 +147,6 @@ namespace RadarSDKBridge
             {
                 LogManager.Instance.Log("Failed to retrieve location", LogType.Error);
             }
-
-            SetImageColor(_getLocationImage, _greenColor);
-            StopLoadingAnimation(ref _timeLoadingCoroutine);
         }
 
 
@@ -176,10 +181,15 @@ namespace RadarSDKBridge
             string uniqueUserId = $"{userId}";
             if (RadarSDKManager.AddUserIdExtension)
                 uniqueUserId += $"_{Enum.GetName(typeof(RuntimePlatform), Application.platform)}";
-            RadarSDKManager.SetUserId(uniqueUserId);
+            bool succeeded = RadarSDKManager.SetUserId(uniqueUserId);
 
             stopWatch.Stop();
             _timeText.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
+            if (succeeded == true)
+                _statusText.text = $"Status: Success";
+            else
+                _statusText.text = $"Status: Failed";
 
             StopLoadingAnimation(ref _timeLoadingCoroutine);
             StopLoadingAnimation(ref _statusLoadingCoroutine);
@@ -211,10 +221,15 @@ namespace RadarSDKBridge
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
-            RadarSDKManager.SetMetadata(metadata);
+            bool succeeded = RadarSDKManager.SetMetadata(metadata);
             // Call the extended TrackVerifiedWithFraudDetection method
             stopWatch.Stop();
             _timeText.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
+            if (succeeded == true)
+                _statusText.text = $"Status: Success";
+            else
+                _statusText.text = $"Status: Failed";
 
             StopLoadingAnimation(ref _timeLoadingCoroutine);
             StopLoadingAnimation(ref _statusLoadingCoroutine);
@@ -236,7 +251,10 @@ namespace RadarSDKBridge
             SetImageColor(_trackVerifiedImage, _orangeColor); // Task in progress
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
             StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
-            StartLoadingAnimation(_onTokenUpdatedText, ref _callbackLoadingCoroutine);
+
+            _onTokenUpdatedTempText = "...";            
+            //StartLoadingAnimation(_onTokenUpdatedText, ref _callbackLoadingCoroutine);
+
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
             // Call the extended TrackVerifiedWithFraudDetection method
@@ -281,7 +299,9 @@ namespace RadarSDKBridge
 
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
             StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
-            StartLoadingAnimation(_onTokenUpdatedText, ref _callbackLoadingCoroutine);
+            
+            _onTokenUpdatedTempText = "...";            
+            //StartLoadingAnimation(_onTokenUpdatedText, ref _callbackLoadingCoroutine);
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
             await RadarSDKManager.StartTrackingVerifiedAsync(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
@@ -378,23 +398,21 @@ namespace RadarSDKBridge
 
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {
-            Debug.Log("OnTokenUpdated()");
+            callbacksTotal += 1;
+            _onTokenUpdatedTempText = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
+            Debug.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...");
+            
 
-            LogManager.Instance.Log("Token updated in Unity: " + token.Token.Substring(0, 5) + "...");
-
-            // Check if the token passed and take the necessary actions
-            if (token.Passed)
-                LogManager.Instance.Log("Access granted. Token is valid.");
-            else
-                LogManager.Instance.Log("Access denied. Token is invalid or expired.", LogType.Error);
+            // // Check if the token passed and take the necessary actions
+            // if (token.Passed)
+            //     LogManager.Instance.Log("Access granted. Token is valid.");
+            // else
+            //     LogManager.Instance.Log("Access denied. Token is invalid or expired.", LogType.Error);
 
             EnqueueMainThreadAction(() =>
-            {
-                callbacksTotal += 1;
-                StopLoadingAnimation(ref _callbackLoadingCoroutine);
-                _onTokenUpdatedText.text = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
-
-                LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
+            {LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
+                //StopLoadingAnimation(ref _callbackLoadingCoroutine);
+                // _onTokenUpdatedTempText = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
             });
         }
 

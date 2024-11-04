@@ -145,8 +145,11 @@ namespace RadarSDK
 
         public void SetUserId(string userId)
         {
-            RadarSDKManager.SetUserId(userId);
-            Debug.Log($"User ID set to: {userId}");
+            bool succeeded = RadarSDKManager.SetUserId(userId);
+            if (succeeded)
+                Debug.Log($"User ID set to: {userId}");
+            else
+                Debug.LogError($"Failed to set user id!");
         }
 
 

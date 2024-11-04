@@ -103,9 +103,9 @@ namespace RadarSDKBridge
         }
 
 
-        public static void SetUserId(string userId)
+        public static bool SetUserId(string userId)
         {
-            RadarServiceWrapper.SetUserId(userId);
+            return RadarServiceWrapper.SetUserId(userId);
         }
 
 
@@ -115,9 +115,9 @@ namespace RadarSDKBridge
         }
 
 
-        public static void SetMetadata(MetadataContainer metadata)
+        public static bool SetMetadata(MetadataContainer metadata)
         {
-            RadarServiceWrapper.SetMetadata(metadata);
+            return RadarServiceWrapper.SetMetadata(metadata);
         }
 
         #endregion

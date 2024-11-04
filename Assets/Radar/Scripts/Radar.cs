@@ -185,9 +185,9 @@ namespace RadarSDK
 
         public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
-            LogManager.Instance.Log($"  Radar.SetVerifiedReceiver");
+            LogManager.Instance.Log($"  Radar.SetVerifiedReceiver -> " + onTokenUpdated.ToString());
             _platformAdapter.SetVerifiedReceiver(onTokenUpdated);
-            LogManager.Instance.Log($"  Radar.SetVerifiedReceiver Complete()");
+            LogManager.Instance.Log($"  Radar.SetVerifiedReceiver Complete() -> " + onTokenUpdated.ToString());
         }
 
 
