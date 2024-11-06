@@ -84,20 +84,24 @@ namespace RadarSDK.Android
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
         {
-            LogManager.Instance.Log("AndroidAdapter.TrackVerifiedAsync()");
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
-            // Create an instance of the RadarTrackVerifiedCallbackProxy, passing the callback
-            var callbackProxy = new RadarVerifiedLocationCallbackProxy((status, locationData) =>
-            {
-                // Set the result for the task
-                taskCompletionSource.SetResult((status, locationData));
-            });
-            // Call the trackVerified method on the Radar SDK
-            _instance.CallStatic("trackVerified", beacons, callbackProxy);
-            LogManager.Instance.Log("AndroidAdapter.TrackVerifiedAsync()  Complete");
-            return taskCompletionSource.Task;
+            Debug.Log("AndroidAdapter.TrackVerifiedAsync() called");
+
+            // Instantiate AndroidTrackVerifiedHandler to handle the callback
+            var handler = new AndroidTrackVerifiedHandler();
+
+            // Call the trackVerified method on the Radar SDK, passing in the handler as the callback
+            _instance.CallStatic("trackVerified", beacons, handler);
+
+            // Await the handler’s task completion, which will contain the track verification result
+            var result = await handler.CompletionTask;
+            
+            // Debug log to confirm received data
+            var json = JsonUtility.ToJson(result);
+            Debug.Log($"AndroidAdapter.TrackVerifiedAsync() - Result Data: {json}");
+
+            return result;
         }
 
 
@@ -189,13 +193,30 @@ namespace RadarSDK.Android
         {
             // Convert Java objects to C# types
             RadarStatus radarStatus = (RadarStatus)status.Call<int>("ordinal");
-            VerifiedLocationData? locationData = null;
+            VerifiedLocationData? verifiedLocationToken = null;
+
             if (token != null)
             {
-                locationData = new VerifiedLocationData();
+                // Retrieve and convert token data from Java to C#
+
+                verifiedLocationToken = new VerifiedLocationData
+                {
+                    passed = token.Call<bool>("getPassed"),
+                    token = token.Call<string>("getToken"),
+                    expiresIn = token.Call<int>("getExpiresIn")
+                };
+                
+                // Convert the VerifiedLocationData to JSON format
+                var json = JsonUtility.ToJson(verifiedLocationToken);
+                Debug.Log($"Track Verified Dataaaa: {json}");
             }
-            // Call the action passed in the constructor
-            _onComplete?.Invoke(radarStatus, locationData);
+            else
+            {
+                Debug.LogWarning("Received a null token from the Radar SDK");
+            }
+
+            // Invoke the callback with the status and token data
+            _onComplete?.Invoke(radarStatus, verifiedLocationToken);
         }
     }
 

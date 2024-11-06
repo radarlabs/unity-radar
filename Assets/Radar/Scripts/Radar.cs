@@ -139,11 +139,11 @@ namespace RadarSDK
         }
 
 
-        private static Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
+        private static async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
             bool beacons = false)
         {
             CheckInitializedOrThrow();
-            return _platformAdapter.TrackVerifiedAsync(beacons);
+            return await _platformAdapter.TrackVerifiedAsync(beacons);
         }
 
 

@@ -39,6 +39,7 @@ namespace RadarSDK
         [ContextMenu("Clear Console")]
         public void ClearConsole()
         {
+            logContent = String.Empty;
             logTextBox.text = String.Empty;
         }
 

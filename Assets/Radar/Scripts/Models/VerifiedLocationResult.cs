@@ -1,3 +1,6 @@
+using UnityEngine;
+using System.Collections.Generic;
+
 namespace RadarSDK
 {
     /// <summary>
@@ -24,16 +27,16 @@ namespace RadarSDK
         /// <summary>
         /// An array of events.
         /// </summary>
-        //public List<Event> events { get; private set; }
+        public List<Event> events { get; set; }
 
         /// <summary>
         /// A signed JSON Web Token (JWT) containing the user and array of events. Verify the token server-side using your secret key.
         /// </summary>
-        //public string token { get; private set; }
+        public string token { get; set; }
 
         /// <summary>
         /// The number of seconds until the token expires.
         /// </summary>
-        //public int expiresIn { get; private set; }
+        public int expiresIn { get; set; }
     }
 }

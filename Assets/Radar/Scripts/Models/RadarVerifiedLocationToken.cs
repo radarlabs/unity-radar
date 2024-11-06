@@ -1,5 +1,6 @@
 namespace RadarSDK
 {
+    [System.Serializable]
     public class RadarVerifiedLocationToken
     {
         public bool Passed { get; set; }

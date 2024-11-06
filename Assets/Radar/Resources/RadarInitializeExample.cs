@@ -62,6 +62,7 @@ namespace RadarSDKBridge
 
         private Queue<Action> TODO = new Queue<Action>();
         int callbacksTotal = 0;
+        bool requestBluetoothPermissions = false;
 
         #endregion
 
@@ -83,6 +84,9 @@ namespace RadarSDKBridge
 
         private IEnumerator Start()
         {
+            if (requestBluetoothPermissions)
+                RequestBluetoothPermissions();
+
             _setUserIdButton.onClick.AddListener(() => { SetUserIdButtonHandler(); });
             _setMetadataButton.onClick.AddListener(() => SetMetadata());
             _getLocationButton.onClick.AddListener(() => GetLocation());
@@ -97,6 +101,28 @@ namespace RadarSDKBridge
             RadarServiceWrapper.SetVerifiedReceiver(OnTokenUpdated);
 #endif
             LogManager.Instance.Log("RadarInitializeExample Complete", LogType.Log);
+        }
+
+
+
+        void RequestBluetoothPermissions()
+        {
+            #if UNITY_ANDROID
+                using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                using (AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                using (AndroidJavaObject context = currentActivity.Call<AndroidJavaObject>("getApplicationContext"))
+                {
+                    string[] permissions = new string[]
+                    {
+                        "android.permission.BLUETOOTH",
+                        "android.permission.BLUETOOTH_ADMIN",
+                        "android.permission.BLUETOOTH_CONNECT",
+                        "android.permission.BLUETOOTH_SCAN"
+                    };
+                    
+                    currentActivity.Call("requestPermissions", new object[] { permissions, 1001 });
+                }
+            #endif
         }
 
 

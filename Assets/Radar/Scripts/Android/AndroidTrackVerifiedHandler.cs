@@ -31,11 +31,16 @@ namespace RadarSDK.Android
             string enumName = status.Call<string>("name");
             RadarStatus radarStatus = Utils.StatusStringToEnum(enumName);
 
-            if (radarStatus == RadarStatus.SUCCESS)
+            if (radarStatus == RadarStatus.SUCCESS && results != null)
             {
+                // Convert the results to JSON and deserialize to VerifiedLocationData
                 AndroidJavaObject json = results.Call<AndroidJavaObject>("toJson");
                 string jsonString = json.Call<string>("toString");
-                _currentTcs.TrySetResult((radarStatus, Utils.GetTrackDataFromJson(jsonString)));
+
+                // Use Utils to parse JSON into VerifiedLocationData
+                var locationData = Utils.GetTrackDataFromJson(jsonString);
+
+                _currentTcs.TrySetResult((radarStatus, locationData));
             }
             else
             {
