@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,7 @@ namespace RadarSDK
 {
     /// <summary>
     /// Manages logging for the Radar SDK, displaying messages with color-coded log types in a Text component.
+    /// Thread-safe logging to handle calls from any thread.
     /// </summary>
     public class LogManager : MonoBehaviour
     {
@@ -14,7 +16,7 @@ namespace RadarSDK
         public int maxLines = 20;
         private string logContent = ""; // To keep track of all messages
         private bool logConsole;
-
+        private ConcurrentQueue<string> logQueue = new ConcurrentQueue<string>();
 
         private void Awake()
         {
@@ -29,12 +31,10 @@ namespace RadarSDK
             }
         }
 
-
         public void SetLogConsole(bool isLogEnabled)
         {
             logConsole = isLogEnabled;
         }
-
 
         [ContextMenu("Clear Console")]
         public void ClearConsole()
@@ -43,10 +43,22 @@ namespace RadarSDK
             logTextBox.text = String.Empty;
         }
 
-
         public void Log(string message, LogType logType = LogType.Log)
         {
-            string formattedMessage = FormatLogMessage(message, logType, logConsole);
+            string formattedMessage = FormatLogMessage(message, logType);
+            logQueue.Enqueue(formattedMessage);
+        }
+
+        private void Update()
+        {
+            while (logQueue.TryDequeue(out string message))
+            {
+                AppendLog(message);
+            }
+        }
+
+        private void AppendLog(string formattedMessage)
+        {
             logContent += formattedMessage + "\n"; // Append the new message
 
             string[] lines = logContent.Split('\n');
@@ -58,8 +70,7 @@ namespace RadarSDK
             logTextBox.text = logContent;
         }
 
-
-        private string FormatLogMessage(string message, LogType logType, bool logConsole)
+        private string FormatLogMessage(string message, LogType logType)
         {
             switch (logType)
             {
@@ -79,8 +90,8 @@ namespace RadarSDK
             }
         }
     }
-}
 
+}
 public enum LogType
 {
     Log,

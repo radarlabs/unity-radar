@@ -60,7 +60,6 @@ public class RadarSettingsEditorWindow : EditorWindow
     {
         if (radarSettings == null) return;
 
-        // Custom header style
         GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel)
         {
             fontSize = 15,
@@ -68,20 +67,17 @@ public class RadarSettingsEditorWindow : EditorWindow
             normal = { textColor = Color.cyan }
         };
 
-        // Section header style
         GUIStyle sectionStyle = new GUIStyle(EditorStyles.boldLabel)
         {
             fontSize = 12,
             normal = { textColor = Color.white }
         };
 
-        // Read-only label style
         GUIStyle greyLabelStyle = new GUIStyle(EditorStyles.label)
         {
             normal = { textColor = Color.gray }
         };
 
-        // Save button style
         GUIStyle saveButtonStyle = new GUIStyle(GUI.skin.button)
         {
             fontSize = 14,
@@ -90,7 +86,7 @@ public class RadarSettingsEditorWindow : EditorWindow
         };
 
         GUILayout.Space(10);
-        GUILayout.Label("Radar SDK Settings", headerStyle); // Header
+        GUILayout.Label("Radar SDK Settings", headerStyle);
         GUILayout.Space(10);
 
         EditorGUILayout.BeginVertical("box");
@@ -108,6 +104,7 @@ public class RadarSettingsEditorWindow : EditorWindow
             string fullUserId = $"{radarSettings.userId}_{Application.platform}";
             EditorGUILayout.LabelField(fullUserId, greyLabelStyle, GUILayout.Width(200));
         }
+        
         EditorGUILayout.EndHorizontal();
 
         radarSettings.enableDebugging = EditorGUILayout.Toggle(new GUIContent("Enable Debugging", "Enable debugging to show logs in the console."), radarSettings.enableDebugging);

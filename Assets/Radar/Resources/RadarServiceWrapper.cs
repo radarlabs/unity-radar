@@ -163,17 +163,19 @@ namespace RadarSDKBridge
             {
                 if (location.coordinates != null)
                 {
+                    LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
+
                     EnqueueMainThreadAction(() =>
                     {
-                        LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
                         tcs.SetResult(location); // Set the result on the main thread
                     });
                 }
                 else
                 {
+                    LogManager.Instance.Log("Failed to get location", LogType.Error);
+
                     EnqueueMainThreadAction(() =>
                     {
-                        LogManager.Instance.Log("Failed to get location", LogType.Error);
                         tcs.SetResult(null); // Set the result on the main thread
                     });
                 }
