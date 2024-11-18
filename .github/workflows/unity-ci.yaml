@@ -1,0 +1,28 @@
+
+name: Unity CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Unity Builder
+        uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: StandaloneWindows64
+
+      - name: Run Tests
+        uses: game-ci/unity-test-runner@v4
+        with:
+          testMode: playmode
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results
+          path: results/
