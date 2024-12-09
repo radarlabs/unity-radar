@@ -18,6 +18,8 @@ namespace RadarSDK
         private bool logConsole;
         private ConcurrentQueue<string> logQueue = new ConcurrentQueue<string>();
 
+
+
         private void Awake()
         {
             if (Instance == null)
@@ -31,10 +33,12 @@ namespace RadarSDK
             }
         }
 
+
         public void SetLogConsole(bool isLogEnabled)
         {
             logConsole = isLogEnabled;
         }
+
 
         [ContextMenu("Clear Console")]
         public void ClearConsole()
@@ -43,11 +47,13 @@ namespace RadarSDK
             logTextBox.text = String.Empty;
         }
 
+
         public void Log(string message, LogType logType = LogType.Log)
         {
             string formattedMessage = FormatLogMessage(message, logType);
             logQueue.Enqueue(formattedMessage);
         }
+
 
         private void Update()
         {
@@ -56,6 +62,7 @@ namespace RadarSDK
                 AppendLog(message);
             }
         }
+
 
         private void AppendLog(string formattedMessage)
         {
@@ -69,6 +76,7 @@ namespace RadarSDK
 
             logTextBox.text = logContent;
         }
+
 
         private string FormatLogMessage(string message, LogType logType)
         {
@@ -90,7 +98,6 @@ namespace RadarSDK
             }
         }
     }
-
 }
 public enum LogType
 {
