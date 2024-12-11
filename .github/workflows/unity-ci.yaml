@@ -18,20 +18,32 @@ jobs:
           restore-keys: |
             Library-
 
+      - name: Setup Unity
+        uses: game-ci/unity-setup@v2
+        with:
+          unity-version: '6000.0.24f1'
+
+      - name: Activate Unity
+        uses: game-ci/unity-activate@v2
+        with:
+          unity-license: ${{ secrets.UNITY_SECRET }}
+
       - name: Set up Unity Builder
         uses: game-ci/unity-builder@v4
         with:
           targetPlatform: StandaloneWindows64
-          unityLicenseManual: ${{ secrets.UNITY_SECRET }}
 
       - name: Run Tests
         uses: game-ci/unity-test-runner@v4
         with:
           testMode: playmode
-          unityLicenseManual: ${{ secrets.UNITY_SECRET }}
-
+          
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: Test Results
           path: results/
+
+      - name: Return License
+        uses: game-ci/unity-return-license@v2
+        if: always()
