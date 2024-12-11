@@ -26,7 +26,8 @@ jobs:
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
         with:
-          unity-license: ${{ secrets.UNITY_SECRET }}  # This should match the name of your GitHub secret containing the ULF
+          serial: ${{ secrets.UNITY_SERIAL }}
+      
 
       - name: Run Tests
         uses: game-ci/unity-test-runner@v2
