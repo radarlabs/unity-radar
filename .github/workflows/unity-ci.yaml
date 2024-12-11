@@ -13,7 +13,7 @@ jobs:
       - name: Setup Unity
         uses: game-ci/unity-builder@v2
         with:
-          unity-version: '6000.0.24f1'
+          unity-version: '2020.3.24f1'
 
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
