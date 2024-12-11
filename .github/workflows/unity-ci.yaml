@@ -1,37 +1,56 @@
 name: Unity CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build:
+    name: Build Project
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-      - name: Cache Library Folder
+      - name: Cache Library
         uses: actions/cache@v2
         with:
           path: Library
-          key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
+          key: ${{ runner.os }}-library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
           restore-keys: |
-            Library-
+            ${{ runner.os }}-library-
 
-      - name: Set up Unity Builder
-        uses: game-ci/unity-builder@v4
+      - name: Import Unity License
+        uses: game-ci/unity-request-activation-file@v2
+        id: activate
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: 6000.0.24f1
+
+      - name: Activate Unity
+        uses: game-ci/unity-activate@v2
+        with:
+          license: ${{ secrets.UNITY_SECRET }}
+
+      - name: Build
+        uses: game-ci/unity-builder@v2
         with:
           targetPlatform: StandaloneWindows64
-          unityLicenseManual: ${{ secrets.UNITY_SECRET }}
+          unityVersion: 6000.0.24f1
 
-      - name: Run Tests
-        uses: game-ci/unity-test-runner@v4
+      - name: Upload Build
+        uses: actions/upload-artifact@v2
         with:
-          testMode: playmode
-          unityLicenseManual: ${{ secrets.UNITY_SECRET }}
+          name: Build
+          path: build
 
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+      - name: Return License
+        if: always()
+        uses: game-ci/unity-return-license@v2
         with:
-          name: Test Results
-          path: results/
+          unityVersion: 6000.0.24f1
+
