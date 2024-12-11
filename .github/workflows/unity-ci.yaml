@@ -13,9 +13,10 @@ jobs:
       - name: Setup Unity
         uses: game-ci/unity-builder@v2
         with:
-          unity-version: '2020.3.24f1'
+          unity-version: '6000.0.24f1'
 
       - name: Activate Unity
-        uses: game-ci/unity-activate@v2
+        uses: RageAgainstThePixel/activate-unity-license@v1
         with:
+          license: 'Professional'
           serial: ${{ secrets.UNITY_SERIAL }}
