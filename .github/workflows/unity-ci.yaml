@@ -21,13 +21,13 @@ jobs:
       - name: Setup Unity
         uses: game-ci/unity-builder@v2
         with:
-          unity-version: '2020.3.2f1'  # Ensure this version matches your project's Unity version
+          unity-version: '6000.0.24f1'
 
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
         with:
           serial: ${{ secrets.UNITY_SERIAL }}
-      
+          ulf: ${{ secrets.UNITY_ULF }}
 
       - name: Run Tests
         uses: game-ci/unity-test-runner@v2
