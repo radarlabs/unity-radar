@@ -10,17 +10,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Cache Library Folder
+        uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            Library-
+
       - name: Set up Unity Builder
         uses: game-ci/unity-builder@v4
         with:
           targetPlatform: StandaloneWindows64
-          unitySerial: ${{ secrets.UNITY_SECRET }}
+          unityLicenseManual: ${{ secrets.UNITY_SECRET }}
 
       - name: Run Tests
         uses: game-ci/unity-test-runner@v4
         with:
           testMode: playmode
-          unitySerial: ${{ secrets.UNITY_SECRET }}
+          unityLicenseManual: ${{ secrets.UNITY_SECRET }}
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
