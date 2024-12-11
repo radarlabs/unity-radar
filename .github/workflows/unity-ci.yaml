@@ -21,22 +21,18 @@ jobs:
       - name: Setup Unity
         uses: game-ci/unity-builder@v2
         with:
-          unity-version: '2020.3.2f1'  # Replace with your actual Unity version
+          unity-version: '2020.3.2f1'  # Ensure this version matches your project's Unity version
 
       - name: Activate Unity
-        uses: game-ci/unity-request-activation-file@v2
-        with:
-          unity-version: '2020.3.2f1'
-
-      - name: Activate license
         uses: game-ci/unity-activate@v2
         with:
-          license: ${{ secrets.UNITY_SECRET }}
+          unity-license: ${{ secrets.UNITY_SECRET }}  # This should match the name of your GitHub secret containing the ULF
 
       - name: Run Tests
         uses: game-ci/unity-test-runner@v2
         with:
           testMode: playmode
+          customParameters: '-nographics -batchmode'
 
       - name: Build Project
         uses: game-ci/unity-builder@v2
@@ -48,3 +44,7 @@ jobs:
         with:
           name: Test Results
           path: results/
+
+      - name: Return License
+        uses: game-ci/unity-return-license@v2
+        if: always()
