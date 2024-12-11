@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Cache Library Folder
         uses: actions/cache@v2
@@ -28,12 +28,12 @@ jobs:
           unity-license: ${{ secrets.UNITY_SECRET }} 
 
       - name: Build Project
-        uses: game-ci/unity-builder@v2
+        uses: game-ci/unity-builder@v4
         with:
           targetPlatform: StandaloneWindows64
 
       - name: Run Tests
-        uses: game-ci/unity-test-runner@v2
+        uses: game-ci/unity-test-runner@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_SECRET }}
           
