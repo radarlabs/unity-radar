@@ -3,50 +3,40 @@ name: Unity CI
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      
       - name: Cache Library Folder
         uses: actions/cache@v2
         with:
           path: Library
-          key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
+          key: ${{ runner.os }}-library-${{ hashFiles('**/Assets/**', '**/ProjectSettings/**') }}
           restore-keys: |
-            Library-
+            ${{ runner.os }}-library-
+
+      - name: Setup Unity
+        uses: game-ci/unity-setup@v2
+        with:
+          unity-version: 6000.0.24f1
 
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
         with:
-          unityVersion: 2020.3.14f1
-          license: ${{ secrets.UNITY_SECRET }}
+          unity-license: ${{ secrets.UNITY_SECRET }} 
 
-      - name: Set up Unity Builder
-        uses: game-ci/unity-builder@v4
+      - name: Build Project
+        uses: game-ci/unity-builder@v2
         with:
           targetPlatform: StandaloneWindows64
-          unityVersion: 2020.3.14f1
 
       - name: Run Tests
-        uses: game-ci/unity-test-runner@v4
-        with:
-          testMode: playmode
-          unityVersion: 2020.3.14f1
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: Test Results
-          path: results/
-
-      - name: Return License
-        if: always()
-        uses: game-ci/unity-return-license@v2
-        with:
-          unityVersion: 2020.3.14f1
-
-
+        uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_SECRET }}
           
+      - name: Return License
+        uses: game-ci/unity-return-license@v2
+        if: always()
