@@ -13,10 +13,12 @@ extern "C" {
     void Radar_initializeWithPublishableKey(const char* publishableKey) {
         [Radar initializeWithPublishableKey:[NSString stringWithUTF8String:publishableKey]];
     }
+    
 
     void Radar_setUserId(const char* userId) {
         [Radar setUserId:[NSString stringWithUTF8String:userId]];
     }
+
 
     void Radar_getVerifiedLocationTokenWithCompletionHandler(int requestId, CompletionHandlerPtrOnDict handler) {
         [Radar getVerifiedLocationToken:^(RadarStatus status, RadarVerifiedLocationToken * _Nullable token) {
@@ -37,6 +39,7 @@ extern "C" {
             handler(requestId, statusStr, jsonStr);
         }];
     }
+
 
     void Radar_trackVerifiedWithCompletionHandler(int requestId, CompletionHandlerPtrOnDict handler)
     {
@@ -60,6 +63,7 @@ extern "C" {
         }];
     }
 
+
     void Radar_setMetadata(const char* jsonMetadata) {
         NSString *metadataStr = [NSString stringWithUTF8String:jsonMetadata];
         NSData *data = [metadataStr dataUsingEncoding:NSUTF8StringEncoding];
@@ -70,13 +74,16 @@ extern "C" {
         }
     }
 
+
     void Radar_startTrackingVerified(double interval, bool beacons) {
         [Radar startTrackingVerifiedWithInterval:interval beacons:beacons];
     }
 
+
     void Radar_stopTrackingVerified() {
         [Radar stopTrackingVerified];
     }
+
 
     const char* Radar_getUserId() {
         NSString *userId = [Radar getUserId];
@@ -85,6 +92,7 @@ extern "C" {
         }
         return [userId UTF8String];
     }
+
 
     void Radar_getVerifiedLocationToken(int requestId, CompletionHandlerPtrOnDict handler) {
         [Radar getVerifiedLocationToken:^(RadarStatus status, RadarVerifiedLocationToken * _Nullable token) {
@@ -107,24 +115,13 @@ extern "C" {
         }];
     }
 
+
     void Radar_setVerifiedDelegate(RadarTokenUpdatedCallback callback) {
         CustomVerifiedDelegate *delegate = [CustomVerifiedDelegate sharedInstance];
         [delegate setTokenUpdatedCallback:callback];
         [Radar setVerifiedDelegate:delegate];
     }
 
-    // typedef void (*RadarLocationCallback)(double latitude, double longitude);
-
-    // void Radar_getLocation(RadarLocationCallback callback) {
-    // [Radar getLocationWithCompletionHandler:^(RadarStatus status, CLLocation * _Nullable location, BOOL stopped) {
-    //     if (status == RadarStatusSuccess && location) {
-    //         double latitude = location.coordinate.latitude;
-    //         double longitude = location.coordinate.longitude;
-    //         callback(latitude, longitude);
-    //     } else {
-    //         callback(-91, -181); // Invalid coordinates in case of Failure
-    //     }
-    // }];
 
     typedef void (*RadarLocationCallback)(double latitude, double longitude, int callbackId);
 

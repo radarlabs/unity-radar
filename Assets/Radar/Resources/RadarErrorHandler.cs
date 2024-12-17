@@ -1,8 +1,11 @@
-using UnityEngine;
 using RadarSDKBridge;
 
 namespace RadarSDK
 {
+    /// <summary>
+    /// Handles global error management for the Radar SDK. 
+    /// Initializes a centralized error callback to catch and log errors throughout the SDK's usage.
+    /// </summary>
     public static class RadarErrorHandler
     {
         public static void InitializeErrorHandling()
@@ -14,17 +17,7 @@ namespace RadarSDK
         private static void HandleError(string errorMessage)
         {
             // Log the error for debugging purposes
-            Debug.LogError($"Radar SDK Error: {errorMessage}");
-
-            // Optionally, show a user-friendly message in the game UI
-            ShowErrorMessageToUser(errorMessage);
-        }
-
-        private static void ShowErrorMessageToUser(string errorMessage)
-        {
-            // Assume you have a UI Text element to display errors
-            // Example: ErrorManager.ShowError(errorMessage);
-            Debug.Log($"Showing error to user: {errorMessage}");
+            LogManager.Instance.Log($"ERROR: {errorMessage}", LogType.Error);
         }
     }
 }

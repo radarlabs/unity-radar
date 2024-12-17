@@ -24,6 +24,5 @@ namespace RadarSDK
         Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons);
 
         Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync();
-
     }
 }

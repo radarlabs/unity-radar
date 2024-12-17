@@ -2,25 +2,76 @@ using System.Threading.Tasks;
 using RadarSDK;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace RadarSDKBridge
 {
+    /// <summary>
+    /// Provides a wrapper around the Radar SDK's core functionality, including methods for 
+    /// initializing the SDK, setting user ID and metadata, and managing tracking operations.
+    /// Supports error callbacks for centralized error handling through RadarErrorHandler.
+    /// </summary>
     public static class RadarServiceWrapper
     {
         public static Action<string> OnError;
+        public static Queue<System.Action> _mainThreadActions = new Queue<System.Action>();
 
+
+
+        #region Methods
 
         public static void Initialize()
         {
-            const string TEST_PUBLISHABLE_KEY = "prj_test_pk_0eac9fa8b8a4abcfcb40be269396e21fdca21b53";
-            Debug.Log($"{nameof(RadarServiceWrapper)}.{nameof(Initialize)}({"TEST_KEY"})");
-            Radar.Initialize(TEST_PUBLISHABLE_KEY, fraud: true);
+            string publishableKey = Debug.isDebugBuild ? RadarSDKManager.TestPublishableKey : RadarSDKManager.LivePublishableKey;
+            Radar.Initialize(publishableKey, fraud: true);
+            LogManager.Instance.Log("RadarServiceWrapper.Initialize() Complete");
         }
 
 
-        public static void SetErrorCallback(Action<string> errorCallback)
+        public static bool SetUserId(string userId)
         {
-            OnError = errorCallback;
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                Radar.SetUserId(userId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error setting user ID: {e.Message}");
+                return false;
+            }
+        }
+
+
+        public static string GetUserId()
+        {
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                return Radar.GetUserId();
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error getting user ID: {e.Message}");
+                return null;
+            }
+        }
+
+
+        public static bool SetMetadata(MetadataContainer metadata)
+        {
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                Radar.SetMetadata(metadata);
+                return true;
+            }
+            catch (Exception e)
+            {
+                OnError?.Invoke($"Error setting metadata: {e.Message}");
+                return false;
+            }
         }
 
 
@@ -87,6 +138,23 @@ namespace RadarSDKBridge
         }
 
 
+        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
+        {
+            LogManager.Instance.Log($" SetVerifiedReceiver");
+            try
+            {
+                if (!Radar.Initialized) { Initialize(); }
+                LogManager.Instance.Log(" -> onTokenUpdated -> " + onTokenUpdated.ToString());
+                Radar.SetVerifiedReceiver(onTokenUpdated);
+            }
+            catch (Exception e)
+            {
+                LogManager.Instance.Log($"Error setting verified receiver: {e.Message}", LogType.Error);
+                OnError?.Invoke($"Error setting verified receiver: {e.Message}");
+            }
+        }
+
+
         public static Task<Location?> GetLocation()
         {
             var tcs = new TaskCompletionSource<Location?>();
@@ -96,53 +164,42 @@ namespace RadarSDKBridge
                 if (location.coordinates != null)
                 {
                     LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
-                    tcs.SetResult(location);
+
+                    EnqueueMainThreadAction(() =>
+                    {
+                        tcs.SetResult(location); // Set the result on the main thread
+                    });
                 }
                 else
                 {
                     LogManager.Instance.Log("Failed to get location", LogType.Error);
-                    tcs.SetResult(null);
+
+                    EnqueueMainThreadAction(() =>
+                    {
+                        tcs.SetResult(null); // Set the result on the main thread
+                    });
                 }
             });
+
             return tcs.Task;
         }
 
+        #endregion
 
-        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
+        public static void SetErrorCallback(Action<string> errorCallback)
         {
-            try
-            {
-                if (!Radar.Initialized) { Initialize(); }
-                Radar.SetVerifiedReceiver(onTokenUpdated);
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error setting verified receiver: {e.Message}");
-            }
+            OnError = errorCallback;
         }
 
 
-        public static bool IsFraud(Fraud fraud)
+        // Helper method to run actions on the main thread
+        private static void EnqueueMainThreadAction(System.Action action)
         {
-            // The fraud object contains several flags like mocked, compromised, proxy, etc.
-            if (fraud.bypassed)
+            lock (_mainThreadActions)
             {
-                return false;
+                _mainThreadActions.Enqueue(action);
             }
-            // Return true if any fraud flags indicate tampering
-            return !(fraud is
-            {
-                verified: true,
-                proxy: false,
-                mocked: false,
-                compromised: false,
-                jumped: false,
-                sharing: false,
-                inaccurate: false,
-                blocked: false
-            });
         }
-
 
         /// <summary>
         /// This function ensures that the `SetUserId` call is only made if the `uniqueUserId` is changed.

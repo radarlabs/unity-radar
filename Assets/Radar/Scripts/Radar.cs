@@ -15,6 +15,7 @@ namespace RadarSDK
         public static bool Initialized { get; private set; }
         public static ClientSettings Settings { get; private set; }
 
+
         /// <summary>
         /// Creates and initializes the platform-specific adapter for the Radar SDK.
         /// This method is called automatically at the load time of the subsystem registration.
@@ -30,17 +31,17 @@ namespace RadarSDK
         {
 #if UNITY_EDITOR
             _platformAdapter = new ProxyPlatform.ProxyAdapter();
-            Debug.Log($"Radar: '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
+            LogManager.Instance.Log($"Radar: '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
 #elif UNITY_ANDROID
             _platformAdapter = new Android.AndroidAdapter();
-            Debug.Log($"Radar: '{nameof(Android.AndroidAdapter)}' was created");
+            LogManager.Instance.Log($"Radar: '{nameof(Android.AndroidAdapter)}' was created");
 #elif UNITY_IOS
             _platformAdapter = new iOS.IosAdapter();
-            Debug.Log($"Radar: '{nameof(iOS.IosAdapter)}' was created");
+            LogManager.Instance.Log($"Radar: '{nameof(iOS.IosAdapter)}' was created");
 #else
-            Debug.LogError($"Radar: '{Application.platform}' is not supported, defaulting to {nameof(ProxyPlatform.ProxyAdapter)}");
+            LogManager.Instance.Log($"Radar: '{Application.platform}' is not supported, defaulting to {nameof(ProxyPlatform.ProxyAdapter)}", LogType.Error);
             _platformAdapter = new ProxyPlatform.ProxyAdapter();
-            Debug.Log($"Radar: Fallback! '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
+            LogManager.Instance.Log($"Radar: Fallback! '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
 #endif
         }
 
@@ -54,7 +55,6 @@ namespace RadarSDK
         /// <param name="fraud">A boolean indicating whether fraud detection is enabled.</param>
         public static void Initialize(string publishableKey, bool fraud = false)
         {
-            Debug.Log("Radar.Initialize " + publishableKey + "  [][]  " + Initialized);
             if (Initialized)
             {
                 return;
@@ -62,10 +62,9 @@ namespace RadarSDK
 
             Settings = new ClientSettings(fraud: fraud);
             CreatePlatformAdapter();
-            Debug.Log($"Radar.CreatePlatformAdapter");
             _platformAdapter.Initialize(publishableKey);
             Initialized = true;
-            Debug.Log($"Radar.Initialized(fraud: '{fraud}')");
+            LogManager.Instance.Log($"Radar.Initialized(fraud: '{fraud}') Complete");
         }
 
         /// <summary>
@@ -78,28 +77,28 @@ namespace RadarSDK
         {
             CheckInitializedOrThrow();
             _platformAdapter.SetUserID(userId);
-            Debug.Log("Radar.SetUserId: " + userId);
-            Console.WriteLine($"Radar.SetUserId({userId})");
+            LogManager.Instance.Log($"Radar.SetUserId({userId})");
         }
+
 
         public static string GetUserId()
         {
             CheckInitializedOrThrow();
-            string userId = _platformAdapter.GetUserID();
-            Console.WriteLine($"Radar.GetUserId({userId})");
-            return userId;
+            return _platformAdapter.GetUserID();
         }
+
 
         public static void SetMetadata(MetadataContainer metadata)
         {
             CheckInitializedOrThrow();
             _platformAdapter.SetMetadata(metadata);
-            Console.WriteLine($"Radar.SetMetadata({metadata})");
+            LogManager.Instance.Log($"Radar.SetMetadata({metadata})");
         }
+
 
         public static async Task StartTrackingVerified(int interval, bool beacons)
         {
-            Debug.Log("Radar.StartTrackingVerified(interval, beacons)   " + interval + " | " + beacons);
+            LogManager.Instance.Log("Radar.StartTrackingVerified(interval, beacons)   " + interval + " | " + beacons);
             CheckInitializedOrThrow();
 
             var startTask = StartTrackingVerified_Internal(interval, beacons);
@@ -107,12 +106,12 @@ namespace RadarSDK
             await Task.WhenAny(startTask, timeOut);
         }
 
+
         private static Task StartTrackingVerified_Internal(int interval, bool beacons)
         {
             CheckInitializedOrThrow();
             return _platformAdapter.StartTrackingVerifiedAsync(interval, beacons);
         }
-
 
         /// <summary>
         /// Tracks the user's location with device integrity information for location verification use cases.
@@ -139,23 +138,25 @@ namespace RadarSDK
             return completedTask;
         }
 
-        private static Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
+
+        private static async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
             bool beacons = false)
         {
             CheckInitializedOrThrow();
-            return _platformAdapter.TrackVerifiedAsync(beacons);
+            return await _platformAdapter.TrackVerifiedAsync(beacons);
         }
 
 
         public static async Task StopTracking()
         {
-            Debug.Log("Radar.StopTracking()");
             CheckInitializedOrThrow();
 
             var stopTask = StopTracking_Internal();
             var timeOut = DefaultOnTimeOut<bool>(11); // Timeout in 11 seconds if there's an issue
             await Task.WhenAny(stopTask, timeOut);
+            LogManager.Instance.Log("Radar.StopTracking() Complete");
         }
+
 
         private static Task StopTracking_Internal()
         {
@@ -171,21 +172,22 @@ namespace RadarSDK
 
         public static void GetLocation(Action<Location> onLocationReceived)
         {
-            Debug.Log("Radar > GetLocation");
+            LogManager.Instance.Log("Radar.GetLocation");
             if (!Initialized)
             {
-                Debug.LogError("Radar SDK is not initialized");
+                LogManager.Instance.Log("Radar SDK is not initialized", LogType.Error);
                 return;
             }
-            Debug.Log("Radar > GetLocation pre");
             _platformAdapter.GetLocation(onLocationReceived);
-            Debug.Log("Radar > GetLocation  ---end!!!");
+            LogManager.Instance.Log("Radar.GetLocation  Complete");
         }
 
 
         public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
+            LogManager.Instance.Log($"  Radar.SetVerifiedReceiver -> " + onTokenUpdated.ToString());
             _platformAdapter.SetVerifiedReceiver(onTokenUpdated);
+            LogManager.Instance.Log($"  Radar.SetVerifiedReceiver Complete() -> " + onTokenUpdated.ToString());
         }
 
 
@@ -200,7 +202,6 @@ namespace RadarSDK
         {
             if (!Initialized)
             {
-                //! Connect to handlers!!!
                 throw new InvalidOperationException(
                     $"Radar: Was not initialized, must first call the '{nameof(Initialize)}' method");
             }

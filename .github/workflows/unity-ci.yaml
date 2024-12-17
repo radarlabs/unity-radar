@@ -1,0 +1,22 @@
+name: Unity CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Unity
+        uses: game-ci/unity-builder@v2
+        with:
+          unity-version: '6000.0.24f1'
+
+      - name: Activate Unity
+        uses: RageAgainstThePixel/activate-unity-license@v1
+        with:
+          license: 'Professional'
+          serial: ${{ secrets.UNITY_SERIAL }}

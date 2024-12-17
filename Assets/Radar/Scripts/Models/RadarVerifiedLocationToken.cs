@@ -1,11 +1,13 @@
 namespace RadarSDK
 {
+    [System.Serializable]
     public class RadarVerifiedLocationToken
     {
         public bool Passed { get; set; }
         public string Token { get; set; }
         public long ExpiresAt { get; set; }
         public long ExpiresIn { get; set; }
+
 
         public override string ToString()
         {
