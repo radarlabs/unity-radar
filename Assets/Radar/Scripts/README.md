@@ -64,6 +64,10 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 3. **Error Handling**:
    - Errors encountered during SDK usage are sent to `RadarErrorHandler.cs` through a callback set up in `Radar.cs`.
    - `RadarErrorHandler.cs` logs errors and optionally displays messages to the user.
+   
+   **Handling Track Verified Callbacks via `IosTrackVerifiedHandler.cs`**
+
+      `IosTrackVerifiedHandler` manages asynchronous Radar SDK callbacks by linking each request to a unique `requestId`. It uses `TaskCompletionSource` to integrate native responses into C# async workflows, converting JSON data into `VerifiedLocationData` for seamless handling of track verification and location token requests.
 
 4. **Example Implementation**:
    - `RadarUsageExample.cs` provides a comprehensive example of SDK functions, making it easy for developers to integrate and use the Radar SDK in their projects.
