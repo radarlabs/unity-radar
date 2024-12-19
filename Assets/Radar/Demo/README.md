@@ -13,7 +13,7 @@ Each function in the Demo Scene is represented by a button that triggers the res
 You can also change the publishable key directly in the build. These are some additional operations:
 
 - **Save**: Saves key in Player Prefs so that the next time it will have a new key
-- **Update**: Reinitializes the SDK by calling `RadarServiceWrapper.Initialize()`
+- **Update**: Reinitializes the SDK by calling `Radar.Initialize()`
 - **Reset**: Resets the key to default and reinitializes the SDK
 
 <div align="center">

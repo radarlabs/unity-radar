@@ -3,6 +3,7 @@ using RadarSDK;
 using System.Collections;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace RadarSDKBridge
 {
@@ -14,9 +15,7 @@ namespace RadarSDKBridge
     public static class RadarSDKManager
     {
         #region Variables
-
         private static RadarSettingsData radarSettings;
-
 
         public const string TEMP_UNIQUE_USER_ID = "TEST_uniqueUserId_001";
 
@@ -93,102 +92,20 @@ namespace RadarSDKBridge
             PlayerPrefs.Save();
         }
 
-
-        #region Static Methods
-        // Static methods calls to RadarServiceWrapper.cs
-
-        public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
-        {
-            RadarServiceWrapper.SetVerifiedReceiver(onTokenUpdated);
-        }
-
-
-        public static bool SetUserId(string userId)
-        {
-            return RadarServiceWrapper.SetUserId(userId);
-        }
-
-
-        public static string GetUserId()
-        {
-            return RadarServiceWrapper.GetUserId();
-        }
-
-
-        public static bool SetMetadata(MetadataContainer metadata)
-        {
-            return RadarServiceWrapper.SetMetadata(metadata);
-        }
-
-        #endregion
-
-
         #region Coroutine Wrappers
         // Coroutine wrappers for asynchronous methods
 
         public static IEnumerator Initialize()
         {
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
-            LogManager.Instance.SetLogConsole(radarSettings.enableDebugging);
+            LogManager.Instance.SetLogConsole(IsDebuggingEnabled);
             RadarErrorHandler.InitializeErrorHandling();
             var task = InitializeAsync();
             while (!task.IsCompleted)
             {
                 yield return null;
             }
-            LogManager.Instance.Log("RadarSDKManager.Initialize() Complete");
         }
-
-
-        public static IEnumerator TrackVerified()
-        {
-            var task = TrackVerifiedAsync(radarSettings.userId);
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-        }
-
-
-        public static IEnumerator StartTrackingVerified()
-        {
-            var task = StartTrackingVerifiedAsync(radarSettings.trackingInterval, radarSettings.useBeacons);
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-        }
-
-
-        public static IEnumerator StopTracking()
-        {
-            var task = StopTrackingAsync();
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-        }
-
-
-        public static IEnumerator GetVerifiedLocationToken()
-        {
-            var task = GetVerifiedLocationTokenAsync();
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-        }
-
-
-        public static IEnumerator GetLocation()
-        {
-            var task = GetLocationAsync();
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-        }
-
 
         #endregion
 
@@ -198,56 +115,17 @@ namespace RadarSDKBridge
 
         public static async Task InitializeAsync()
         {
-            await Task.Run(() => RadarServiceWrapper.Initialize());
-        }
-
-
-        public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> TrackVerifiedAsync(string userId)
-        {
-            return await RadarServiceWrapper.TrackVerified(userId);
-        }
-
-
-        public static async Task StartTrackingVerifiedAsync(int interval, bool useBeacons)
-        {
-            await RadarServiceWrapper.StartTrackingVerified(interval, useBeacons);
-        }
-
-
-        public static async Task StopTrackingAsync()
-        {
-            await RadarServiceWrapper.StopTracking();
+            await Task.Run(() => {
+                Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
+            });
         }
 
 
         public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> GetVerifiedLocationTokenAsync()
         {
-            return await RadarServiceWrapper.GetVerifiedLocationToken();
+            return await Radar.GetVerifiedLocationToken();
         }
 
-
-        public static async Task<Location?> GetLocationAsync()
-        {
-            return await RadarServiceWrapper.GetLocation();
-        }
-
-
-        public static async Task SetUserIdAsync(string userId)
-        {
-            await Task.Run(() => RadarServiceWrapper.SetUserId(userId));
-        }
-
-
-        public static async Task<string> GetUserIdAsync()
-        {
-            return await Task.Run(() => RadarServiceWrapper.GetUserId());
-        }
-
-
-        public static async Task SetMetadataAsync(MetadataContainer metadata)
-        {
-            await Task.Run(() => RadarServiceWrapper.SetMetadata(metadata));
-        }
 
         #endregion
     }

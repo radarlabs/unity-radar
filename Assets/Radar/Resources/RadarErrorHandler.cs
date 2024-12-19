@@ -11,13 +11,13 @@ namespace RadarSDK
         public static void InitializeErrorHandling()
         {
             // Set global error callback to handle errors
-            RadarServiceWrapper.SetErrorCallback(HandleError);
+            Radar.SetErrorCallback(HandleError);
         }
 
         private static void HandleError(string errorMessage)
         {
             // Log the error for debugging purposes
-            LogManager.Instance.Log($"ERROR: {errorMessage}", LogType.Error);
+            LogManager.Instance.Log($"Error: {errorMessage}", LogType.Error);
         }
     }
 }

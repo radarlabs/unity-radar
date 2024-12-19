@@ -52,66 +52,54 @@ namespace RadarSDK.iOS
         // P/Invoke for the native getLocation method with the callbackId
         [DllImport("__Internal")]
         private static extern void Radar_getLocation(RadarLocationCallback callback, int callbackId);
-
         #endregion
+
+
+
+        public void Initialize(string publishableKey)
+        {
+            if (string.IsNullOrEmpty(publishableKey))
+            {
+                LogManager.Instance.Log("Publishable key is missing. Initialization failed.", LogType.Error);
+                return;
+            }
+            Radar_initializeWithPublishableKey(publishableKey);
+        }
 
 
         public string GetUserID()
         {
-            LogManager.Instance.Log("IosAdapter.GetUserID()", LogType.Attention);
-            // Call the native method to get the User ID
             string userId = Radar_getUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                LogManager.Instance.Log("IosAdapter - User ID not set or unavailable.", LogType.Warning);
-                Debug.LogWarning("User ID not set or unavailable.");
+                LogManager.Instance.Log("User ID not set or unavailable.", LogType.Warning);
                 return null;
             }
-            LogManager.Instance.Log("IosAdapter.GetUserID()  Complete " + userId, LogType.Attention);
             return userId;
         }
 
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
         {
-            LogManager.Instance.Log("IosAdapter.GetVerifiedLocationTokenAsync()", LogType.Attention);
             return new IosTrackVerifiedHandler(RadarRequestType.GetVerifiedLocationToken).CompletionTask;
-        }
-
-
-        public void Initialize(string publishableKey)
-        {
-            LogManager.Instance.Log("IosAdapter.Initialize()", LogType.Attention);
-            if (string.IsNullOrEmpty(publishableKey))
-            {
-                LogManager.Instance.Log("IosAdapter - Publishable key is missing. Initialization failed.", LogType.Error);
-                return;
-            }
-            Radar_initializeWithPublishableKey(publishableKey);
-            LogManager.Instance.Log("IosAdapter.Initialize()  Complete", LogType.Attention);
         }
 
 
         public void SetMetadata(MetadataContainer metadata)
         {
-            LogManager.Instance.Log("IosAdapter.SetMetadata()", LogType.Attention);
             string metadataJson = JsonUtility.ToJson(metadata);
-            LogManager.Instance.Log("IosAdapter.SetMetadata2()", LogType.Attention);
             Radar_setMetadata(metadataJson);
-            LogManager.Instance.Log("IosAdapter.SetMetadata()  Complete", LogType.Attention);
         }
 
 
         public void SetUserID(string userId)
         {
-            LogManager.Instance.Log("IosAdapter.SetUserID() " + userId, LogType.Attention);
             if (string.IsNullOrEmpty(userId))
             {
                 LogManager.Instance.Log("User ID is null or empty. Skipping SetUserID.", LogType.Warning);
                 return;
             }
             Radar_setUserId(userId);
-            LogManager.Instance.Log("IosAdapter.SetUserID()  Complete", LogType.Attention);
         }
 
 
@@ -124,14 +112,10 @@ namespace RadarSDK.iOS
 
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
-            LogManager.Instance.Log("IosAdapter.SetVerifiedReceiver()", LogType.Attention);
-
             _onTokenUpdated = onTokenUpdated;
 
             // Set up the delegate to be called when a new token is available
             Radar_setVerifiedDelegate(OnTokenUpdated);
-
-            LogManager.Instance.Log("IosAdapter.SetVerifiedReceiver() Complete", LogType.Attention);
         }
 
         // This function will be called by the native code
@@ -150,8 +134,6 @@ namespace RadarSDK.iOS
                 ExpiresIn = expiresIn
             };
 
-            LogManager.Instance.Log($"Token updated: {verifiedLocationToken.Token.Substring(0, 5)}, Passed: {verifiedLocationToken.Passed}, ExpiresAt: {verifiedLocationToken.ExpiresAt}, ExpiresIn: {verifiedLocationToken.ExpiresIn}", LogType.Attention);
-
             // Call the C# callback action
             _onTokenUpdated?.Invoke(verifiedLocationToken);
         }
@@ -159,52 +141,42 @@ namespace RadarSDK.iOS
 
         public async Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
-            LogManager.Instance.Log("IosAdapter.StartTrackingVerifiedAsync " + interval + " " + beacons, LogType.Attention);
             Radar_startTrackingVerified(interval, beacons);
-            await Task.Delay(10); // Mocking asynchronous behavior for demonstration
-            LogManager.Instance.Log("IosAdapter.StartTrackingVerifiedAsync Complete", LogType.Attention);
             return (RadarStatus.SUCCESS, null); // Placeholder for actual verified location data
         }
 
 
         public async Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
         {
-            LogManager.Instance.Log("IosAdapter.StopTrackingAsync()", LogType.Attention);
             Radar_stopTrackingVerified();
-            await Task.Delay(10); // Mocking asynchronous behavior for demonstration
-            LogManager.Instance.Log("IosAdapter.StopTrackingAsync() Complete", LogType.Attention);
             return (RadarStatus.SUCCESS, null);
         }
 
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
         {
-            LogManager.Instance.Log("IosAdapter.TrackVerifiedAsync() " + beacons, LogType.Attention);
             return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
         }
 
 
         public void GetLocation(Action<Location> onLocationReceived)
         {
-            LogManager.Instance.Log("IosAdapter.GetLocation()", LogType.Attention);
             // Increment the callback ID and store the callback in the dictionary
             int callbackId = currentCallbackId++;
             locationCallbacks[callbackId] = onLocationReceived;
 
             // Call the native method with the static callback and the callbackId
             Radar_getLocation(OnLocationUpdated, callbackId);
-            LogManager.Instance.Log("IosAdapter.GetLocation() Complete", LogType.Attention);
         }
 
         // Static method that will be called by native code when location is received
         [AOT.MonoPInvokeCallback(typeof(RadarLocationCallback))]
         private static void OnLocationUpdated(double latitude, double longitude, int callbackId)
         {
-            LogManager.Instance.Log("IosAdapter.OnLocationUpdated()", LogType.Attention);
             // Check if valid coordinates were received
             if (locationCallbacks.TryGetValue(callbackId, out var callback))
             {
-                if (latitude != -91 && longitude != -181)
+                if (Location.IsValidLocation(latitude, longitude))
                 {
                     // Create a Location struct to pass the location back to Unity
                     var location = new Location

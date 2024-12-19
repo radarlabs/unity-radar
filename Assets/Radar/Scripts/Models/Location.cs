@@ -20,11 +20,20 @@ namespace RadarSDK
         /// <summary>
         /// Gets the longitude of the location.
         /// </summary>
-        public double longitude => coordinates != null && coordinates.Length >= 1 ? coordinates[0] : -181;
+        public double longitude => (coordinates != null && coordinates.Length >= 1) ? coordinates[0] : double.NaN;
 
         /// <summary>
         /// Gets the latitude of the location.
         /// </summary>
-        public double latitude => coordinates != null && coordinates.Length >= 2 ? coordinates[1] : -91;
+        public double latitude => (coordinates != null && coordinates.Length >= 2) ? coordinates[1] : double.NaN;
+
+
+        public static bool IsValidLocation(double latitude, double longitude)
+        {
+            // Returns true if both latitude and longitude are within the valid range and are not NaN
+            return !double.IsNaN(latitude) && !double.IsNaN(longitude) &&
+                latitude >= -90 && latitude <= 90 &&
+                longitude >= -180 && longitude <= 180;
+        }
     }
 }

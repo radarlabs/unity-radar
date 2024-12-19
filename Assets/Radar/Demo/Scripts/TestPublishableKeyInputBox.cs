@@ -36,12 +36,15 @@ namespace RadarSDK
         // Called when "Update" button is pressed
         public void ReInitialize()
         {
-            RadarServiceWrapper.Initialize();
+            string publishableKey = Debug.isDebugBuild ? RadarSDKManager.TestPublishableKey : RadarSDKManager.LivePublishableKey;
+            Radar.Initialize(publishableKey, fraud: true);
+            LogManager.Instance.Log("ReInitialized", LogType.Log);
         }
 
         // Called when "Reset" button is pressed
         public void ResetToDefault()
         {
+            LogManager.Instance.Log("Key has been reset to default value", LogType.Log);
             RadarSDKManager.SaveOverrideTestPublishableKey(RadarSDKManager.OriginalTestPublishableKey);
             UpdateText();
         }
