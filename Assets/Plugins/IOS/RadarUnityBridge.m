@@ -41,12 +41,52 @@ extern "C" {
     }
 
 
-    void Radar_trackVerifiedWithCompletionHandler(int requestId, CompletionHandlerPtrOnDict handler)
+    // void Radar_trackVerifiedWithCompletionHandler(int requestId, CompletionHandlerPtrOnDict handler)
+    // {
+    //     [Radar trackVerifiedWithCompletionHandler:^(RadarStatus status, RadarVerifiedLocationToken * _Nullable token)
+    //     {
+    //         const char *statusStr = [[Radar stringForStatus:status] UTF8String];
+    //         const char *jsonStr = NULL;
+    //         if (status == RadarStatusSuccess && token != nil)
+    //         {
+    //             NSDictionary *dict = [token dictionaryValue];
+    //             NSError *error;
+    //             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
+    //             if (!error)
+    //             {
+    //                 NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    //                 jsonStr = [jsonString UTF8String];
+    //             }
+    //         }
+
+    //         handler(requestId, statusStr, jsonStr);
+    //     }];
+    // }
+    void Radar_trackVerifiedWithCompletionHandler(
+        int requestId,
+        CompletionHandlerPtrOnDict handler,
+        const char* desiredAccuracy
+    )
     {
+        NSString *desiredAccuracyStr = [NSString stringWithUTF8String:desiredAccuracy];
+        RadarTrackingOptionsDesiredAccuracy accuracyEnum;
+
+        // Map the string to the corresponding enum value
+        if ([desiredAccuracyStr isEqualToString:@"HIGH"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyHigh;
+        } else if ([desiredAccuracyStr isEqualToString:@"LOW"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyLow;
+        } else if ([desiredAccuracyStr isEqualToString:@"NONE"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyNone;
+        } else {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyMedium; // Default to MEDIUM
+        }
+
         [Radar trackVerifiedWithCompletionHandler:^(RadarStatus status, RadarVerifiedLocationToken * _Nullable token)
         {
             const char *statusStr = [[Radar stringForStatus:status] UTF8String];
             const char *jsonStr = NULL;
+
             if (status == RadarStatusSuccess && token != nil)
             {
                 NSDictionary *dict = [token dictionaryValue];
@@ -62,6 +102,7 @@ extern "C" {
             handler(requestId, statusStr, jsonStr);
         }];
     }
+
 
 
     void Radar_setMetadata(const char* jsonMetadata) {

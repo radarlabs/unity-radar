@@ -112,7 +112,7 @@ namespace RadarSDK.ProxyPlatform
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool _ = false)
+        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
         {
             var data = new VerifiedLocationData
             {

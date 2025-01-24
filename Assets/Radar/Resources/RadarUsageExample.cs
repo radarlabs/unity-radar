@@ -74,7 +74,6 @@ namespace RadarSDK
             }
         }
 
-
         private Task<Location?> GetLocation()
         {
             var tcs = new TaskCompletionSource<Location?>();

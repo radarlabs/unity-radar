@@ -164,6 +164,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.radar.unityexample
+    Standalone: com.radar.unityexample
     iPhone: com.radar.unity-example
   buildNumber:
     Standalone: 0

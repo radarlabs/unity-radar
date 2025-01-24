@@ -88,21 +88,28 @@ namespace RadarSDK.Android
         }
 
 
-        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(
+            bool beacons = false, 
+            string desiredAccuracy = "MEDIUM")
         {
             // Instantiate AndroidTrackVerifiedHandler to handle the callback
             var handler = new AndroidTrackVerifiedHandler();
 
-            // Call the trackVerified method on the Radar SDK, passing in the handler as the callback
-            _instance.CallStatic("trackVerified", beacons, handler);
+            // Find the RadarTrackingOptionsDesiredAccuracy enum value in the Kotlin SDK
+            AndroidJavaClass trackingOptionsClass = new AndroidJavaClass("io.radar.sdk.RadarTrackingOptions$RadarTrackingOptionsDesiredAccuracy");
+            AndroidJavaObject desiredAccuracyEnum = trackingOptionsClass.CallStatic<AndroidJavaObject>("valueOf", desiredAccuracy.ToUpper());
 
-            // Await the handler’s task completion, which will contain the track verification result
+            // Call the trackVerified method on the Radar SDK, passing in the parameters and handler
+            _instance.CallStatic("trackVerified", beacons, desiredAccuracyEnum, handler);
+
+            // Await the handler's task completion, which will contain the track verification result
             var result = await handler.CompletionTask;
-            
+
             // Debug log to confirm received data
-            // var json = JsonUtility.ToJson(result); 
+            // var json = JsonUtility.ToJson(result);
             return result;
         }
+
 
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)

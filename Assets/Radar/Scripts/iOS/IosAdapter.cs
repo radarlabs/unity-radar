@@ -153,9 +153,19 @@ namespace RadarSDK.iOS
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        // public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        // {
+        //     return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
+        // }
+
+        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(
+            bool beacons = false,
+            string desiredAccuracy = "MEDIUM")
         {
-            return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
+            return new IosTrackVerifiedHandler(
+                RadarRequestType.TrackVerified,
+                desiredAccuracy
+            ).CompletionTask;
         }
 
 
