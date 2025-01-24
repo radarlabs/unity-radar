@@ -69,7 +69,6 @@ namespace RadarSDK
             _platformAdapter = new iOS.IosAdapter();
             LogManager.Instance.Log($"Radar: '{nameof(iOS.IosAdapter)}' was created");
 #else
-            LogManager.Instance.Log($"Radar: '{Application.platform}' is not supported, defaulting to {nameof(ProxyPlatform.ProxyAdapter)}", LogType.Error);
             _platformAdapter = new ProxyPlatform.ProxyAdapter();
             LogManager.Instance.Log($"Radar: Fallback! '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
 #endif
