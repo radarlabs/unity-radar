@@ -12,6 +12,8 @@ jobs:
 
       - name: Setup Unity
         uses: game-ci/unity-builder@v2
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           unity-version: '6000.0.24f1'
           license: 'Professional'
@@ -19,6 +21,8 @@ jobs:
 
       - name: Activate Unity
         uses: RageAgainstThePixel/activate-unity-license@v1
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           license: 'Professional'
           serial: ${{ secrets.UNITY_SERIAL }}
