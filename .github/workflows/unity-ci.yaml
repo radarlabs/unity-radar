@@ -11,27 +11,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Setup Unity and activate license
+      # Set up Unity with correct version
       - name: Setup Unity
-        uses: game-ci/unity-setup@v2
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x 
+
+      # Activate Unity License
+      - name: Activate Unity License
+        uses: game-ci/unity-activate@v1
         with:
           unityVersion: '6000.0.24f1'
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
 
-      # Build the Unity project
-      - name: Build project
-        uses: game-ci/unity-builder@v4
+      # Build the Unity Project
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v2
         with:
           unityVersion: '6000.0.24f1'
           targetPlatform: StandaloneWindows64
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
 
-      # Deactivate Unity license (optional cleanup)
-      - name: Deactivate Unity
+      # Return the Unity License
+      - name: Return Unity License
         uses: game-ci/unity-return-license@v1
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
