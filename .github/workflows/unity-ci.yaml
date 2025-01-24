@@ -7,24 +7,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Setup Unity and activate license
       - name: Setup Unity
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }} 
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        uses: game-ci/unity-setup@v2
         with:
-          unity-version: '6000.0.24f1'
-          license: 'Professional'
-          serial: ${{ secrets.UNITY_SERIAL }}
+          unityVersion: '6000.0.24f1'
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
-      - name: Activate Unity
-        uses: RageAgainstThePixel/activate-unity-license@v1
+      # Build the Unity project
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        with:
+          unityVersion: '6000.0.24f1'
+          targetPlatform: StandaloneWindows64
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          license: 'Professional'
-          serial: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+      # Deactivate Unity license (optional cleanup)
+      - name: Deactivate Unity
+        uses: game-ci/unity-return-license@v1
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
