@@ -11,27 +11,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Setup Unity and activate license
+      # Set up Unity with correct version
       - name: Setup Unity
-        uses: game-ci/unity-setup@v2
+        uses: actions/setup-dotnet@v3
         with:
-          unityVersion: '2022.3.4f1'
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          dotnet-version: 6.x # Required for Unity activation
 
-      # Build the Unity project
-      - name: Build project
-        uses: game-ci/unity-builder@v4
+      # Activate Unity License
+      - name: Activate Unity License
+        uses: game-ci/unity-activate@v1
         with:
-          unityVersion: '2022.3.4f1'
-          targetPlatform: StandaloneWindows64 # Replace with your desired target platform
+          unityVersion: '2022.3.4f1' # Replace with your correct Unity version
         env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
 
-      # Deactivate Unity license (optional cleanup)
-      - name: Deactivate Unity
+      # Build the Unity Project
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v2
+        with:
+          unityVersion: '2022.3.4f1' # Match your Unity version here
+          targetPlatform: StandaloneWindows64 # Replace with your target platform
+
+      # Return the Unity License
+      - name: Return Unity License
         uses: game-ci/unity-return-license@v1
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
