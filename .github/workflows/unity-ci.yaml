@@ -7,42 +7,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run Unity in Batch Mode
-        run: |
-          /opt/Unity/Editor/Unity \
-            -batchmode \
-            -nographics \
-            -projectPath . \
-            -quit \
-            -logFile /dev/stdout
-
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up Unity with correct version
+      # Setup Unity and activate license
       - name: Setup Unity
-        uses: actions/setup-dotnet@v3
+        uses: game-ci/unity-setup@v2
         with:
-          dotnet-version: 6.x 
-
-      # Activate Unity License
-      - name: Activate Unity License
-        uses: game-ci/unity-activate@v1
-        with:
-          unityVersion: 2022.3.4f1
+          unityVersion: '2022.3.4f1'
         env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      # Build the Unity project
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        with:
+          unityVersion: '2022.3.4f1'
+          targetPlatform: StandaloneWindows64 # Replace with your desired target platform
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
 
-      # Build the Unity Project
-      - name: Build Unity Project
-        uses: game-ci/unity-builder@v2
-        with:
-          unityVersion: 2022.3.4f1
-          targetPlatform: StandaloneWindows64
-
-      # Return the Unity License
-      - name: Return Unity License
+      # Deactivate Unity license (optional cleanup)
+      - name: Deactivate Unity
         uses: game-ci/unity-return-license@v1
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
