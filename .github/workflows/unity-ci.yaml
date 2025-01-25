@@ -7,6 +7,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Run Unity in Batch Mode
+        run: |
+          /opt/Unity/Editor/Unity \
+            -batchmode \
+            -nographics \
+            -projectPath . \
+            -quit \
+            -logFile /dev/stdout
+
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
