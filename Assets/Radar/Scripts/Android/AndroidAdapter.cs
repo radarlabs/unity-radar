@@ -15,7 +15,6 @@ namespace RadarSDK.Android
         private AndroidJavaObject _instance;
 
 
-
         public void Initialize(string publishableKey)
         {
             if (string.IsNullOrEmpty(publishableKey))
@@ -164,13 +163,18 @@ namespace RadarSDK.Android
             {
                 AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
-                // Create a custom Java receiver instance with the callback
-                var receiver = new AndroidJavaObject("io.radar.sdk.CustomVerifiedReceiver", new CustomVerifiedReceiverCallback(onTokenUpdated));
-                // Call the setVerifiedReceiver method on the Radar SDK
+                // Create an instance of CustomVerifiedReceiver with the callback
+                AndroidJavaObject receiver = new AndroidJavaObject(
+                    "io.radar.sdk.CustomVerifiedReceiver",
+                    new CustomVerifiedReceiverCallback(onTokenUpdated)
+                );
+
+                // Set the receiver in the Radar SDK
                 _instance.CallStatic("setVerifiedReceiver", receiver);
             }
         }
     }
+
 
 
     public class RadarVerifiedLocationCallbackProxy : AndroidJavaProxy

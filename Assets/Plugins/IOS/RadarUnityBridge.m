@@ -1,11 +1,36 @@
-// #import "RadarUnityBridge.h"
 #import <RadarSDK/Radar.h>
+#import <RadarSDK/RadarVerifiedDelegate.h>
 #import <RadarSDK/RadarVerifiedLocationToken.h>
-#import <RadarSDK/CustomVerifiedDelegate.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+    typedef void (*RadarTokenUpdatedCallback)(const char* token, BOOL passed, long expiresAt, int expiresIn);
+
+    // Static variable to store the Unity callback
+    static RadarTokenUpdatedCallback _tokenUpdatedCallback;
+
+    @interface UnityRadarDelegate : NSObject <RadarVerifiedDelegate>
+    @end
+
+    @implementation UnityRadarDelegate
+
+    - (void)didUpdateToken:(RadarVerifiedLocationToken *)token {
+        if (_tokenUpdatedCallback && token) {
+            const char *tokenString = [token.token UTF8String];
+            BOOL passed = token.passed;
+            long expiresAt = [token.expiresAt timeIntervalSince1970] * 1000; // Convert seconds to milliseconds
+            int expiresIn = token.expiresIn;
+            
+            _tokenUpdatedCallback(tokenString, passed, expiresAt, expiresIn);
+        }
+    }
+
+    @end
+
+    static UnityRadarDelegate *unityRadarDelegate;
+
 
     typedef void (*CompletionHandlerPtrOnDict)(int requestId, const char* statusStr, const char* jsonStr);
 
@@ -41,27 +66,6 @@ extern "C" {
     }
 
 
-    // void Radar_trackVerifiedWithCompletionHandler(int requestId, CompletionHandlerPtrOnDict handler)
-    // {
-    //     [Radar trackVerifiedWithCompletionHandler:^(RadarStatus status, RadarVerifiedLocationToken * _Nullable token)
-    //     {
-    //         const char *statusStr = [[Radar stringForStatus:status] UTF8String];
-    //         const char *jsonStr = NULL;
-    //         if (status == RadarStatusSuccess && token != nil)
-    //         {
-    //             NSDictionary *dict = [token dictionaryValue];
-    //             NSError *error;
-    //             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
-    //             if (!error)
-    //             {
-    //                 NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    //                 jsonStr = [jsonString UTF8String];
-    //             }
-    //         }
-
-    //         handler(requestId, statusStr, jsonStr);
-    //     }];
-    // }
     void Radar_trackVerifiedWithCompletionHandler(
         int requestId,
         CompletionHandlerPtrOnDict handler,
@@ -158,9 +162,13 @@ extern "C" {
 
 
     void Radar_setVerifiedDelegate(RadarTokenUpdatedCallback callback) {
-        CustomVerifiedDelegate *delegate = [CustomVerifiedDelegate sharedInstance];
-        [delegate setTokenUpdatedCallback:callback];
-        [Radar setVerifiedDelegate:delegate];
+        _tokenUpdatedCallback = callback;
+
+        if (!unityRadarDelegate) {
+            unityRadarDelegate = [[UnityRadarDelegate alloc] init];
+        }
+        
+        [Radar setVerifiedDelegate:unityRadarDelegate];
     }
 
 

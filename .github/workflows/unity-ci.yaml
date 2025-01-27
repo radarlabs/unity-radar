@@ -21,7 +21,7 @@ jobs:
       - name: Activate Unity License
         uses: game-ci/unity-activate@v1
         with:
-          unityVersion: '2022.3.4f1' # Replace with your correct Unity version
+          unityVersion: '6000.0.24f1'
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -31,8 +31,8 @@ jobs:
       - name: Build Unity Project
         uses: game-ci/unity-builder@v2
         with:
-          unityVersion: '2022.3.4f1' # Match your Unity version here
-          targetPlatform: StandaloneWindows64 # Replace with your target platform
+          unityVersion: '6000.0.24f1'
+          targetPlatform: Android
 
       # Return the Unity License
       - name: Return Unity License
