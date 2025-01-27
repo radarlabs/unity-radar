@@ -80,8 +80,6 @@ extern "C" {
             accuracyEnum = RadarTrackingOptionsDesiredAccuracyHigh;
         } else if ([desiredAccuracyStr isEqualToString:@"LOW"]) {
             accuracyEnum = RadarTrackingOptionsDesiredAccuracyLow;
-        } else if ([desiredAccuracyStr isEqualToString:@"NONE"]) {
-            accuracyEnum = RadarTrackingOptionsDesiredAccuracyNone;
         } else {
             accuracyEnum = RadarTrackingOptionsDesiredAccuracyMedium; // Default to MEDIUM
         }
