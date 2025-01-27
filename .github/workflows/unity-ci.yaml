@@ -10,17 +10,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up Unity
-      - name: Setup Unity
+      # Set up .NET
+      - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.x
+
+      # Set up Unity
+      - name: Set up Unity
+        uses: game-ci/unity-builder@v2
+        with:
+          unityVersion: '2022.3.4f1' # Replace this with your project's Unity version
+          targetPlatform: Android
+          customParameters: -quit -batchmode
 
       # Activate Unity License
       - name: Activate Unity License
         uses: game-ci/unity-activate@v1
         with:
-          unityVersion: '6000.0.35f1'
+          unityVersion: '2022.3.4f1' # Replace this with your project's Unity version
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -30,9 +38,11 @@ jobs:
       - name: Build Unity Project for Android
         uses: game-ci/unity-builder@v2
         with:
-          unityVersion: '6000.0.35f1'
+          unityVersion: '2022.3.4f1' # Replace this with your project's Unity version
           targetPlatform: Android
 
       # Return Unity License
       - name: Return Unity License
         uses: game-ci/unity-return-license@v1
+        with:
+          unityVersion: '2022.3.4f1' # Replace this with your project's Unity version
