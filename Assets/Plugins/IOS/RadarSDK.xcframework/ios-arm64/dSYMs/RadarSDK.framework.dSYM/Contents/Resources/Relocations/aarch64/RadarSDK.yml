@@ -207,7 +207,7 @@ relocations:
   - { offsetInCU: 0x8D0, offset: 0x61DBF, size: 0x8, addend: 0x0, symName: '-[RadarTrip status]', symObjAddr: 0xD18, symBinAddr: 0xBEC0, symSize: 0x8 }
   - { offsetInCU: 0x907, offset: 0x61DF6, size: 0x8, addend: 0x0, symName: '-[RadarTrip .cxx_destruct]', symObjAddr: 0xD20, symBinAddr: 0xBEC8, symSize: 0x60 }
   - { offsetInCU: 0x27, offset: 0x61EAE, size: 0x8, addend: 0x0, symName: '-[CLLocation(Radar) isValid]', symObjAddr: 0x0, symBinAddr: 0xBF28, symSize: 0xCC }
-  - { offsetInCU: 0x41, offset: 0x61EC8, size: 0x8, addend: 0x0, symName: _DEGREE_EPSILON, symObjAddr: 0x110, symBinAddr: 0x4D9A8, symSize: 0x0 }
+  - { offsetInCU: 0x41, offset: 0x61EC8, size: 0x8, addend: 0x0, symName: _DEGREE_EPSILON, symObjAddr: 0x110, symBinAddr: 0x4D9A0, symSize: 0x0 }
   - { offsetInCU: 0x65, offset: 0x61EEC, size: 0x8, addend: 0x0, symName: '-[CLLocation(Radar) isValid]', symObjAddr: 0x0, symBinAddr: 0xBF28, symSize: 0xCC }
   - { offsetInCU: 0xE8, offset: 0x61F6F, size: 0x8, addend: 0x0, symName: '-[CLLocation(Radar) isDouble:withinDegreeEpsilonTo:]', symObjAddr: 0xCC, symBinAddr: 0xBFF4, symSize: 0x18 }
   - { offsetInCU: 0x27, offset: 0x6200D, size: 0x8, addend: 0x0, symName: '+[RadarAPIClient sharedInstance]', symObjAddr: 0x0, symBinAddr: 0xC00C, symSize: 0x74 }
@@ -567,7 +567,7 @@ relocations:
   - { offsetInCU: 0x120C, offset: 0x71BE7, size: 0x8, addend: 0x0, symName: '-[RadarTrackingOptions setBeacons:]', symObjAddr: 0x15F4, symBinAddr: 0x1CAC0, symSize: 0x8 }
   - { offsetInCU: 0x1247, offset: 0x71C22, size: 0x8, addend: 0x0, symName: '-[RadarTrackingOptions .cxx_destruct]', symObjAddr: 0x15FC, symBinAddr: 0x1CAC8, symSize: 0x30 }
   - { offsetInCU: 0x27, offset: 0x71CE1, size: 0x8, addend: 0x0, symName: '+[RadarUtils isoDateFormatter]', symObjAddr: 0x0, symBinAddr: 0x1CAF8, symSize: 0xBC }
-  - { offsetInCU: 0x41, offset: 0x71CFB, size: 0x8, addend: 0x0, symName: __isoDateFormatter, symObjAddr: 0xF200, symBinAddr: 0x6A100, symSize: 0x0 }
+  - { offsetInCU: 0x41, offset: 0x71CFB, size: 0x8, addend: 0x0, symName: __isoDateFormatter, symObjAddr: 0xF1E8, symBinAddr: 0x6A100, symSize: 0x0 }
   - { offsetInCU: 0x7B, offset: 0x71D35, size: 0x8, addend: 0x0, symName: '+[RadarUtils isoDateFormatter]', symObjAddr: 0x0, symBinAddr: 0x1CAF8, symSize: 0xBC }
   - { offsetInCU: 0xAE, offset: 0x71D68, size: 0x8, addend: 0x0, symName: '+[RadarUtils deviceModel]', symObjAddr: 0xBC, symBinAddr: 0x1CBB4, symSize: 0x74 }
   - { offsetInCU: 0x115, offset: 0x71DCF, size: 0x8, addend: 0x0, symName: '+[RadarUtils deviceOS]', symObjAddr: 0x130, symBinAddr: 0x1CC28, symSize: 0x4C }
