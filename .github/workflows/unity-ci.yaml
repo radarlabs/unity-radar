@@ -13,6 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-Android
+          restore-keys: Library-
+
       - name: Build Unity Project for Android
         uses: game-ci/unity-builder@v4
         env:
@@ -24,7 +30,7 @@ jobs:
           targetPlatform: Android
           # Optional: customParameters: -quit -batchmode
 
-  build-ios:
+  build-for-ios:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
