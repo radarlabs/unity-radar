@@ -202,5 +202,5 @@ public class RadarSettingsEditorWindow : EditorWindow
         AssetDatabase.SaveAssets();
         Debug.Log("Radar SDK settings saved.");
     }
-}
+} 
 # endif
