@@ -1,120 +1,42 @@
-name: Unity CI for iOS and Android
+name: Build project
 
-on: [push, pull_request, workflow_dispatch]
-  # push:
-  #   branches: [ "main" ]
-  # pull_request:
-  # workflow_dispatch:
+on: [push, pull_request]
 
 jobs:
-  build-for-android:
+  buildForAllSupportedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - iOS # Build an iOS player.
+          - Android # Build an Android .apk standalone app.
+          # - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          # - StandaloneWindows # Build a Windows standalone.
+          # - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          # - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          # - WebGL # WebGL.
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-Android
-          restore-keys: Library-
-
-      - name: Build Unity Project for Android
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          unityVersion: '6000.0.35f1'
-          targetPlatform: Android
-          # Optional: customParameters: -quit -batchmode
-
-  build-for-ios:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+          lfs: true
       - uses: actions/cache@v3
         with:
           path: Library
-          key: Library-iOS
+          key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
-
-      - name: Activate license
-        uses: game-ci/unity-builder@v4
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+      - uses: game-ci/unity-builder@v4
         env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          unityVersion: '6000.0.35f1'
-          targetPlatform: iOS
-          customParameters: -batchmode -nographics -silent-crashes -quit -logfile "-" -projectPath . -username $UNITY_EMAIL -password $UNITY_PASSWORD -serial $UNITY_SERIAL
-          
-
-      - name: Build for iOS
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+      - uses: actions/upload-artifact@v3
         with:
-          unityVersion: '6000.0.35f1'
-          targetPlatform: iOS
-
-      - name: Return license
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          unityVersion: '6000.0.35f1'
-          targetPlatform: iOS
-          customParameters: -batchmode -quit -returnlicense
-
-
-  # This job runs after both builds finish and exports the .unitypackage
-  export-and-commit-unitypackage:
-    name: Export and Commit .unitypackage
-    runs-on: ubuntu-latest
-    needs: [build-for-android, build-for-ios]
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      
-      - name: Export RadarUnitySDK.unitypackage
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          unityVersion: '6000.0.35f1'
-          # The platform doesn't matter much for an export-package step, so pick one:
-          targetPlatform: StandaloneWindows
-          # Custom CLI parameters to export Assets folder to a .unitypackage
-          # Adjust the Assets path if you only want a subfolder.
-          customParameters: -quit -batchmode -nographics -projectPath . -exportPackage Assets RadarUnitySDK.unitypackage
-
-      - name: Commit and push .unitypackage
-        run: |
-          # Switch to main branch to avoid merge conflicts
-          git checkout main
-          git pull origin main
-
-          # Stage and commit
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add RadarUnitySDK.unitypackage
-
-          # The [skip ci] tag helps avoid infinite re-triggering
-          git commit -m "Add RadarUnitySDK.unitypackage [skip ci]"
-
-          # Push changes
-          git push origin HEAD:main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
