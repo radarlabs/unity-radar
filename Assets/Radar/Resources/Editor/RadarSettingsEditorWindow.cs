@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using RadarSDK;
@@ -202,3 +203,4 @@ public class RadarSettingsEditorWindow : EditorWindow
         Debug.Log("Radar SDK settings saved.");
     }
 }
+# endif
