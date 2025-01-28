@@ -20,23 +20,5 @@ jobs:
         with:
           unityVersion: '6000.0.35f1'
           targetPlatform: Android
-          customParameters: -quit -batchmode
-
-  build-for-ios:
-    runs-on: macos-latest
-    steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Build Unity Project for iOS
-      - name: Build Unity Project for iOS
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          unityVersion: '6000.0.35f1'
-          targetPlatform: iOS
-          customParameters: -quit -batchmode
+          # Optionally add custom build parameters:
+          # customParameters: -quit -batchmode
