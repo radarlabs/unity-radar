@@ -13,12 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-Android
-          restore-keys: Library-
-
       - name: Build Unity Project for Android
         uses: game-ci/unity-builder@v4
         env:
