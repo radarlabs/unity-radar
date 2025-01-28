@@ -16,7 +16,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}
+          key: Library-Android
           restore-keys: Library-
 
       - name: Build Unity Project for Android
