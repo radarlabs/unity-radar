@@ -78,25 +78,29 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-
+      
+          # Discard unintentional local changes to ProjectSettings (or any other files)
+          git reset --hard
+      
           # Ensure we are on the main branch
           git checkout main
           git pull origin main
-
+      
           # Verify that the package exists
           ls -l RadarUnitySDK.unitypackage
-
+      
           # Add ONLY the .unitypackage file, avoiding unwanted changes
           git add RadarUnitySDK.unitypackage
-
+      
           # Check if there are any changes to commit
           if git diff --cached --quiet; then
             echo "No changes to commit. Exiting successfully."
             exit 0
           fi
-
+      
           # Commit and push
           git commit -m "Add exported Unity package [skip ci]"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
