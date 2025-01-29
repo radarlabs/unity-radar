@@ -79,30 +79,27 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          # Reset and pull the latest main branch to avoid conflicts
-          git reset --hard
+          # Ensure we are on the main branch
           git checkout main
           git pull origin main
 
-          # Ensure we are in the correct directory
+          # Verify that the package exists
           ls -l RadarUnitySDK.unitypackage
 
-          # Forcefully replace the old .unitypackage file with the new one
-          cp -f RadarUnitySDK.unitypackage ./RadarUnitySDK.unitypackage
-
-          # Add ONLY the .unitypackage file, ignoring other changes
+          # Add ONLY the .unitypackage file, avoiding unwanted changes
           git add RadarUnitySDK.unitypackage
 
-          # Check if there are actual changes to commit
+          # Check if there are any changes to commit
           if git diff --cached --quiet; then
             echo "No changes to commit. Exiting successfully."
             exit 0
           fi
 
-          # Commit and push the updated .unitypackage file
-          git commit -m "Update RadarUnitySDK.unitypackage [skip ci]"
+          # Commit and push
+          git commit -m "Add exported Unity package [skip ci]"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
     
