@@ -12,7 +12,8 @@ public class ExportPackage
             "Assets/ExternalDependencyManager",   // Include relevant paths
             "Assets/Plugins",
             "Assets/Radar",
-            "Assets/Settings"
+            "Assets/Settings",
+            "Packages/com.unity.textmeshpro"
         };
 
         AssetDatabase.ExportPackage(assetPaths, packagePath, ExportPackageOptions.Recurse);
