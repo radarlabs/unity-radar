@@ -86,7 +86,7 @@ jobs:
           unityVersion: 6000.0.35f1
           versioning: None
           allowDirtyBuild: true
-          customParameters: -nographics -exportPackage Assets RadarUnitySDK.unitypackage
+          customParameters: -nographics -exportPackage Assets ../RadarUnitySDK.unitypackage
 
       # Upload the .unitypackage artifact (optional)
       - name: Upload Unity Package
