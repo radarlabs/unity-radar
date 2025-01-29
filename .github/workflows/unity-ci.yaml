@@ -72,6 +72,7 @@ jobs:
           targetPlatform: StandaloneWindows  # Adjust if needed
           unityVersion: 2021.3.20f1
           allowDirtyBuild: true 
+          customParameters: -restorePackages
 
       # Step 2️⃣: Run Unity separately to export the .unitypackage
       - name: Export Unity Package
