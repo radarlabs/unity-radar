@@ -47,7 +47,7 @@ jobs:
 
   export-unitypackage:
     name: Export .unitypackage
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [buildForAllSupportedPlatforms] # Waits for all platform builds to finish
 
     steps:
@@ -62,7 +62,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: StandaloneWindows
+          targetPlatform: StandaloneLinux64
           unityVersion: 6000.0.35f1
           customParameters: -quit -batchmode -nographics -exportPackage Assets RadarUnitySDK.unitypackage
 
