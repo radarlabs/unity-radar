@@ -64,15 +64,15 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
-          # customParameters: -executeMethod ExportPackage.Run
+          customParameters: -executeMethod ExportPackage.Run
           
-      - name: Run Unity Export Script
-        run: |
-          xvfb-run --auto-servernum \
-          /opt/unity/Editor/Unity \
-          -batchmode -nographics -quit \
-          -executeMethod ExportPackage.Run \
-          -logFile unity_export.log
+      # - name: Run Unity Export Script
+      #   run: |
+      #     xvfb-run --auto-servernum \
+      #     /opt/unity/Editor/Unity \
+      #     -batchmode -nographics -quit \
+      #     -executeMethod ExportPackage.Run \
+      #     -logFile unity_export.log
         
   
       # Upload the .unitypackage file as an artifact
