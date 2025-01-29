@@ -84,7 +84,7 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
-          versioning: none
+          versioning: None
           allowDirtyBuild: true
           customParameters: -nographics -exportPackage Assets RadarUnitySDK.unitypackage
 
