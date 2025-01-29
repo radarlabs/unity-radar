@@ -64,8 +64,12 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
-          customParameters: -executeMethod ExportPackage.Run -batchmode -quit -logFile unity_export.log
-
+          customParameters: -batchmode -quit -logFile unity_export.log
+          
+      - name: Run Unity Export Script
+        run: |
+          /opt/unity/Editor/Unity -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
+  
       # Upload the .unitypackage file as an artifact
       - name: Upload Unity Package
         uses: actions/upload-artifact@v3
