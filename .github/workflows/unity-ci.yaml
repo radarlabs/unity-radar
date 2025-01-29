@@ -47,7 +47,7 @@ jobs:
 
   export-unitypackage:
     name: Export .unitypackage
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [buildForAllSupportedPlatforms] # Waits for all platform builds to finish
 
     steps:
