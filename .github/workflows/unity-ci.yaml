@@ -54,6 +54,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Reset any unwanted local changes before running Unity
+      - name: Clean Working Directory
+        run: |
+          git reset --hard HEAD
+          git clean -fd
+          git status  # Debug: Show the clean working directory state
+
       # Step 1️⃣: Build the project (NO executeMethod here!)
       - name: Build Project
         uses: game-ci/unity-builder@v4
