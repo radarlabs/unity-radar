@@ -62,9 +62,9 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: StandaloneLinux64
+          targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
-          customParameters: -quit -batchmode -nographics -exportPackage Assets RadarUnitySDK.unitypackage
+          customParameters: -batchmode -nographics -exportPackage Assets RadarUnitySDK.unitypackage
 
       # Upload the .unitypackage file as an artifact
       - name: Upload Unity Package
