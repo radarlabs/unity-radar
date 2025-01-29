@@ -79,6 +79,10 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+          # Fix file permissions to prevent "Permission denied" errors
+          sudo chmod -R 777 Assets/Editor || true
+          sudo chmod -R 777 .git || true
+
           # Reset any unwanted local changes to avoid conflicts
           git reset --hard HEAD
           git clean -fd  # Removes untracked files and directories
@@ -108,5 +112,6 @@ jobs:
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
     
