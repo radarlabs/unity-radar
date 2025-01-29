@@ -86,7 +86,7 @@ jobs:
           unityVersion: 6000.0.35f1
           versioning: None
           allowDirtyBuild: true
-          customParameters: -nographics -exportPackage Assets ../RadarUnitySDK.unitypackage
+          customParameters: -nographics -exportPackage Assets /home/runner/work/unity-radar/RadarUnitySDK.unitypackage
 
       # Upload the .unitypackage artifact (optional)
       - name: Upload Unity Package
@@ -98,25 +98,25 @@ jobs:
       # Commit and push .unitypackage to the current branch
       - name: Commit and Push .unitypackage
         run: |
-          # Set up identity so commits work
+          # Verify if the file exists
+          ls -l /home/runner/work/unity-radar/RadarUnitySDK.unitypackage || exit 1
+
+          # Move it to the expected location
+          mv /home/runner/work/unity-radar/RadarUnitySDK.unitypackage RadarUnitySDK.unitypackage
+
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-
-          # Check that the .unitypackage was actually created
-          ls -l RadarUnitySDK.unitypackage
-
-          # Stage the file
+          
           git add RadarUnitySDK.unitypackage
-
-          # If there's nothing to commit, exit gracefully
+          
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          # Commit and push to the same branch that triggered the workflow
           git commit -m "Add exported Unity package [skip ci]"
           git push origin ${{ steps.vars.outputs.BRANCH_NAME }}
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
