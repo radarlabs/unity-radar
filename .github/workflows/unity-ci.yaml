@@ -79,10 +79,10 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          # Move the package to the repository root
-          mv RadarUnitySDK.unitypackage .
+          # Ensure the file exists before proceeding
+          ls -l RadarUnitySDK.unitypackage
 
-          # Add the package to Git
+          # Stage and commit the package
           git add RadarUnitySDK.unitypackage
           git commit -m "Add exported Unity package [skip ci]"
 
