@@ -64,7 +64,7 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
-          customParameters: -batchmode -nographics -exportPackage Assets RadarUnitySDK.unitypackage
+          customParameters: -nographics -exportPackage Assets RadarUnitySDK.unitypackage
 
       # Upload the .unitypackage file as an artifact
       - name: Upload Unity Package
