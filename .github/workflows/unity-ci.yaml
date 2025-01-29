@@ -64,7 +64,7 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
-          customParameters: -batchmode -quit -logFile unity_export.log
+          customParameters: -quit -logFile unity_export.log
           
       - name: Run Unity Export Script
         run: |
