@@ -54,73 +54,58 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Build and export Unity package
-      - name: Export RadarUnitySDK.unitypackage
+      # Step 1️⃣: Build the project using game-ci/unity-builder
+      - name: Build Project
         uses: game-ci/unity-builder@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: StandaloneWindows
-          unityVersion: 6000.0.35f1
-          customParameters: -executeMethod ExportPackage.Run
-          
-      # - name: Run Unity Export Script
-      #   run: |
-      #     xvfb-run --auto-servernum \
-      #     /opt/unity/Editor/Unity \
-      #     -batchmode -nographics -quit \
-      #     -executeMethod ExportPackage.Run \
-      #     -logFile unity_export.log
-        
-  
-      # Upload the .unitypackage file as an artifact
+          targetPlatform: StandaloneWindows  # Replace with your platform if needed
+          unityVersion: 2021.3.20f1  # Replace with your Unity version
+
+      # Step 2️⃣: Run ExportPackage.Run using game-ci/unity-runner
+      - name: Export Unity Package
+        uses: game-ci/unity-runner@v2
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          unityVersion: 2021.3.20f1  # Use the same Unity version as above
+          args: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
+
+      # Step 3️⃣: Upload the .unitypackage file as an artifact
       - name: Upload Unity Package
         uses: actions/upload-artifact@v3
         with:
           name: RadarUnitySDK.unitypackage
           path: RadarUnitySDK.unitypackage
 
-      # Commit and push .unitypackage to the main branch
+      # Step 4️⃣: Commit and push .unitypackage to the main branch
       - name: Commit and Push .unitypackage
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          # Fix file permissions to prevent "Permission denied" errors
-          sudo chmod -R 777 Assets/Editor || true
-          sudo chmod -R 777 .git || true
-
-          # Reset any unwanted local changes to avoid conflicts
           git reset --hard HEAD
           git clean -fd  # Removes untracked files and directories
 
-          # Ensure we are on the main branch
           git fetch origin main
           git checkout main
           git pull origin main
 
-          # Remove the existing package to ensure it gets replaced
           git rm -f RadarUnitySDK.unitypackage || true
-
-          # Move the new package to the correct location
           mv RadarUnitySDK.unitypackage RadarUnitySDK.unitypackage
-
-          # Ensure the file is updated (force add)
           git add -f RadarUnitySDK.unitypackage
 
-          # Check if there are any changes to commit
           if git diff --cached --quiet; then
             echo "No changes to commit. Exiting successfully."
             exit 0
           fi
 
-          # Commit and push
           git commit -m "Updated Unity package [skip ci]"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-    
