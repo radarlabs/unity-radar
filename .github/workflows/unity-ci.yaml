@@ -54,7 +54,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 1️⃣: Build the project using game-ci/unity-builder
+      # Step 1️⃣: Build the project (NO executeMethod here!)
       - name: Build Project
         uses: game-ci/unity-builder@v4
         env:
@@ -62,19 +62,20 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: StandaloneWindows  # Replace with your platform if needed
-          unityVersion: 2021.3.20f1  # Replace with your Unity version
+          targetPlatform: StandaloneWindows  # Adjust if needed
+          unityVersion: 6000.0.35f1
 
-      # Step 2️⃣: Run ExportPackage.Run using game-ci/unity-runner
+      # Step 2️⃣: Run Unity separately to export the .unitypackage
       - name: Export Unity Package
-        uses: game-ci/unity-runner@v2
+        uses: game-ci/unity-builder@v4  # Re-use the builder action to access Unity
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          unityVersion: 2021.3.20f1  # Use the same Unity version as above
-          args: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
+          targetPlatform: NoTarget  # Prevents unnecessary builds
+          unityVersion: 6000.0.35f1
+          customParameters: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
 
       # Step 3️⃣: Upload the .unitypackage file as an artifact
       - name: Upload Unity Package
