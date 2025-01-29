@@ -12,7 +12,7 @@ jobs:
         os: [ubuntu-latest]
         targetPlatform:
           - iOS # Build an iOS player (requires macOS).
-          # - Android # Build an Android .apk standalone app.
+          - Android # Build an Android .apk standalone app.
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,78 +45,42 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 
-  export-unitypackage:
-    name: Export .unitypackage
+  buildUnityPackage:
+    name: Build and Upload .unitypackage
+    needs: buildForAllSupportedPlatforms # Runs only if both iOS and Android builds succeed
     runs-on: ubuntu-latest
-    needs: [buildForAllSupportedPlatforms]
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
-      # Figure out which branch we should push to
-      - name: Determine branch name
-        id: vars
-        run: echo "BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-
-      # Remove the old package so we can be sure a new version is recognized as changed
-      - name: Remove old .unitypackage
+      - name: Install Unity Package Exporter
         run: |
-          rm -f RadarUnitySDK.unitypackage
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "No changes from removing old unitypackage."
-          else
-            git commit -m "Remove old unitypackage [skip ci]"
-          fi
+          mkdir -p Assets/Editor
+          curl -sL https://raw.githubusercontent.com/OneMinuteUnity/unity-package-exporter/main/Editor/ExportPackage.cs -o Assets/Editor/ExportPackage.cs
 
-      # Build & export the Unity package
-      - name: Export RadarUnitySDK.unitypackage
+      - name: Export Unity Package
         uses: game-ci/unity-builder@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: StandaloneWindows
+          targetPlatform: StandaloneWindows # Doesn't matter, we just need Unity to run
           unityVersion: 6000.0.35f1
           versioning: None
           allowDirtyBuild: true
-          customParameters: -nographics -exportPackage Assets /home/runner/work/unity-radar/RadarUnitySDK.unitypackage
+          customParameters: -executeMethod ExportPackage.Run -projectPath . -logFile export.log
 
-      # Upload the .unitypackage artifact (optional)
-      - name: Upload Unity Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: RadarUnitySDK.unitypackage
-          path: RadarUnitySDK.unitypackage
+      - name: Move .unitypackage to root
+        run: mv ExportedPackage.unitypackage RadarUnitySDK.unitypackage
 
-      # Commit and push .unitypackage to the current branch
-      - name: Commit and Push .unitypackage
+      - name: Push to branch
         run: |
-          # Verify if the file exists
-          ls -l /home/runner/work/unity-radar/RadarUnitySDK.unitypackage || exit 1
-
-          # Move it to the expected location
-          mv /home/runner/work/unity-radar/RadarUnitySDK.unitypackage RadarUnitySDK.unitypackage
-
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add RadarUnitySDK.unitypackage
-          
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "Add exported Unity package [skip ci]"
-          git push origin ${{ steps.vars.outputs.BRANCH_NAME }}
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
+          git commit -m "Update RadarUnitySDK.unitypackage"
+          git push
