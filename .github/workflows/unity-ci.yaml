@@ -63,7 +63,16 @@ jobs:
 
       # Remove the old package so we can be sure a new version is recognized as changed
       - name: Remove old .unitypackage
-        run: rm -f RadarUnitySDK.unitypackage
+        run: |
+          rm -f RadarUnitySDK.unitypackage
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes from removing old unitypackage."
+          else
+            git commit -m "Remove old unitypackage [skip ci]"
+          fi
 
       # Build & export the Unity package
       - name: Export RadarUnitySDK.unitypackage
@@ -75,6 +84,8 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           unityVersion: 6000.0.35f1
+          versioning: none
+          allowDirtyBuild: true
           customParameters: -nographics -exportPackage Assets RadarUnitySDK.unitypackage
 
       # Upload the .unitypackage artifact (optional)
