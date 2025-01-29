@@ -79,7 +79,11 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+          # Reset unwanted changes to avoid conflicts
+          git reset --hard HEAD
+
           # Ensure we are on the main branch
+          git fetch origin main
           git checkout main
           git pull origin main
 
@@ -100,6 +104,7 @@ jobs:
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
     
