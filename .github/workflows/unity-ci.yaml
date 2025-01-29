@@ -79,32 +79,39 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+          # Fix file permissions to prevent "Permission denied" errors
+          sudo chmod -R 777 Assets/Editor || true
+          sudo chmod -R 777 .git || true
+
+          # Reset any unwanted local changes to avoid conflicts
+          git reset --hard HEAD
+          git clean -fd  # Removes untracked files and directories
+
           # Ensure we are on the main branch
           git fetch origin main
           git checkout main
           git pull origin main
 
-          # Check if the package exists
-          if [ ! -f "RadarUnitySDK.unitypackage" ]; then
-            echo "Error: RadarUnitySDK.unitypackage not found!"
-            exit 1
-          fi
-
-          # Remove old package and add new one
+          # Remove the existing package to ensure it gets replaced
           git rm -f RadarUnitySDK.unitypackage || true
+
+          # Move the new package to the correct location
+          mv RadarUnitySDK.unitypackage RadarUnitySDK.unitypackage
+
+          # Ensure the file is updated (force add)
           git add -f RadarUnitySDK.unitypackage
 
-          # Commit only if there are changes
+          # Check if there are any changes to commit
           if git diff --cached --quiet; then
             echo "No changes to commit. Exiting successfully."
             exit 0
           fi
 
+          # Commit and push
           git commit -m "Updated Unity package [skip ci]"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
 
     
