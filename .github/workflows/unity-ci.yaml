@@ -70,7 +70,7 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: StandaloneWindows  # Adjust if needed
-          unityVersion: 6000.0.35f1
+          unityVersion: 2021.3.20f1
           allowDirtyBuild: true 
 
       # Step 2️⃣: Run Unity separately to export the .unitypackage
@@ -82,7 +82,7 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: NoTarget  # Prevents unnecessary builds
-          unityVersion: 6000.0.35f1
+          unityVersion: 2021.3.20f1
           allowDirtyBuild: true 
           customParameters: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
 
