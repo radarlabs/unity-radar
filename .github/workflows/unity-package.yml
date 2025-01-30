@@ -33,8 +33,9 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: StandaloneLinux64  # This is a dummy target just to trigger Unity execution
-          unityVersion: 2022.3.15f1  # ✅ Replace with the correct version from Unity Hub
+          targetPlatform: StandaloneLinux64
+          unityVersion: 2022.3.15f1  # ✅ Replace with your actual Unity version
+          dockerImage: unityci/editor:2022.3.15f1-base-3  # ✅ Manually specify a valid image
           customParameters: -executeMethod ExportPackage.Run
 
       # 4. Upload the .unitypackage to the GitHub Release
