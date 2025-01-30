@@ -61,12 +61,6 @@ jobs:
           rm -rf "Assets/TextMesh Pro/Examples & Extras"
           rm -rf "Assets/TextMesh Pro/Shaders"
 
-      - name: Restore Unity Packages
-        run: |
-          echo "Restoring Unity Packages"
-          /opt/unity/Editor/Unity -batchmode -quit -projectPath . -executeMethod UnityEditor.PackageManager.Client.Resolve
-
-
 
       # Reset any unwanted local changes before running Unity
       - name: Clean Working Directory
