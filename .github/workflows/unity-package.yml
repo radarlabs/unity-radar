@@ -34,8 +34,8 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: StandaloneLinux64
-          unityVersion: 2022.3.15f1  # ✅ Replace with your actual Unity version
-          dockerImage: unityci/editor:2022.3.15f1-base-3  # ✅ Manually specify a valid image
+          unityVersion: 6000.0.35f1  # ✅ Your correct Unity version
+          dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0  # ✅ Set the correct Docker image
           customParameters: -executeMethod ExportPackage.Run
 
       # 4. Upload the .unitypackage to the GitHub Release
