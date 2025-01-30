@@ -36,7 +36,7 @@ jobs:
           targetPlatform: StandaloneLinux64
           unityVersion: 6000.0.35f1  # ✅ Your correct Unity version
           dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0  # ✅ Correct Docker image
-          buildMethod: ExportPackage.Run  # ✅ This replaces the need for `unityCommand`
+          customParameters: -batchmode -nographics -quit -logFile unity_export.log -executeMethod ExportPackage.Run
 
       # 4. Upload the .unitypackage to the GitHub Release
       - name: Upload release asset
