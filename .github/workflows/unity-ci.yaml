@@ -54,12 +54,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-
+      - name: Force Unity to Restore Packages
+        run: |
+          rm -rf Library
+          git reset --hard HEAD
+          git clean -fd
+ 
 
       - name: Remove TMP Examples & Extras
         run: |
-          rm -rf "Assets/TextMesh Pro/Examples & Extras"
-          rm -rf "Assets/TextMesh Pro/Shaders"
+          git rm -rf "Assets/TextMesh Pro/Examples & Extras" || true
+          git rm -rf "Assets/TextMesh Pro/Shaders" || true
+          rm -rf Library
 
 
       # Reset any unwanted local changes before running Unity
