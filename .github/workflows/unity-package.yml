@@ -25,8 +25,8 @@ jobs:
           key: Library-standalone
           restore-keys: Library-
 
-      # 3. Run the Unity builder to export the .unitypackage
-      - name: Build .unitypackage
+      # 3. Run Unity to export the .unitypackage
+      - name: Export Unity Package
         uses: game-ci/unity-builder@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -35,8 +35,8 @@ jobs:
         with:
           targetPlatform: StandaloneLinux64
           unityVersion: 6000.0.35f1  # ✅ Your correct Unity version
-          dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0  # ✅ Set the correct Docker image
-          customParameters: -executeMethod ExportPackage.Run
+          dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0  # ✅ Correct Docker image
+          buildMethod: ExportPackage.Run  # ✅ This replaces the need for `unityCommand`
 
       # 4. Upload the .unitypackage to the GitHub Release
       - name: Upload release asset
