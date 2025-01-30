@@ -1,50 +1,50 @@
-name: Release Unity Package
+name: Build and Attach .unitypackage
 
 on:
   release:
-    types: [created]  # Runs when a new release is created
+    types: [published, prereleased] 
+    # Alternatively, you could do: [created, published, prereleased]
+    # so that it runs as soon as you create a draft release as well.
 
 jobs:
-  export-unitypackage:
-    name: Export and Attach .unitypackage
+  build-unity-package:
+    name: Export & Attach Unity Package
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+
+      # 1. Check out the repository
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
 
-      # Reset unwanted changes before running Unity
-      - name: Clean Working Directory
-        run: |
-          git reset --hard HEAD
-          git clean -fd
-          git status  # Debug: Show the clean working directory state
+      # 2. Cache the Library folder (optional, can help speed up Unity builds)
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-standalone
+          restore-keys: Library-
 
-      # Step 1️⃣: Run Unity to Export the .unitypackage
-      - name: Export Unity Package
+      # 3. Run the Unity builder to call our ExportPackage script.
+      #    Use a "dummy" target platform or any platform you want. The key part
+      #    is the custom parameter to call your method: ExportPackage.Run
+      - name: Build .unitypackage
         uses: game-ci/unity-builder@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform: NoTarget  # Prevents unnecessary builds
-          unityVersion: 2021.3.20f1  # Match your Unity version
-          allowDirtyBuild: true
-          customParameters: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
+          targetPlatform: StandaloneLinux64
+          unityVersion: 2022.3.1f1   # <-- Put your real Unity version here
+          customParameters: -executeMethod ExportPackage.Run
 
-      # Step 2️⃣: Verify the exported package exists
-      - name: Verify Exported Package
-        run: |
-          if [ ! -f "RadarUnitySDK.unitypackage" ]; then
-            echo "Error: RadarUnitySDK.unitypackage was not created!"
-            exit 1
-          fi
-
-      # Step 3️⃣: Upload .unitypackage to the GitHub Release
-      - name: Upload Unity Package to Release
-        uses: softprops/action-gh-release@v1
+      # 4. Upload the .unitypackage to the *GitHub Release* that triggered this workflow
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
         with:
-          files: RadarUnitySDK.unitypackage
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: "RadarUnitySDK.unitypackage"   # The .unitypackage file name from ExportPackage.cs
+          asset_name: "RadarUnitySDK.unitypackage"
+          asset_content_type: application/octet-stream
