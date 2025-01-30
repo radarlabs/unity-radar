@@ -54,6 +54,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+
+
+      - name: Remove TMP Examples & Extras
+        run: |
+          rm -rf "Assets/TextMesh Pro/Examples & Extras"
+          rm -rf "Assets/TextMesh Pro/Shaders"
+
+      - name: Restore Unity Packages
+        run: |
+          echo "Restoring Unity Packages"
+          /opt/unity/Editor/Unity -batchmode -quit -projectPath . -executeMethod UnityEditor.PackageManager.Client.Resolve
+
+
+
       # Reset any unwanted local changes before running Unity
       - name: Clean Working Directory
         run: |
@@ -72,7 +86,7 @@ jobs:
           targetPlatform: StandaloneWindows  # Adjust if needed
           unityVersion: 2021.3.20f1
           allowDirtyBuild: true 
-          customParameters: -restorePackages
+          # customParameters: -restorePackages
 
       # Step 2️⃣: Run Unity separately to export the .unitypackage
       - name: Export Unity Package
