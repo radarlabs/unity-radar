@@ -40,7 +40,7 @@ jobs:
           unityVersion: 6000.0.35f1
 
       # Upload the build as an artifact
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
@@ -103,7 +103,7 @@ jobs:
 
   #     # Step 3️⃣: Upload the .unitypackage file as an artifact
   #     - name: Upload Unity Package
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         name: RadarUnitySDK.unitypackage
   #         path: RadarUnitySDK.unitypackage
