@@ -2,9 +2,8 @@ name: Build and Attach .unitypackage
 
 on:
   release:
-    types: [published, prereleased] 
-    # Alternatively, you could do: [created, published, prereleased]
-    # so that it runs as soon as you create a draft release as well.
+    types: [created, published, prereleased]
+  workflow_dispatch:
 
 jobs:
   build-unity-package:
