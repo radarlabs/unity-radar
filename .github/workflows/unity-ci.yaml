@@ -45,92 +45,92 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 
-  export-unitypackage:
-    name: Export .unitypackage
-    runs-on: ubuntu-latest
-    needs: [buildForAllSupportedPlatforms] # Waits for all platform builds to finish
+  # export-unitypackage:
+  #   name: Export .unitypackage
+  #   runs-on: ubuntu-latest
+  #   needs: [buildForAllSupportedPlatforms] # Waits for all platform builds to finish
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
 
-      - name: Force Unity to Restore Packages
-        run: |
-          rm -rf Library
-          git reset --hard HEAD
-          git clean -fd
+  #     - name: Force Unity to Restore Packages
+  #       run: |
+  #         rm -rf Library
+  #         git reset --hard HEAD
+  #         git clean -fd
  
 
-      - name: Remove TMP Examples & Extras
-        run: |
-          git rm -rf "Assets/TextMesh Pro/Examples & Extras" || true
-          git rm -rf "Assets/TextMesh Pro/Shaders" || true
-          rm -rf Library
+  #     - name: Remove TMP Examples & Extras
+  #       run: |
+  #         git rm -rf "Assets/TextMesh Pro/Examples & Extras" || true
+  #         git rm -rf "Assets/TextMesh Pro/Shaders" || true
+  #         rm -rf Library
 
 
-      # Reset any unwanted local changes before running Unity
-      - name: Clean Working Directory
-        run: |
-          git reset --hard HEAD
-          git clean -fd
-          git status  # Debug: Show the clean working directory state
+  #     # Reset any unwanted local changes before running Unity
+  #     - name: Clean Working Directory
+  #       run: |
+  #         git reset --hard HEAD
+  #         git clean -fd
+  #         git status  # Debug: Show the clean working directory state
 
-      # Step 1️⃣: Build the project (NO executeMethod here!)
-      - name: Build Project
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          targetPlatform: StandaloneWindows  # Adjust if needed
-          unityVersion: 2021.3.20f1
-          allowDirtyBuild: true 
-          # customParameters: -restorePackages
+  #     # Step 1️⃣: Build the project (NO executeMethod here!)
+  #     - name: Build Project
+  #       uses: game-ci/unity-builder@v4
+  #       env:
+  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  #         UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+  #       with:
+  #         targetPlatform: StandaloneWindows  # Adjust if needed
+  #         unityVersion: 2021.3.20f1
+  #         allowDirtyBuild: true 
+  #         # customParameters: -restorePackages
 
-      # Step 2️⃣: Run Unity separately to export the .unitypackage
-      - name: Export Unity Package
-        uses: game-ci/unity-builder@v4  # Re-use the builder action to access Unity
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          targetPlatform: NoTarget  # Prevents unnecessary builds
-          unityVersion: 2021.3.20f1
-          allowDirtyBuild: true 
-          customParameters: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
+  #     # Step 2️⃣: Run Unity separately to export the .unitypackage
+  #     - name: Export Unity Package
+  #       uses: game-ci/unity-builder@v4  # Re-use the builder action to access Unity
+  #       env:
+  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  #         UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+  #       with:
+  #         targetPlatform: NoTarget  # Prevents unnecessary builds
+  #         unityVersion: 2021.3.20f1
+  #         allowDirtyBuild: true 
+  #         customParameters: -batchmode -nographics -quit -executeMethod ExportPackage.Run -logFile unity_export.log
 
-      # Step 3️⃣: Upload the .unitypackage file as an artifact
-      - name: Upload Unity Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: RadarUnitySDK.unitypackage
-          path: RadarUnitySDK.unitypackage
+  #     # Step 3️⃣: Upload the .unitypackage file as an artifact
+  #     - name: Upload Unity Package
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: RadarUnitySDK.unitypackage
+  #         path: RadarUnitySDK.unitypackage
 
-      # Step 4️⃣: Commit and push .unitypackage to the main branch
-      - name: Commit and Push .unitypackage
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+  #     # Step 4️⃣: Commit and push .unitypackage to the main branch
+  #     - name: Commit and Push .unitypackage
+  #       run: |
+  #         git config --global user.name "github-actions"
+  #         git config --global user.email "github-actions@github.com"
 
-          git reset --hard HEAD
-          git clean -fd  # Removes untracked files and directories
+  #         git reset --hard HEAD
+  #         git clean -fd  # Removes untracked files and directories
 
-          git fetch origin main
-          git checkout main
-          git pull origin main
+  #         git fetch origin main
+  #         git checkout main
+  #         git pull origin main
 
-          git rm -f RadarUnitySDK.unitypackage || true
-          mv RadarUnitySDK.unitypackage RadarUnitySDK.unitypackage
-          git add -f RadarUnitySDK.unitypackage
+  #         git rm -f RadarUnitySDK.unitypackage || true
+  #         mv RadarUnitySDK.unitypackage RadarUnitySDK.unitypackage
+  #         git add -f RadarUnitySDK.unitypackage
 
-          if git diff --cached --quiet; then
-            echo "No changes to commit. Exiting successfully."
-            exit 0
-          fi
+  #         if git diff --cached --quiet; then
+  #           echo "No changes to commit. Exiting successfully."
+  #           exit 0
+  #         fi
 
-          git commit -m "Updated Unity package [skip ci]"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         git commit -m "Updated Unity package [skip ci]"
+  #         git push origin main
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

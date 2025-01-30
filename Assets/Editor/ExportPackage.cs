@@ -14,7 +14,6 @@ public class ExportPackage
             "Assets/Radar",
             "Assets/Settings",
             "Packages/com.unity.textmeshpro",
-            "Assets/TextMesh Pro"
         };
 
         AssetDatabase.ExportPackage(assetPaths, packagePath, ExportPackageOptions.Recurse);
