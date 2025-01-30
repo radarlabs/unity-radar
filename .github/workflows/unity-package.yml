@@ -36,7 +36,7 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: StandaloneLinux64
-          unityVersion: 2022.3.1f1   # <-- Put your real Unity version here
+          unityVersion: 6000.0.35f1
           customParameters: -executeMethod ExportPackage.Run
 
       # 4. Upload the .unitypackage to the *GitHub Release* that triggered this workflow
