@@ -13,6 +13,7 @@ public class ExportPackage
             "Assets/Plugins",
             "Assets/Radar",
             "Assets/Settings",
+            "Assets/TextMesh Pro",
             "Packages/com.unity.textmeshpro"
         };
 
