@@ -336,7 +336,7 @@ typedef void (^_Nullable RadarLogConversionCompletionHandler)(RadarStatus status
  @see https://radar.com/documentation/sdk/ios#initialize-sdk
  */
 
-+ (void)initializeWithPublishableKey:(NSString *)publishableKey options:(RadarInitializeOptions *)options NS_SWIFT_NAME(initialize(publishableKey:options:));
++ (void)initializeWithPublishableKey:(NSString *_Nonnull)publishableKey options:(RadarInitializeOptions *_Nullable)options NS_SWIFT_NAME(initialize(publishableKey:options:));
 #pragma mark - Properties
 
 /**
@@ -489,11 +489,12 @@ typedef void (^_Nullable RadarLogConversionCompletionHandler)(RadarStatus status
  @warning Note that you must configure SSL pinning before calling this method.
 
  @param beacons A boolean indicating whether to range beacons.
+ @param desiredAccuracy The desired accuracy.
  @param completionHandler An optional completion handler.
 
  @see https://radar.com/documentation/fraud
  */
-+ (void)trackVerifiedWithBeacons:(BOOL)beacons completionHandler:(RadarTrackVerifiedCompletionHandler _Nullable)completionHandler NS_SWIFT_NAME(trackVerified(beacons:completionHandler:));
++ (void)trackVerifiedWithBeacons:(BOOL)beacons desiredAccuracy:(RadarTrackingOptionsDesiredAccuracy)desiredAccuracy completionHandler:(RadarTrackVerifiedCompletionHandler _Nullable)completionHandler NS_SWIFT_NAME(trackVerified(beacons:desiredAccuracy:completionHandler:));
 
 /**
  Starts tracking the user's location with device integrity information for location verification use cases.
@@ -520,6 +521,26 @@ typedef void (^_Nullable RadarLogConversionCompletionHandler)(RadarStatus status
  @see https://radar.com/documentation/fraud
  */
 + (void)getVerifiedLocationToken:(RadarTrackVerifiedCompletionHandler _Nullable)completionHandler NS_SWIFT_NAME(getVerifiedLocationToken(completionHandler:));
+
+/**
+ Returns the user's last verified location token if still valid, or requests a fresh token if not.
+
+ @warning Note that you must configure SSL pinning before calling this method.
+ 
+ @param beacons A boolean indicating whether to range beacons.
+ @param desiredAccuracy The desired accuracy.
+ @param completionHandler An optional completion handler.
+
+ @see https://radar.com/documentation/fraud
+ */
++ (void)getVerifiedLocationTokenWithBeacons:(BOOL)beacons desiredAccuracy:(RadarTrackingOptionsDesiredAccuracy)desiredAccuracy completionHandler:(RadarTrackVerifiedCompletionHandler _Nullable)completionHandler NS_SWIFT_NAME(getVerifiedLocationToken(beacons:desiredAccuracy:completionHandler:));
+
+/**
+ Clears the user's last verified location token.
+
+ @see https://radar.com/documentation/fraud
+ */
++ (void)clearVerifiedLocationToken;
 
 /**
  Optionally sets the user's expected country and state for jurisdiction checks.
@@ -1200,9 +1221,7 @@ typedef void (^_Nullable RadarLogConversionCompletionHandler)(RadarStatus status
 
 /**
  Returns a display string for a travel mode value.
-
  @param mode A travel mode value.
-
  @return A display string for the travel mode value.
  */
 + (NSString *)stringForMode:(RadarRouteMode)mode NS_SWIFT_NAME(stringForMode(_:));
@@ -1230,7 +1249,9 @@ typedef void (^_Nullable RadarLogConversionCompletionHandler)(RadarStatus status
  Performs optional setup for Radar SDK within the AppDelegate. This method only needs to be called if Radar is initalized in cross-platform code.
 
  */
-+ (void)nativeSetup NS_SWIFT_NAME(nativeSetup());
++ (void)nativeSetup:(RadarInitializeOptions *)options NS_SWIFT_NAME(nativeSetup(_:));
+
++ (void)openURLFromNotification:(UNNotification *)notification NS_SWIFT_NAME(openURLFromNotification(_:));
 
 @end
 

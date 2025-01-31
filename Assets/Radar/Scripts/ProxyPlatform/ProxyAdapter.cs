@@ -26,15 +26,12 @@ namespace RadarSDK.ProxyPlatform
 
         public string GetUserID()
         {
-            Debug.Log("ProxyAdapter.GetUserID()");
             return _mockUserId;
         }
 
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
         {
-            Debug.Log("ProxyAdapter.GetVerifiedLocationTokenAsync()");
-
             // Simulate an asynchronous token retrieval
             return Task.Run(() =>
             {
@@ -64,20 +61,17 @@ namespace RadarSDK.ProxyPlatform
 
             // Serialize to JSON using Unity's JsonUtility
             string jsonString = JsonUtility.ToJson(metadata);
-            Debug.Log("ProxyAdapter.SetMetadata() with: " + jsonString);
         }
 
 
         public void SetUserID(string userId)
         {
             _mockUserId = userId;
-            Debug.Log($"ProxyAdapter.SetUserID() with: {userId}");
         }
 
 
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
-            Debug.Log("ProxyAdapter.SetVerifiedReceiver()");
             _onTokenUpdatedCallback = onTokenUpdated;
 
             // Simulate receiving a token update
@@ -99,8 +93,6 @@ namespace RadarSDK.ProxyPlatform
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
-            Debug.Log($"ProxyAdapter.StartTrackingVerifiedAsync() with interval: {interval}, beacons: {beacons}");
-
             // Simulate tracking verified response with mock location data
             var data = new VerifiedLocationData
             {
@@ -115,14 +107,12 @@ namespace RadarSDK.ProxyPlatform
 
         public Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
         {
-            Debug.Log("ProxyAdapter.StopTrackingAsync()");
-
-            // Simulate stopping tracking
+            // Simulate stop tracking
             return Task.FromResult<(RadarStatus, VerifiedLocationData?)>((RadarStatus.SUCCESS, null));
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool _ = false)
+        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
         {
             var data = new VerifiedLocationData
             {

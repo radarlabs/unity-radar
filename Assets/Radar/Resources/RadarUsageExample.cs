@@ -24,12 +24,6 @@ namespace RadarSDK
         }
 
 
-        private async Task TrackVerifiedAsync()
-        {
-            await Radar.TrackVerified();
-        }
-
-
         private async Task StartTrackingVerifiedAsync()
         {
             await Radar.StartTrackingVerified(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
@@ -79,7 +73,6 @@ namespace RadarSDK
                 Debug.LogError("Failed to retrieve verified location token.");
             }
         }
-
 
         private Task<Location?> GetLocation()
         {

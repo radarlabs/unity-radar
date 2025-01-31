@@ -1,22 +1,46 @@
-name: Unity CI
+name: Build project
 
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
+  buildForAllSupportedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        targetPlatform:
+          - iOS # Build an iOS player (requires macOS).
+          - Android # Build an Android .apk standalone app.
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Unity
-        uses: game-ci/unity-builder@v2
+      - uses: actions/checkout@v4
         with:
-          unity-version: '6000.0.24f1'
+          fetch-depth: 0
+          lfs: true
 
-      - name: Activate Unity
-        uses: RageAgainstThePixel/activate-unity-license@v1
+      - uses: actions/cache@v3
         with:
-          license: 'Professional'
-          serial: ${{ secrets.UNITY_SERIAL }}
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
+
+      # Free disk space if Android
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+
+      # Unity Builder Step
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          unityVersion: 6000.0.35f1
+
+      # Upload the build as an artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}

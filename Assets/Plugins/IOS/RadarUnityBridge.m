@@ -1,11 +1,36 @@
-// #import "RadarUnityBridge.h"
 #import <RadarSDK/Radar.h>
+#import <RadarSDK/RadarVerifiedDelegate.h>
 #import <RadarSDK/RadarVerifiedLocationToken.h>
-#import <RadarSDK/CustomVerifiedDelegate.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+    typedef void (*RadarTokenUpdatedCallback)(const char* token, BOOL passed, long expiresAt, int expiresIn);
+
+    // Static variable to store the Unity callback
+    static RadarTokenUpdatedCallback _tokenUpdatedCallback;
+
+    @interface UnityRadarDelegate : NSObject <RadarVerifiedDelegate>
+    @end
+
+    @implementation UnityRadarDelegate
+
+    - (void)didUpdateToken:(RadarVerifiedLocationToken *)token {
+        if (_tokenUpdatedCallback && token) {
+            const char *tokenString = [token.token UTF8String];
+            BOOL passed = token.passed;
+            long expiresAt = [token.expiresAt timeIntervalSince1970] * 1000; // Convert seconds to milliseconds
+            int expiresIn = token.expiresIn;
+            
+            _tokenUpdatedCallback(tokenString, passed, expiresAt, expiresIn);
+        }
+    }
+
+    @end
+
+    static UnityRadarDelegate *unityRadarDelegate;
+
 
     typedef void (*CompletionHandlerPtrOnDict)(int requestId, const char* statusStr, const char* jsonStr);
 
@@ -41,12 +66,29 @@ extern "C" {
     }
 
 
-    void Radar_trackVerifiedWithCompletionHandler(int requestId, CompletionHandlerPtrOnDict handler)
+    void Radar_trackVerifiedWithCompletionHandler(
+        int requestId,
+        CompletionHandlerPtrOnDict handler,
+        const char* desiredAccuracy
+    )
     {
+        NSString *desiredAccuracyStr = [NSString stringWithUTF8String:desiredAccuracy];
+        RadarTrackingOptionsDesiredAccuracy accuracyEnum;
+
+        // Map the string to the corresponding enum value
+        if ([desiredAccuracyStr isEqualToString:@"HIGH"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyHigh;
+        } else if ([desiredAccuracyStr isEqualToString:@"LOW"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyLow;
+        } else {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyMedium; // Default to MEDIUM
+        }
+
         [Radar trackVerifiedWithCompletionHandler:^(RadarStatus status, RadarVerifiedLocationToken * _Nullable token)
         {
             const char *statusStr = [[Radar stringForStatus:status] UTF8String];
             const char *jsonStr = NULL;
+
             if (status == RadarStatusSuccess && token != nil)
             {
                 NSDictionary *dict = [token dictionaryValue];
@@ -62,6 +104,7 @@ extern "C" {
             handler(requestId, statusStr, jsonStr);
         }];
     }
+
 
 
     void Radar_setMetadata(const char* jsonMetadata) {
@@ -117,9 +160,13 @@ extern "C" {
 
 
     void Radar_setVerifiedDelegate(RadarTokenUpdatedCallback callback) {
-        CustomVerifiedDelegate *delegate = [CustomVerifiedDelegate sharedInstance];
-        [delegate setTokenUpdatedCallback:callback];
-        [Radar setVerifiedDelegate:delegate];
+        _tokenUpdatedCallback = callback;
+
+        if (!unityRadarDelegate) {
+            unityRadarDelegate = [[UnityRadarDelegate alloc] init];
+        }
+        
+        [Radar setVerifiedDelegate:unityRadarDelegate];
     }
 
 

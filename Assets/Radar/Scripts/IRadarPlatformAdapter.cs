@@ -19,7 +19,7 @@ namespace RadarSDK
 
         Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync();
 
-        Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false);
+        Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false, string desiredAccuracy = "MEDIUM");
 
         Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons);
 
