@@ -57,3 +57,5 @@ jobs:
           asset_path: "RadarUnitySDK.unitypackage"
           asset_name: "RadarUnitySDK.unitypackage"
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
