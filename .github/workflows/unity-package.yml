@@ -37,7 +37,7 @@ jobs:
           unityVersion: 6000.0.35f1  # ✅ Your correct Unity version
           dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0  # ✅ Set the correct Docker image
           customParameters: >
-            -nographics -quit -logFile unity_export.log
+            -nographics -logFile unity_export.log
             -exportPackage "Assets/ExternalDependencyManager" "Assets/Plugins" "Assets/Radar" "Assets/Settings" "Packages/com.unity.textmeshpro" "RadarUnitySDK.unitypackage"
 
       # 4. Upload the .unitypackage to the GitHub Release
