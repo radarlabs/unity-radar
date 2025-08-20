@@ -30,7 +30,7 @@ namespace RadarSDK.ProxyPlatform
         }
 
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> GetVerifiedLocationTokenAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationTokenAsync()
         {
             // Simulate an asynchronous token retrieval
             return Task.Run(() =>
@@ -43,7 +43,7 @@ namespace RadarSDK.ProxyPlatform
                     user = new User { _id = _mockUserId, fraud = new Fraud { bypassed = true } }
                 };
 
-                return (RadarStatus.SUCCESS, new RadarVerifiedLocationToken?(data));
+                return (RadarStatus.SUCCESS, data);
             });
         }
 
@@ -91,7 +91,7 @@ namespace RadarSDK.ProxyPlatform
         }
 
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
             // Simulate tracking verified response with mock location data
             var data = new RadarVerifiedLocationToken
@@ -101,18 +101,18 @@ namespace RadarSDK.ProxyPlatform
             };
 
             // Returning success status and mock data
-            return Task.FromResult((RadarStatus.SUCCESS, new RadarVerifiedLocationToken?(data)));
+            return Task.FromResult((RadarStatus.SUCCESS, data));
         }
 
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StopTrackingAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StopTrackingAsync()
         {
             // Simulate stop tracking
-            return Task.FromResult<(RadarStatus, RadarVerifiedLocationToken?)>((RadarStatus.SUCCESS, null));
+            return Task.FromResult<(RadarStatus, RadarVerifiedLocationToken)>((RadarStatus.SUCCESS, null));
         }
 
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
         {
             var data = new RadarVerifiedLocationToken
             {
@@ -120,7 +120,7 @@ namespace RadarSDK.ProxyPlatform
                 user = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
             };
 
-            return Task.FromResult((RadarStatus.SUCCESS, new RadarVerifiedLocationToken?(data)));
+            return Task.FromResult((RadarStatus.SUCCESS, data));
         }
     }
 }

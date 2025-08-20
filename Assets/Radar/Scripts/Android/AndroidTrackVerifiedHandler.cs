@@ -12,11 +12,11 @@ namespace RadarSDK.Android
         /// Initializes a new instance of the <see cref="AndroidTrackVerifiedHandler"/> class.
         public AndroidTrackVerifiedHandler() : base("io.radar.sdk.Radar$RadarTrackVerifiedCallback")
         {
-            _currentTcs = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)>();
+            _currentTcs = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)>();
         }
 
-        public Task<(RadarStatus, RadarVerifiedLocationToken?)> CompletionTask => _currentTcs.Task;
-        private readonly TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)> _currentTcs;
+        public Task<(RadarStatus, RadarVerifiedLocationToken)> CompletionTask => _currentTcs.Task;
+        private readonly TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)> _currentTcs;
 
         /// <summary>
         /// Handles the completion of the radar track verification process.

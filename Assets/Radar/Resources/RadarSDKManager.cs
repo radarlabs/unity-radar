@@ -121,7 +121,7 @@ namespace RadarSDKBridge
         }
 
 
-        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)?> GetVerifiedLocationTokenAsync()
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)?> GetVerifiedLocationTokenAsync()
         {
             return await Radar.GetVerifiedLocationToken();
         }

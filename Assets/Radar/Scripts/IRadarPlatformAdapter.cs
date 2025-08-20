@@ -17,12 +17,12 @@ namespace RadarSDK
 
         void GetLocation(Action<Location> onLocationReceived);
 
-        Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> GetVerifiedLocationTokenAsync();
+        Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationTokenAsync();
 
-        Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerifiedAsync(bool beacons = false, string desiredAccuracy = "MEDIUM");
+        Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerifiedAsync(bool beacons = false, string desiredAccuracy = "MEDIUM");
 
-        Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StartTrackingVerifiedAsync(int interval, bool beacons);
+        Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StartTrackingVerifiedAsync(int interval, bool beacons);
 
-        Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StopTrackingAsync();
+        Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StopTrackingAsync();
     }
 }

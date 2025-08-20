@@ -34,14 +34,14 @@ namespace RadarSDK.iOS
             OnResponse?.Invoke((requestId, statusStr, jsonStr));
         }
 
-        private readonly TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)> _currentTcs;
-        public Task<(RadarStatus, RadarVerifiedLocationToken?)> CompletionTask => _currentTcs.Task;
+        private readonly TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)> _currentTcs;
+        public Task<(RadarStatus, RadarVerifiedLocationToken)> CompletionTask => _currentTcs.Task;
         private readonly int _id;
 
         public IosTrackVerifiedHandler(RadarRequestType requestType, string desiredAccuracy = "MEDIUM")
         {
             _id = GetHashCode();
-            _currentTcs = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)>();
+            _currentTcs = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)>();
 
             OnResponse += ResponseReceiveCallback;
 
