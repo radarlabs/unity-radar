@@ -39,8 +39,8 @@ namespace RadarSDK.ProxyPlatform
 
                 var data = new RadarVerifiedLocationToken
                 {
-                    Location = new Location { coordinates = new double[] { _mockLocation.x, _mockLocation.y } },
-                    user = new User { _id = _mockUserId, fraud = new Fraud { bypassed = true } }
+                    Passed = true,
+                    User = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
                 };
 
                 return (RadarStatus.SUCCESS, data);
@@ -96,8 +96,8 @@ namespace RadarSDK.ProxyPlatform
             // Simulate tracking verified response with mock location data
             var data = new RadarVerifiedLocationToken
             {
-                Location = new Location { coordinates = new double[] { _mockLocation.x, _mockLocation.y } },
-                user = new User { _id = _mockUserId, fraud = new Fraud { bypassed = true } }
+                Passed = true,
+                User = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
             };
 
             // Returning success status and mock data
@@ -116,8 +116,8 @@ namespace RadarSDK.ProxyPlatform
         {
             var data = new RadarVerifiedLocationToken
             {
-                Location = new Location { coordinates = new double[] { _mockLocation.x, _mockLocation.y } },
-                user = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
+                Passed = true,
+                User = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
             };
 
             return Task.FromResult((RadarStatus.SUCCESS, data));
