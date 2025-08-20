@@ -30,20 +30,20 @@ namespace RadarSDK.ProxyPlatform
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> GetVerifiedLocationTokenAsync()
         {
             // Simulate an asynchronous token retrieval
             return Task.Run(() =>
             {
                 Task.Delay(1000).Wait(); // Simulate delay
 
-                var data = new VerifiedLocationData
+                var data = new RadarVerifiedLocationToken
                 {
                     Location = new Location { coordinates = new double[] { _mockLocation.x, _mockLocation.y } },
                     user = new User { _id = _mockUserId, fraud = new Fraud { bypassed = true } }
                 };
 
-                return (RadarStatus.SUCCESS, new VerifiedLocationData?(data));
+                return (RadarStatus.SUCCESS, new RadarVerifiedLocationToken?(data));
             });
         }
 
@@ -91,36 +91,36 @@ namespace RadarSDK.ProxyPlatform
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
             // Simulate tracking verified response with mock location data
-            var data = new VerifiedLocationData
+            var data = new RadarVerifiedLocationToken
             {
                 Location = new Location { coordinates = new double[] { _mockLocation.x, _mockLocation.y } },
                 user = new User { _id = _mockUserId, fraud = new Fraud { bypassed = true } }
             };
 
             // Returning success status and mock data
-            return Task.FromResult((RadarStatus.SUCCESS, new VerifiedLocationData?(data)));
+            return Task.FromResult((RadarStatus.SUCCESS, new RadarVerifiedLocationToken?(data)));
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StopTrackingAsync()
         {
             // Simulate stop tracking
-            return Task.FromResult<(RadarStatus, VerifiedLocationData?)>((RadarStatus.SUCCESS, null));
+            return Task.FromResult<(RadarStatus, RadarVerifiedLocationToken?)>((RadarStatus.SUCCESS, null));
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
         {
-            var data = new VerifiedLocationData
+            var data = new RadarVerifiedLocationToken
             {
                 Location = new Location { coordinates = new double[] { _mockLocation.x, _mockLocation.y } },
                 user = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
             };
 
-            return Task.FromResult((RadarStatus.SUCCESS, new VerifiedLocationData?(data)));
+            return Task.FromResult((RadarStatus.SUCCESS, new RadarVerifiedLocationToken?(data)));
         }
     }
 }

@@ -8,8 +8,8 @@ using System.Collections.Generic;
 namespace RadarSDKBridge
 {
     /// <summary>
-    /// Manages the initialization and configuration of the Radar SDK. 
-    /// Loads user-configurable settings from the RadarSettings asset and initializes 
+    /// Manages the initialization and configuration of the Radar SDK.
+    /// Loads user-configurable settings from the RadarSettings asset and initializes
     /// the Radar SDK with the appropriate settings, such as user ID and tracking options.
     /// </summary>
     public static class RadarSDKManager
@@ -60,10 +60,10 @@ namespace RadarSDKBridge
 
         public static string LivePublishableKey
         {
-            get 
-            { 
+            get
+            {
                 if (radarSettings.livePublishableKey == String.Empty) return "prj_live_pk_0000000000000000000000000000000000000000";
-                return radarSettings.livePublishableKey; 
+                return radarSettings.livePublishableKey;
             }
         }
 
@@ -121,7 +121,7 @@ namespace RadarSDKBridge
         }
 
 
-        public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> GetVerifiedLocationTokenAsync()
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)?> GetVerifiedLocationTokenAsync()
         {
             return await Radar.GetVerifiedLocationToken();
         }

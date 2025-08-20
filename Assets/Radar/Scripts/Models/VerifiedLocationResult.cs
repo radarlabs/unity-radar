@@ -8,7 +8,7 @@ namespace RadarSDK
     /// Check out the <a href="https://radar.com/documentation/fraud">fraud documentation</a> for more information.
     /// </summary>
     [System.Serializable]
-    public struct VerifiedLocationData
+    public struct RadarVerifiedLocationToken
     {
         public Location? Location { get; set; }
         /// <summary>

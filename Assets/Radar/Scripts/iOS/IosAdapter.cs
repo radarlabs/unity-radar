@@ -79,7 +79,7 @@ namespace RadarSDK.iOS
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> GetVerifiedLocationTokenAsync()
         {
             return new IosTrackVerifiedHandler(RadarRequestType.GetVerifiedLocationToken).CompletionTask;
         }
@@ -139,26 +139,26 @@ namespace RadarSDK.iOS
         }
 
 
-        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
             Radar_startTrackingVerified(interval, beacons);
             return (RadarStatus.SUCCESS, null); // Placeholder for actual verified location data
         }
 
 
-        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
+        public async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StopTrackingAsync()
         {
             Radar_stopTrackingVerified();
             return (RadarStatus.SUCCESS, null);
         }
 
 
-        // public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false)
+        // public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerifiedAsync(bool beacons = false)
         // {
         //     return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
         // }
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerifiedAsync(
             bool beacons = false,
             string desiredAccuracy = "MEDIUM")
         {

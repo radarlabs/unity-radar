@@ -70,7 +70,7 @@ namespace RadarSDKBridge
         private void OnValidate()
         {
             ResetImagesToRed();
-            var a = JsonUtility.ToJson(new VerifiedLocationData());
+            var a = JsonUtility.ToJson(new RadarVerifiedLocationToken());
             var b = JsonFormatter.FormatJson(a, _colors);
             _jsonText.text = b;
         }
@@ -119,7 +119,7 @@ namespace RadarSDKBridge
                         "android.permission.BLUETOOTH_CONNECT",
                         "android.permission.BLUETOOTH_SCAN"
                     };
-                    
+
                     currentActivity.Call("requestPermissions", new object[] { permissions, 1001 });
                 }
             #endif
@@ -296,7 +296,7 @@ namespace RadarSDKBridge
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
             StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
 
-            _onTokenUpdatedTempText = "...";            
+            _onTokenUpdatedTempText = "...";
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -339,8 +339,8 @@ namespace RadarSDKBridge
 
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
             StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
-            
-            _onTokenUpdatedTempText = "...";            
+
+            _onTokenUpdatedTempText = "...";
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
             await Radar.StartTrackingVerified(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
@@ -435,7 +435,7 @@ namespace RadarSDKBridge
         {
             callbacksTotal += 1;
             _onTokenUpdatedTempText = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
-            
+
             LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
         }
 

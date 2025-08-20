@@ -87,8 +87,8 @@ namespace RadarSDK.Android
         }
 
 
-        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(
-            bool beacons = false, 
+        public async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerifiedAsync(
+            bool beacons = false,
             string desiredAccuracy = "MEDIUM")
         {
             // Instantiate AndroidTrackVerifiedHandler to handle the callback
@@ -111,9 +111,9 @@ namespace RadarSDK.Android
 
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
         {
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
+            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)>();
 
             // Create a callback proxy to handle the completion
             var callbackProxy = new RadarVerifiedLocationCallbackProxy((status, locationData) =>
@@ -126,9 +126,9 @@ namespace RadarSDK.Android
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> StopTrackingAsync()
         {
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
+            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)>();
 
             // Call stopTracking on the Radar SDK
             _instance.CallStatic("stopTracking");
@@ -138,10 +138,10 @@ namespace RadarSDK.Android
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> GetVerifiedLocationTokenAsync()
         {
             // Create a TaskCompletionSource to return a Task
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
+            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken?)>();
 
             // Create an instance of the RadarVerifiedLocationCallbackProxy, passing the callback
             var callbackProxy = new RadarVerifiedLocationCallbackProxy((status, locationData) =>
@@ -179,9 +179,9 @@ namespace RadarSDK.Android
 
     public class RadarVerifiedLocationCallbackProxy : AndroidJavaProxy
     {
-        private readonly Action<RadarStatus, VerifiedLocationData?> _onComplete;
+        private readonly Action<RadarStatus, RadarVerifiedLocationToken?> _onComplete;
 
-        public RadarVerifiedLocationCallbackProxy(Action<RadarStatus, VerifiedLocationData?> onComplete)
+        public RadarVerifiedLocationCallbackProxy(Action<RadarStatus, RadarVerifiedLocationToken?> onComplete)
             : base("io.radar.sdk.Radar$RadarTrackVerifiedCallback")
         {
             _onComplete = onComplete;
@@ -192,20 +192,20 @@ namespace RadarSDK.Android
         {
             // Convert Java objects to C# types
             RadarStatus radarStatus = (RadarStatus)status.Call<int>("ordinal");
-            VerifiedLocationData? verifiedLocationToken = null;
+            RadarVerifiedLocationToken? verifiedLocationToken = null;
 
             if (token != null)
             {
                 // Retrieve and convert token data from Java to C#
 
-                verifiedLocationToken = new VerifiedLocationData
+                verifiedLocationToken = new RadarVerifiedLocationToken
                 {
                     passed = token.Call<bool>("getPassed"),
                     token = token.Call<string>("getToken"),
                     expiresIn = token.Call<int>("getExpiresIn")
                 };
-                
-                // Convert the VerifiedLocationData to JSON format
+
+                // Convert the RadarVerifiedLocationToken to JSON format
                 var json = JsonUtility.ToJson(verifiedLocationToken);
             }
             else

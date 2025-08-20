@@ -19,7 +19,7 @@ namespace RadarSDK
         public static Queue<System.Action> _mainThreadActions = new Queue<System.Action>();
 
         private static IRadarPlatformAdapter _platformAdapter;
-        private static Task<(RadarStatus Status, VerifiedLocationData? Data)> _cachedTrackVerifiedTask;
+        private static Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> _cachedTrackVerifiedTask;
         public static bool Initialized { get; private set; }
         public static ClientSettings Settings { get; private set; }
         #endregion
@@ -27,7 +27,7 @@ namespace RadarSDK
 
         /// <summary>
         /// Initializes the Radar SDK. Call this method from the main thread before calling any other Radar methods.
-        /// Check out <a href="https://radar.com/documentation/sdk/android#foreground-tracking">Android</a>, 
+        /// Check out <a href="https://radar.com/documentation/sdk/android#foreground-tracking">Android</a>,
         /// and <a href="https://radar.com/documentation/sdk/ios#foreground-tracking">iOS</a> for more details.
         /// </summary>
         /// <param name="publishableKey">The publishable key for the Radar SDK.</param>
@@ -76,7 +76,7 @@ namespace RadarSDK
 
         /// <summary>
         /// Identifies the user. Until you identify the user, Radar will automatically identify the user by `deviceId`.
-        /// Check out <a href="https://radar.com/documentation/sdk/android#identify-user">Android</a>, 
+        /// Check out <a href="https://radar.com/documentation/sdk/android#identify-user">Android</a>,
         /// and <a href="https://radar.com/documentation/sdk/ios#identify-user">iOS</a> for more details.
         /// </summary>
         /// <param name="userId">The user ID to be set for the Radar SDK.</param>
@@ -149,8 +149,8 @@ namespace RadarSDK
         /// </remarks>
         /// <param name="token">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <param name="beacons">A boolean indicating whether to range beacons.</param>
-        /// <returns>A Task that returns a tuple containing the RadarStatus and VerifiedLocationData.</returns>
-        public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> TrackVerified()
+        /// <returns>A Task that returns a tuple containing the RadarStatus and RadarVerifiedLocationToken.</returns>
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)?> TrackVerified()
         {
             try
             {
@@ -160,7 +160,7 @@ namespace RadarSDK
                     return await _cachedTrackVerifiedTask;
                 }
                 var track = TrackVerified_Internal();
-                var timeOut = DefaultOnTimeOut<(RadarStatus Status, VerifiedLocationData? Data)>(TIMEOUT_INTERVAL); // Timeout if there's an issue
+                var timeOut = DefaultOnTimeOut<(RadarStatus Status, RadarVerifiedLocationToken? Data)>(TIMEOUT_INTERVAL); // Timeout if there's an issue
                 _cachedTrackVerifiedTask = Task.WhenAny(track, timeOut).ContinueWith(t => t.Result.Result);
                 var completedTask = await _cachedTrackVerifiedTask;
                 _cachedTrackVerifiedTask = null;
@@ -175,7 +175,7 @@ namespace RadarSDK
         }
 
 
-        private static async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
+        private static async Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> TrackVerified_Internal(
             bool beacons = false)
         {
             CheckInitializedOrThrow();
@@ -204,7 +204,7 @@ namespace RadarSDK
         }
 
 
-        public static Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationToken()
+        public static Task<(RadarStatus Status, RadarVerifiedLocationToken? Data)> GetVerifiedLocationToken()
         {
             try
             {
