@@ -1,3 +1,6 @@
+using UnityEngine;
+using System.Collections.Generic;
+
 namespace RadarSDK
 {
     /// <summary>
