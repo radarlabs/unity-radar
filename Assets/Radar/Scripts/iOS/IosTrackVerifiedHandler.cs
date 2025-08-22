@@ -38,7 +38,7 @@ namespace RadarSDK.iOS
         public Task<(RadarStatus, RadarVerifiedLocationToken)> CompletionTask => _currentTcs.Task;
         private readonly int _id;
 
-        public IosTrackVerifiedHandler(RadarRequestType requestType, string desiredAccuracy = "MEDIUM")
+        public IosTrackVerifiedHandler(RadarRequestType requestType, RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
             _id = GetHashCode();
             _currentTcs = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)>();
@@ -46,7 +46,7 @@ namespace RadarSDK.iOS
             OnResponse += ResponseReceiveCallback;
 
             // Call the native function with the additional desiredAccuracy parameter
-            Radar_trackVerifiedWithCompletionHandler(_id, TrackVerifiedResponseCallback, desiredAccuracy);
+            Radar_trackVerifiedWithCompletionHandler(_id, TrackVerifiedResponseCallback, desiredAccuracy.ToString().ToUpper());
         }
 
         private void ResponseReceiveCallback((int requestId, string statusStr, string jsonStr) response)

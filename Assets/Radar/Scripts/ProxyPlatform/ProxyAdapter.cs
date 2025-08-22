@@ -1,74 +1,54 @@
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace RadarSDK.ProxyPlatform
 {
     public class ProxyAdapter : IRadarPlatformAdapter
     {
-        private Vector2 _mockLocation = new Vector2(40.7128f, -74.0060f);
+        private static RadarLocation _mockLocation = new RadarLocation { Latitude = 40.7128f, Longitude = -74.0060f };
+        private static RadarUser _mockUser = new RadarUser { _id = "proxy_id", fraud = new RadarFraud { bypassed = true } };
+        private static RadarVerifiedLocationToken _mockToken = new RadarVerifiedLocationToken
+        {
+            Passed = true,
+            Token = "mock_verified_token",
+            ExpiresAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 60000, // 1 minute from now
+            ExpiresIn = 60
+        };
+
         private string _mockUserId = "proxy_user_id";
-        private MetadataContainer _mockMetadata;
+        private Dictionary<string, object> _mockMetadata;
         private Action<RadarVerifiedLocationToken> _onTokenUpdatedCallback;
 
-
-
-        public void GetLocation(Action<Location> onLocationReceived)
+        public string UserId
         {
-            Location mockLocation = new Location
-            {
-                coordinates = new double[] { _mockLocation.x, _mockLocation.y }
-            };
-
-            onLocationReceived?.Invoke(mockLocation);
+            get => _mockUserId;
+            set => _mockUserId = value;
         }
 
-
-        public string GetUserID()
+        public Dictionary<string, object> Metadata
         {
-            return _mockUserId;
+            get => _mockMetadata ?? new Dictionary<string, object>();
+            set => _mockMetadata = value;
         }
 
-
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationTokenAsync()
+        public async Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation()
         {
-            // Simulate an asynchronous token retrieval
-            return Task.Run(() =>
-            {
-                Task.Delay(1000).Wait(); // Simulate delay
-
-                var data = new RadarVerifiedLocationToken
-                {
-                    Passed = true,
-                    User = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
-                };
-
-                return (RadarStatus.SUCCESS, data);
-            });
+            await Task.Delay(1000); // Simulate delay
+            return (RadarStatus.SUCCESS, _mockLocation, false);
         }
 
+        public async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationToken()
+        {
+            await Task.Delay(1000); // Simulate delay
+            return (RadarStatus.SUCCESS, _mockToken);
+        }
 
         public void Initialize(string _)
         {
             Debug.Log("Radar Proxy Adapter Initialized");
         }
-
-
-        public void SetMetadata(MetadataContainer metadata)
-        {
-            // Store the metadata locally for mocking purposes
-            _mockMetadata = metadata;
-
-            // Serialize to JSON using Unity's JsonUtility
-            string jsonString = JsonUtility.ToJson(metadata);
-        }
-
-
-        public void SetUserID(string userId)
-        {
-            _mockUserId = userId;
-        }
-
 
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
@@ -78,49 +58,17 @@ namespace RadarSDK.ProxyPlatform
             Task.Run(async () =>
             {
                 await Task.Delay(2000); // Simulate delay
-                var token = new RadarVerifiedLocationToken
-                {
-                    Passed = true,
-                    Token = "mock_verified_token",
-                    ExpiresAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 60000, // 1 minute from now
-                    ExpiresIn = 60
-                };
-
-                _onTokenUpdatedCallback?.Invoke(token);
+                _onTokenUpdatedCallback?.Invoke(_mockToken);
             });
         }
 
+        public void StartTrackingVerified(int interval, bool beacons) { }
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public void StopTrackingVerified() { }
+
+        public async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(bool _ = false, RadarTrackingOptionsDesiredAccuracy __ = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
-            // Simulate tracking verified response with mock location data
-            var data = new RadarVerifiedLocationToken
-            {
-                Passed = true,
-                User = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
-            };
-
-            // Returning success status and mock data
-            return Task.FromResult((RadarStatus.SUCCESS, data));
-        }
-
-
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StopTrackingAsync()
-        {
-            // Simulate stop tracking
-            return Task.FromResult<(RadarStatus, RadarVerifiedLocationToken)>((RadarStatus.SUCCESS, null));
-        }
-
-
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerifiedAsync(bool _ = false, string desiredAccuracy = "MEDIUM")
-        {
-            var data = new RadarVerifiedLocationToken
-            {
-                Passed = true,
-                User = new User { _id = "proxy_id", fraud = new Fraud { bypassed = true } }
-            };
-
-            return Task.FromResult((RadarStatus.SUCCESS, data));
+            return (RadarStatus.SUCCESS, _mockToken);
         }
     }
 }

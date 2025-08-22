@@ -26,7 +26,7 @@ namespace RadarSDKBridge
 
         public static bool AddUserIdExtension
         {
-            get { return radarSettings != null ? radarSettings.addUserIdExtension : true;}
+            get { return radarSettings != null ? radarSettings.addUserIdExtension : true; }
         }
 
         public static bool IsDebuggingEnabled
@@ -67,10 +67,10 @@ namespace RadarSDKBridge
             }
         }
 
-        public static MetadataContainer Metadata
-        {
-            get { return radarSettings != null ? radarSettings.metadata : null; }
-        }
+        // public static Dictionary<string, object> Metadata
+        // {
+        //     get { return radarSettings != null ? radarSettings.metadata.ToDictionary() : null; }
+        // }
 
         public static int TrackingInterval
         {
@@ -95,16 +95,12 @@ namespace RadarSDKBridge
         #region Coroutine Wrappers
         // Coroutine wrappers for asynchronous methods
 
-        public static IEnumerator Initialize()
+        public static void Initialize()
         {
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
             LogManager.Instance.SetLogConsole(IsDebuggingEnabled);
             RadarErrorHandler.InitializeErrorHandling();
-            var task = InitializeAsync();
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
+            Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
         }
 
         #endregion
@@ -112,13 +108,6 @@ namespace RadarSDKBridge
 
         #region Async Methods
         // Async versions of the methods
-
-        public static async Task InitializeAsync()
-        {
-            await Task.Run(() => {
-                Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
-            });
-        }
 
 
         public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)?> GetVerifiedLocationTokenAsync()

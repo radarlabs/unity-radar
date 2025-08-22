@@ -7,7 +7,7 @@ namespace RadarSDK
     [System.Serializable]
     public class RadarVerifiedLocationToken
     {
-        public User User;
+        public RadarUser User;
         public bool Passed { get; set; }
         public string Token { get; set; }
         public long ExpiresAt { get; set; }

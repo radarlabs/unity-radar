@@ -16,7 +16,7 @@ namespace RadarSDK.iOS
     {
         #region Variables
         private delegate void RadarTokenUpdatedCallback(IntPtr token, bool passed, long expiresAt, int expiresIn);
-        private delegate void RadarLocationCallback(double latitude, double longitude, int callbackId);
+        private delegate void RadarLocationCallback(string status, double latitude, double longitude, bool stopped, int callbackId);
 
 
         // Store the callback action to invoke later
@@ -46,7 +46,7 @@ namespace RadarSDK.iOS
         [DllImport("__Internal")]
         private static extern void Radar_getLocation(RadarLocationCallback callback);
 
-        private static Dictionary<int, Action<Location>> locationCallbacks = new Dictionary<int, Action<Location>>();
+        private static Dictionary<int, TaskCompletionSource<(RadarStatus, RadarLocation, bool)>> locationCallbacks = new Dictionary<int, TaskCompletionSource<(RadarStatus, RadarLocation, bool)>>();
         private static int currentCallbackId = 0;
 
         // P/Invoke for the native getLocation method with the callbackId
@@ -66,40 +66,21 @@ namespace RadarSDK.iOS
             Radar_initializeWithPublishableKey(publishableKey);
         }
 
-
-        public string GetUserID()
+        public string UserId
         {
-            string userId = Radar_getUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                LogManager.Instance.Log("User ID not set or unavailable.", LogType.Warning);
-                return null;
-            }
-            return userId;
+            get => Radar_getUserId();
+            set => Radar_setUserId(value);
+        }
+
+        public Dictionary<string, object> Metadata
+        {
+            set => Radar_setMetadata(JsonUtility.ToJson(value));
         }
 
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationTokenAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationToken()
         {
             return new IosTrackVerifiedHandler(RadarRequestType.GetVerifiedLocationToken).CompletionTask;
-        }
-
-
-        public void SetMetadata(MetadataContainer metadata)
-        {
-            string metadataJson = JsonUtility.ToJson(metadata);
-            Radar_setMetadata(metadataJson);
-        }
-
-
-        public void SetUserID(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                LogManager.Instance.Log("User ID is null or empty. Skipping SetUserID.", LogType.Warning);
-                return;
-            }
-            Radar_setUserId(userId);
         }
 
 
@@ -139,17 +120,15 @@ namespace RadarSDK.iOS
         }
 
 
-        public async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public void StartTrackingVerified(int interval, bool beacons)
         {
             Radar_startTrackingVerified(interval, beacons);
-            return (RadarStatus.SUCCESS, null); // Placeholder for actual verified location data
         }
 
 
-        public async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> StopTrackingAsync()
+        public void StopTrackingVerified()
         {
             Radar_stopTrackingVerified();
-            return (RadarStatus.SUCCESS, null);
         }
 
 
@@ -158,9 +137,9 @@ namespace RadarSDK.iOS
         //     return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
         // }
 
-        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerifiedAsync(
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(
             bool beacons = false,
-            string desiredAccuracy = "MEDIUM")
+            RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
             return new IosTrackVerifiedHandler(
                 RadarRequestType.TrackVerified,
@@ -169,42 +148,37 @@ namespace RadarSDK.iOS
         }
 
 
-        public void GetLocation(Action<Location> onLocationReceived)
+        public Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation()
         {
             // Increment the callback ID and store the callback in the dictionary
             int callbackId = currentCallbackId++;
-            locationCallbacks[callbackId] = onLocationReceived;
+            var tsc = new TaskCompletionSource<(RadarStatus, RadarLocation, bool)>();
+            locationCallbacks[callbackId] = tsc;
 
             // Call the native method with the static callback and the callbackId
             Radar_getLocation(OnLocationUpdated, callbackId);
+
+            return tsc.Task;
         }
 
         // Static method that will be called by native code when location is received
         [AOT.MonoPInvokeCallback(typeof(RadarLocationCallback))]
-        private static void OnLocationUpdated(double latitude, double longitude, int callbackId)
+        private static void OnLocationUpdated(string statusStr, double latitude, double longitude, bool stopped, int callbackId)
         {
             // Check if valid coordinates were received
-            if (locationCallbacks.TryGetValue(callbackId, out var callback))
+            if (locationCallbacks.TryGetValue(callbackId, out var tsc))
             {
-                if (Location.IsValidLocation(latitude, longitude))
+                var status = Utils.StatusStringToEnum(statusStr);
+                RadarLocation location = null;
+                if (status == RadarStatus.SUCCESS)
                 {
-                    // Create a Location struct to pass the location back to Unity
-                    var location = new Location
+                    location = new RadarLocation
                     {
-                        type = "Point",
-                        coordinates = new double[] { longitude, latitude }
+                        Latitude = latitude,
+                        Longitude = longitude
                     };
-
-                    // Invoke the C# callback with the location
-                    callback?.Invoke(location);
                 }
-                else
-                {
-                    // Handle location failure
-                    LogManager.Instance.Log("Failed to get location", LogType.Error);
-                    callback?.Invoke(default);
-                }
-                // Remove the callback from the dictionary once it's invoked
+                tsc.TrySetResult((status, location, stopped));
                 locationCallbacks.Remove(callbackId);
             }
         }

@@ -22,7 +22,7 @@ extern "C" {
             BOOL passed = token.passed;
             long expiresAt = [token.expiresAt timeIntervalSince1970] * 1000; // Convert seconds to milliseconds
             int expiresIn = token.expiresIn;
-            
+
             _tokenUpdatedCallback(tokenString, passed, expiresAt, expiresIn);
         }
     }
@@ -38,7 +38,7 @@ extern "C" {
     void Radar_initializeWithPublishableKey(const char* publishableKey) {
         [Radar initializeWithPublishableKey:[NSString stringWithUTF8String:publishableKey]];
     }
-    
+
 
     void Radar_setUserId(const char* userId) {
         [Radar setUserId:[NSString stringWithUTF8String:userId]];
@@ -105,7 +105,19 @@ extern "C" {
         }];
     }
 
-
+    // string Radar_getMetadata() {
+    //     NSDictionary *metadata = [Radar getMetadata];
+    //     if (metadata == nil) {
+    //         return NULL;
+    //     }
+    //     NSError *error;
+    //     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:metadata options:0 error:&error];
+    //     if (error) {
+    //         return NULL;
+    //     }
+    //     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    //     return [jsonString UTF8String];
+    // }
 
     void Radar_setMetadata(const char* jsonMetadata) {
         NSString *metadataStr = [NSString stringWithUTF8String:jsonMetadata];
@@ -165,21 +177,22 @@ extern "C" {
         if (!unityRadarDelegate) {
             unityRadarDelegate = [[UnityRadarDelegate alloc] init];
         }
-        
+
         [Radar setVerifiedDelegate:unityRadarDelegate];
     }
 
 
-    typedef void (*RadarLocationCallback)(double latitude, double longitude, int callbackId);
-
+    typedef void (*RadarLocationCallback)(const char* status, double latitude, double longitude, bool stopped, int callbackId);
     void Radar_getLocation(RadarLocationCallback callback, int callbackId) {
         [Radar getLocationWithCompletionHandler:^(RadarStatus status, CLLocation * _Nullable location, BOOL stopped) {
-            if (status == RadarStatusSuccess && location) {
+            const char *statusStr = [[Radar stringForStatus:status] UTF8String];
+            const BOOL stoppedBool = stopped;
+            if (status == RadarStatusSuccess) {
                 double latitude = location.coordinate.latitude;
                 double longitude = location.coordinate.longitude;
-                callback(latitude, longitude, callbackId);  // Pass the callbackId
+                callback(statusStr, latitude, longitude, stoppedBool, callbackId);
             } else {
-                callback(-91, -181, callbackId);  // Pass invalid coordinates and callbackId on failure
+                callback(statusStr, 0, 0, false, callbackId);  // Pass invalid coordinates and callbackId on failure
             }
         }];
     }

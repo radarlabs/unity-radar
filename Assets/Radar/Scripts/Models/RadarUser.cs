@@ -5,7 +5,7 @@ namespace RadarSDK
     /// Check out the <a href="https://radar.com/documentation">documentation</a> for more information.
     /// </summary>
     [System.Serializable]
-    public struct User
+    public struct RadarUser
     {
         /// <summary>
         /// The Radar ID of the user.
@@ -25,7 +25,7 @@ namespace RadarSDK
         /// <summary>
         /// The user's current location.
         /// </summary>
-        public Location location;
+        public RadarLocation location;
 
         /// <summary>
         /// A boolean indicating whether the user is stopped.
@@ -40,12 +40,12 @@ namespace RadarSDK
         /// <summary>
         /// The user's current country. May be `null` if the country is not available or if Regions is not enabled.
         /// </summary>
-        public Region country;
+        public RadarRegion country;
 
         /// <summary>
         /// The user's current state. May be `null` if the state is not available or if Regions is not enabled. See <a href="https://radar.com/documentation/regions">regions documentation</a> for more information.
         /// </summary>
-        public Region state;
+        public RadarRegion state;
 
         /// <summary>
         /// The source of the user's current location.
@@ -60,7 +60,7 @@ namespace RadarSDK
         /// <summary>
         /// The user's current fraud state. May be `null` if fraud detection is not enabled.
         /// </summary>
-        public Fraud fraud;
+        public RadarFraud fraud;
 
         // The commented out fields are not currently in use.
         // Prefer to leave them commented out due to case sensitivity.
