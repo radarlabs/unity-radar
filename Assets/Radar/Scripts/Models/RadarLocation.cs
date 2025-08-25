@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace RadarSDK
 {
     /// <summary>
@@ -7,7 +9,9 @@ namespace RadarSDK
     [System.Serializable]
     public class RadarLocation
     {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        [SerializeField] private double[] coordinates = new double[2]; // [longitude, latitude]
+
+        public double Latitude { get => coordinates[1]; set => coordinates[1] = value; }
+        public double Longitude { get => coordinates[0]; set => coordinates[0] = value; }
     }
 }

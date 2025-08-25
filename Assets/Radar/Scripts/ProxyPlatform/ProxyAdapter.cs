@@ -8,12 +8,12 @@ namespace RadarSDK.ProxyPlatform
     public class ProxyAdapter : IRadarPlatformAdapter
     {
         private static RadarLocation _mockLocation = new RadarLocation { Latitude = 40.7128f, Longitude = -74.0060f };
-        private static RadarUser _mockUser = new RadarUser { _id = "proxy_id", fraud = new RadarFraud { bypassed = true } };
+        private static RadarUser _mockUser = new RadarUser { Id = "proxy_id", Fraud = new RadarFraud { Bypassed = true } };
         private static RadarVerifiedLocationToken _mockToken = new RadarVerifiedLocationToken
         {
             Passed = true,
             Token = "mock_verified_token",
-            ExpiresAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 60000, // 1 minute from now
+            ExpiresAt = DateTime.Now.AddMinutes(1),
             ExpiresIn = 60
         };
 

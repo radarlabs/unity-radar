@@ -15,7 +15,7 @@ namespace RadarSDK.iOS
     public class IosAdapter : IRadarPlatformAdapter
     {
         #region Variables
-        private delegate void RadarTokenUpdatedCallback(IntPtr token, bool passed, long expiresAt, int expiresIn);
+        private delegate void RadarTokenUpdatedCallback(string jsonData);
         private delegate void RadarLocationCallback(string status, double latitude, double longitude, bool stopped, int callbackId);
 
 
@@ -84,13 +84,6 @@ namespace RadarSDK.iOS
         }
 
 
-        public void OnTokenUpdated(string token) // This function will be called by UnitySendMessage from iOS
-        {
-            LogManager.Instance.Log("Received verified token: " + token, LogType.Attention);
-            // Handle the token as needed
-        }
-
-
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
             _onTokenUpdated = onTokenUpdated;
@@ -101,19 +94,10 @@ namespace RadarSDK.iOS
 
         // This function will be called by the native code
         [AOT.MonoPInvokeCallback(typeof(RadarTokenUpdatedCallback))]
-        private static void OnTokenUpdated(IntPtr tokenPtr, bool passed, long expiresAt, int expiresIn)
+        private static void OnTokenUpdated(string jsonData)
         {
-            // Convert the IntPtr to a string (token)
-            string token = Marshal.PtrToStringAnsi(tokenPtr);
-
-            // Create a new RadarVerifiedLocationToken object and populate it with the received data
-            var verifiedLocationToken = new RadarVerifiedLocationToken
-            {
-                Passed = passed,
-                Token = token,
-                ExpiresAt = expiresAt, // Unix timestamp (milliseconds)
-                ExpiresIn = expiresIn
-            };
+            // Deserialize the JSON data to a RadarVerifiedLocationToken object
+            var verifiedLocationToken = JsonUtility.FromJson<RadarVerifiedLocationToken>(jsonData);
 
             // Call the C# callback action
             _onTokenUpdated?.Invoke(verifiedLocationToken);
@@ -131,11 +115,6 @@ namespace RadarSDK.iOS
             Radar_stopTrackingVerified();
         }
 
-
-        // public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerifiedAsync(bool beacons = false)
-        // {
-        //     return new IosTrackVerifiedHandler(RadarRequestType.TrackVerified).CompletionTask;
-        // }
 
         public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(
             bool beacons = false,

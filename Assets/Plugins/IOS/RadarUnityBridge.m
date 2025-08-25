@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-    typedef void (*RadarTokenUpdatedCallback)(const char* token, BOOL passed, long expiresAt, int expiresIn);
+    typedef void (*RadarTokenUpdatedCallback)(const char* jsonData);
 
     // Static variable to store the Unity callback
     static RadarTokenUpdatedCallback _tokenUpdatedCallback;
@@ -18,12 +18,13 @@ extern "C" {
 
     - (void)didUpdateToken:(RadarVerifiedLocationToken *)token {
         if (_tokenUpdatedCallback && token) {
-            const char *tokenString = [token.token UTF8String];
-            BOOL passed = token.passed;
-            long expiresAt = [token.expiresAt timeIntervalSince1970] * 1000; // Convert seconds to milliseconds
-            int expiresIn = token.expiresIn;
-
-            _tokenUpdatedCallback(tokenString, passed, expiresAt, expiresIn);
+            NSDictionary *dict = [token dictionaryValue];
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
+            if (!error) {
+                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                _tokenUpdatedCallback([jsonString UTF8String]);
+            }
         }
     }
 

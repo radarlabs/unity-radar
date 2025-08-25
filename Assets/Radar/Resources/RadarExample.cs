@@ -273,14 +273,15 @@ namespace RadarSDKBridge
             var track = await Radar.TrackVerified();
             if (track != null)
             {
-                if (track.Value.Status == RadarStatus.SUCCESS)
+                var (status, token) = track.Value;
+                if (status == RadarStatus.SUCCESS)
                 {
-                    var json = JsonUtility.ToJson(track.Value.Data);
+                    var json = JsonUtility.ToJson(token);
                     _jsonText.text = JsonFormatter.FormatJson(json, _colors);
                     SetImageColor(_trackVerifiedImage, _greenColor); // Task completed successfully
                 }
 
-                _statusText.text = $"Status:{track.Value.Status}";
+                _statusText.text = $"Status:{status}";
             }
             else
             {

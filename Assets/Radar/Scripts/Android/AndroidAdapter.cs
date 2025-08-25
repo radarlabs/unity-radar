@@ -109,7 +109,7 @@ namespace RadarSDK.Android
 
         public void StopTrackingVerified()
         {
-            _instance.CallStatic("stopTracking");
+            _instance.CallStatic("stopTrackingVerified");
         }
 
 
@@ -239,8 +239,8 @@ namespace RadarSDK.Android
             {
                 Passed = token.Call<bool>("getPassed"),
                 Token = token.Call<string>("getToken"),
-                ExpiresAt = expiresAt, // Use the converted Unix timestamp
-                ExpiresIn = expiresIn // Retrieve as int
+                ExpiresAt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(expiresAt),
+                ExpiresIn = expiresIn
             };
             _onTokenUpdated?.Invoke(verifiedLocationToken);
         }
