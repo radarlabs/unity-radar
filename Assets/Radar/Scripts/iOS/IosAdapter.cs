@@ -66,6 +66,11 @@ namespace RadarSDK.iOS
             Radar_initializeWithPublishableKey(publishableKey);
         }
 
+        public void RequestLocationPermissions()
+        {
+            Input.location.Start();
+        }
+
         public string UserId
         {
             get => Radar_getUserId();

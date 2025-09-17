@@ -50,6 +50,11 @@ namespace RadarSDK.ProxyPlatform
             Debug.Log("Radar Proxy Adapter Initialized");
         }
 
+        public void RequestLocationPermissions()
+        {
+            Debug.Log("Radar Proxy Adapter Requesting Location Permissions");
+        }
+
         public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
         {
             _onTokenUpdatedCallback = onTokenUpdated;

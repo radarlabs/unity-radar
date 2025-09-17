@@ -46,6 +46,10 @@ namespace RadarSDK
             LogManager.Instance.Log($"Radar Initialization Completed");
         }
 
+        public static void RequestLocationPermissions() 
+        {
+            _platformAdapter.RequestLocationPermissions();
+        }
 
         public static string UserId
         {

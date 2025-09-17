@@ -100,6 +100,7 @@ namespace RadarSDKBridge
 #else
             Radar.SetVerifiedReceiver(OnTokenUpdated);
 #endif
+            Radar.RequestLocationPermissions();
             LogManager.Instance.Log("RadarInitializeExample Completed", LogType.Log);
         }
 

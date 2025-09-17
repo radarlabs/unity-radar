@@ -59,8 +59,15 @@ namespace RadarSDK.Android
         }
 
 
+        public void RequestLocationPermissions()
+        {
+            UnityEngine.Android.Permission.RequestUserPermission(UnityEngine.Android.Permission.FineLocation);
+        }
+
+
         public Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation()
         {
+
             var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarLocation, bool)>();
 
             // Create a callback proxy to handle the completion

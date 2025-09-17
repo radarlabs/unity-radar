@@ -10,6 +10,7 @@ namespace RadarSDK
         Dictionary<string, object> Metadata { /*get;*/ set; }
 
         void Initialize(string publishableKey);
+        void RequestLocationPermissions();
 
         void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated);
         Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation();
