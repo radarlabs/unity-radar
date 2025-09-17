@@ -39,7 +39,7 @@ jobs:
           dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0
           customParameters: >
             -nographics -logFile unity_export.log -ignoreCompilerErrors
-            -exportPackage "Assets/ExternalDependencyManager" "Assets/Plugins" "Assets/Radar" "Assets/Settings" "Packages/com.unity.textmeshpro" "RadarUnitySDK.unitypackage"
+            -exportPackage "Assets/ExternalDependencyManager" "Assets/Plugins" "Assets/Radar" "Assets/Settings" "RadarUnitySDK.unitypackage"
 
       # 6. Upload the .unitypackage to the GitHub Release
       - name: Upload release asset

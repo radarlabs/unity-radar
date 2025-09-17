@@ -36,6 +36,7 @@ public static class JsonFormatter
                     stringBuilder.Append(character);
                     if (!inQuotes)
                     {
+                        stringBuilder.Append("</color>");
                         stringBuilder.AppendLine();
                         stringBuilder.Append(getIndentationString(++indentation));
                     }
@@ -45,6 +46,7 @@ public static class JsonFormatter
                 case ']':
                     if (!inQuotes)
                     {
+                        stringBuilder.Append("</color>");
                         stringBuilder.AppendLine();
                         stringBuilder.Append(getIndentationString(--indentation));
                     }
@@ -65,6 +67,7 @@ public static class JsonFormatter
                     stringBuilder.Append(character);
                     if (!inQuotes)
                     {
+                        stringBuilder.Append("</color>");
                         stringBuilder.AppendLine();
                         stringBuilder.Append(getIndentationString(indentation));
                     }
@@ -83,6 +86,7 @@ public static class JsonFormatter
                     break;
             }
         }
+        stringBuilder.Append("</color>");
 
         return stringBuilder.ToString();
     }

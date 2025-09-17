@@ -1,12 +1,12 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using RadarSDKBridge;
 
 namespace RadarSDK
 {
     public class TestPublishableKeyInputBox : MonoBehaviour
     {
-        public TMP_InputField keyInputField;
+        public InputField keyInputField;
 
 
 
