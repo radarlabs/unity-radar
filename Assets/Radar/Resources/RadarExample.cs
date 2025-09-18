@@ -270,23 +270,19 @@ namespace RadarSDKBridge
 
             if (userId == String.Empty) SetUserId();
 
-            var track = await Radar.TrackVerified();
-            if (track != null)
+            var (status, track) = await Radar.TrackVerified();
+            if (status == RadarStatus.SUCCESS)
             {
-                var (status, token) = track.Value;
-                if (status == RadarStatus.SUCCESS)
-                {
-                    var json = JsonUtility.ToJson(token);
-                    _jsonText.text = $"{JsonFormatter.FormatJson(json, _colors)}";
-                    SetImageColor(_trackVerifiedImage, _greenColor); // Task completed successfully
-                }
+                var json = JsonUtility.ToJson(track);
+                _jsonText.text = $"{JsonFormatter.FormatJson(json, _colors)}";
+                SetImageColor(_trackVerifiedImage, _greenColor); // Task completed successfully
 
-                _statusText.text = $"Status:{status}";
+                _statusText.text = $"Status:{status.ToString()}";
             }
             else
             {
                 SetImageColor(_trackVerifiedImage, _redColor); // Task failed or timed out
-                _statusText.text = $"Status: Timeout";
+                _statusText.text = $"Status: {status.ToString()}";
             }
 
             StopLoadingAnimation(ref _timeLoadingCoroutine);

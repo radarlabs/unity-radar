@@ -93,7 +93,7 @@ namespace RadarSDK
         /// <param name="token">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <param name="beacons">A boolean indicating whether to range beacons.</param>
         /// <returns>A Task that returns a tuple containing the RadarStatus and RadarVerifiedLocationToken.</returns>
-        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)?> TrackVerified(
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(
             bool beacons = false,
             RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
@@ -114,7 +114,7 @@ namespace RadarSDK
             catch (Exception e)
             {
                 OnError?.Invoke($"Error during TrackVerified: {e.Message}");
-                return null;
+                return (RadarStatus.ERROR_UNKNOWN, null);
             }
         }
 
