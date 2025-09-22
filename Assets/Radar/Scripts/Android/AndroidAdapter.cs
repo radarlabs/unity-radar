@@ -214,11 +214,11 @@ namespace RadarSDK.Android
         public void onComplete(AndroidJavaObject status, AndroidJavaObject location, bool stopped)
         {
             RadarStatus radarStatus = (RadarStatus)status.Call<int>("ordinal");
-            var radarLocation = new RadarLocation()
+            var radarLocation = location != null ? new RadarLocation()
             {
                 Latitude = location.Call<double>("getLatitude"),
                 Longitude = location.Call<double>("getLongitude"),
-            };
+            } : null;
             _onLocationReceived?.Invoke(radarStatus, radarLocation, stopped);
         }
     }
