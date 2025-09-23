@@ -19,7 +19,7 @@ namespace RadarSDK
         public static Queue<System.Action> _mainThreadActions = new Queue<System.Action>();
 
         private static IRadarPlatformAdapter _platformAdapter;
-        private static Task<(RadarStatus Status, VerifiedLocationData? Data)> _cachedTrackVerifiedTask;
+        private static Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> _cachedTrackVerifiedTask;
         public static bool Initialized { get; private set; }
         public static ClientSettings Settings { get; private set; }
         #endregion
@@ -27,7 +27,7 @@ namespace RadarSDK
 
         /// <summary>
         /// Initializes the Radar SDK. Call this method from the main thread before calling any other Radar methods.
-        /// Check out <a href="https://radar.com/documentation/sdk/android#foreground-tracking">Android</a>, 
+        /// Check out <a href="https://radar.com/documentation/sdk/android#foreground-tracking">Android</a>,
         /// and <a href="https://radar.com/documentation/sdk/ios#foreground-tracking">iOS</a> for more details.
         /// </summary>
         /// <param name="publishableKey">The publishable key for the Radar SDK.</param>
@@ -46,17 +46,23 @@ namespace RadarSDK
             LogManager.Instance.Log($"Radar Initialization Completed");
         }
 
-        /// <summary>
-        /// Creates and initializes the platform-specific adapter for the Radar SDK.
-        /// This method is called automatically at the load time of the subsystem registration.
-        /// The adapter created depends on the platform the application is running on:
-        /// <list type="bullet">
-        /// <item><description>On the Unity Editor, a <see cref="ProxyPlatform.ProxyAdapter"/> is created.</description></item>
-        /// <item><description>On Android, an <see cref="Android.AndroidAdapter"/> is created.</description></item>
-        /// <item><description>On iOS, an <see cref="iOS.IosAdapter"/> is created.</description></item>
-        /// <item><description>For unsupported platforms, it defaults to a <see cref="ProxyPlatform.ProxyAdapter"/>.</description></item>
-        /// </list>
-        /// </summary>
+        public static void RequestLocationPermissions() 
+        {
+            _platformAdapter.RequestLocationPermissions();
+        }
+
+        public static string UserId
+        {
+            get => _platformAdapter.UserId;
+            set => _platformAdapter.UserId = value;
+        }
+
+        public static Dictionary<string, object> Metadata
+        {
+            // get => _platformAdapter.Metadata;
+            set => _platformAdapter.Metadata = value;
+        }
+
         private static void CreatePlatformAdapter()
         {
 #if UNITY_EDITOR
@@ -74,71 +80,8 @@ namespace RadarSDK
 #endif
         }
 
-        /// <summary>
-        /// Identifies the user. Until you identify the user, Radar will automatically identify the user by `deviceId`.
-        /// Check out <a href="https://radar.com/documentation/sdk/android#identify-user">Android</a>, 
-        /// and <a href="https://radar.com/documentation/sdk/ios#identify-user">iOS</a> for more details.
-        /// </summary>
-        /// <param name="userId">The user ID to be set for the Radar SDK.</param>
-        public static bool SetUserId(string userId)
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                _platformAdapter.SetUserID(userId);
-                return true;
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error setting user ID: {e.Message}");
-                return false;
-            }
-        }
-
-
-        public static string GetUserId()
-        {
-            CheckInitializedOrThrow();
-            return _platformAdapter.GetUserID();
-        }
-
-
-        public static bool SetMetadata(MetadataContainer metadata)
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                _platformAdapter.SetMetadata(metadata);
-                return true;
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error setting metadata: {e.Message}");
-                return false;
-            }
-        }
-
-
-        public static async Task StartTrackingVerified(int interval, bool beacons)
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                var startTask = StartTrackingVerified_Internal(interval, beacons);
-                var timeOut = DefaultOnTimeOut<bool>(TIMEOUT_INTERVAL); // Timeout if there's an issue
-                await Task.WhenAny(startTask, timeOut);
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error during StartTrackingVerified: {e.Message}");
-            }
-        }
-
-
-        private static Task StartTrackingVerified_Internal(int interval, bool beacons)
-        {
-            return _platformAdapter.StartTrackingVerifiedAsync(interval, beacons);
-        }
+        public static void StartTrackingVerified(int interval, bool beacons)
+            => _platformAdapter.StartTrackingVerified(interval, beacons);
 
         /// <summary>
         /// Tracks the user's location with device integrity information for location verification use cases.
@@ -149,18 +92,19 @@ namespace RadarSDK
         /// </remarks>
         /// <param name="token">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <param name="beacons">A boolean indicating whether to range beacons.</param>
-        /// <returns>A Task that returns a tuple containing the RadarStatus and VerifiedLocationData.</returns>
-        public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> TrackVerified()
+        /// <returns>A Task that returns a tuple containing the RadarStatus and RadarVerifiedLocationToken.</returns>
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)?> TrackVerified(
+            bool beacons = false,
+            RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
             try
             {
-                CheckInitializedOrThrow();
                 if (_cachedTrackVerifiedTask != null)
                 {
                     return await _cachedTrackVerifiedTask;
                 }
-                var track = TrackVerified_Internal();
-                var timeOut = DefaultOnTimeOut<(RadarStatus Status, VerifiedLocationData? Data)>(TIMEOUT_INTERVAL); // Timeout if there's an issue
+                var track = _platformAdapter.TrackVerified(beacons, desiredAccuracy);
+                var timeOut = DefaultOnTimeOut<(RadarStatus Status, RadarVerifiedLocationToken Data)>(TIMEOUT_INTERVAL); // Timeout if there's an issue
                 _cachedTrackVerifiedTask = Task.WhenAny(track, timeOut).ContinueWith(t => t.Result.Result);
                 var completedTask = await _cachedTrackVerifiedTask;
                 _cachedTrackVerifiedTask = null;
@@ -175,64 +119,19 @@ namespace RadarSDK
         }
 
 
-        private static async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerified_Internal(
-            bool beacons = false)
-        {
-            CheckInitializedOrThrow();
-            return await _platformAdapter.TrackVerifiedAsync(beacons);
-        }
+        public static void StopTrackingVerified()
+            => _platformAdapter.StopTrackingVerified();
 
 
-        public static async Task StopTracking()
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                var stopTask = StopTracking_Internal();
-                var timeOut = DefaultOnTimeOut<bool>(TIMEOUT_INTERVAL); // Timeout if there's an issue
-                await Task.WhenAny(stopTask, timeOut);
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error during StopTracking: {e.Message}");
-            }
-
-            Task StopTracking_Internal()
-            {
-                return _platformAdapter.StopTrackingAsync();
-            }
-        }
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationToken()
+            => await _platformAdapter.GetVerifiedLocationToken();
 
 
-        public static Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationToken()
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                return _platformAdapter.GetVerifiedLocationTokenAsync();
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error getting verified location token: {e.Message}");
-                return null;
-            }
-        }
+        public static async Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation()
+            => await _platformAdapter.GetLocation();
 
 
-        public static void GetLocation(Action<Location> onLocationReceived)
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                _platformAdapter.GetLocation(onLocationReceived);
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error getting verified location token: {e.Message}");
-            }
-        }
-
-
+        // todo: delete
         private static void EnqueueMainThreadAction(System.Action action)
         {
             lock (_mainThreadActions)
@@ -244,17 +143,7 @@ namespace RadarSDK
 
 
         public static void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
-        {
-            try
-            {
-                CheckInitializedOrThrow();
-                _platformAdapter.SetVerifiedReceiver(onTokenUpdated);
-            }
-            catch (Exception e)
-            {
-                OnError?.Invoke($"Error setting verified receiver: {e.Message}");
-            }
-        }
+            => _platformAdapter.SetVerifiedReceiver(onTokenUpdated);
 
 
         private static async Task<T> DefaultOnTimeOut<T>(int seconds)
@@ -263,15 +152,6 @@ namespace RadarSDK
             return default;
         }
 
-
-
-        private static void CheckInitializedOrThrow()
-        {
-            if (!Initialized)
-            {
-                throw new InvalidOperationException($"Radar: Was not initialized, must first call the '{nameof(Initialize)}' method");
-            }
-        }
 
 
         public static void SetErrorCallback(Action<string> errorCallback)

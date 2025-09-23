@@ -8,8 +8,8 @@ using System.Collections.Generic;
 namespace RadarSDKBridge
 {
     /// <summary>
-    /// Manages the initialization and configuration of the Radar SDK. 
-    /// Loads user-configurable settings from the RadarSettings asset and initializes 
+    /// Manages the initialization and configuration of the Radar SDK.
+    /// Loads user-configurable settings from the RadarSettings asset and initializes
     /// the Radar SDK with the appropriate settings, such as user ID and tracking options.
     /// </summary>
     public static class RadarSDKManager
@@ -26,7 +26,7 @@ namespace RadarSDKBridge
 
         public static bool AddUserIdExtension
         {
-            get { return radarSettings != null ? radarSettings.addUserIdExtension : true;}
+            get { return radarSettings != null ? radarSettings.addUserIdExtension : true; }
         }
 
         public static bool IsDebuggingEnabled
@@ -60,17 +60,17 @@ namespace RadarSDKBridge
 
         public static string LivePublishableKey
         {
-            get 
-            { 
+            get
+            {
                 if (radarSettings.livePublishableKey == String.Empty) return "prj_live_pk_0000000000000000000000000000000000000000";
-                return radarSettings.livePublishableKey; 
+                return radarSettings.livePublishableKey;
             }
         }
 
-        public static MetadataContainer Metadata
-        {
-            get { return radarSettings != null ? radarSettings.metadata : null; }
-        }
+        // public static Dictionary<string, object> Metadata
+        // {
+        //     get { return radarSettings != null ? radarSettings.metadata.ToDictionary() : null; }
+        // }
 
         public static int TrackingInterval
         {
@@ -95,16 +95,12 @@ namespace RadarSDKBridge
         #region Coroutine Wrappers
         // Coroutine wrappers for asynchronous methods
 
-        public static IEnumerator Initialize()
+        public static void Initialize()
         {
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
             LogManager.Instance.SetLogConsole(IsDebuggingEnabled);
             RadarErrorHandler.InitializeErrorHandling();
-            var task = InitializeAsync();
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
+            Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
         }
 
         #endregion
@@ -113,15 +109,8 @@ namespace RadarSDKBridge
         #region Async Methods
         // Async versions of the methods
 
-        public static async Task InitializeAsync()
-        {
-            await Task.Run(() => {
-                Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
-            });
-        }
 
-
-        public static async Task<(RadarStatus Status, VerifiedLocationData? Data)?> GetVerifiedLocationTokenAsync()
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)?> GetVerifiedLocationTokenAsync()
         {
             return await Radar.GetVerifiedLocationToken();
         }

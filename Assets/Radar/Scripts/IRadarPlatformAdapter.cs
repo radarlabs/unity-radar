@@ -1,28 +1,22 @@
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace RadarSDK
 {
     public interface IRadarPlatformAdapter
     {
+        string UserId { get; set; }
+        Dictionary<string, object> Metadata { /*get;*/ set; }
+
         void Initialize(string publishableKey);
-
-        void SetUserID(string userId);
-
-        string GetUserID();
-
-        void SetMetadata(MetadataContainer metadata);
+        void RequestLocationPermissions();
 
         void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated);
-
-        void GetLocation(Action<Location> onLocationReceived);
-
-        Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync();
-
-        Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(bool beacons = false, string desiredAccuracy = "MEDIUM");
-
-        Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons);
-
-        Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync();
+        Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation();
+        Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationToken();
+        Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(bool beacons = false, RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium);
+        void StartTrackingVerified(int interval, bool beacons);
+        void StopTrackingVerified();
     }
 }

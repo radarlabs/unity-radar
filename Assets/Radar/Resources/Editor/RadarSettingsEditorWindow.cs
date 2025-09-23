@@ -3,12 +3,13 @@ using UnityEditor;
 using UnityEngine;
 using RadarSDK;
 using System.IO;
+using System.Collections.Generic;
 
 public class RadarSettingsEditorWindow : EditorWindow
 {
     private RadarSettingsData radarSettings;
     private string settingsPath;
-    private string metadataPath;
+    // private string metadataPath;
 
     private Editor metadataEditor;
 
@@ -25,7 +26,7 @@ public class RadarSettingsEditorWindow : EditorWindow
         string path = GetScriptFolderPath();
 
         settingsPath = Path.Combine(path, "RadarSettings.asset");
-        metadataPath = Path.Combine(path, "MetadataContainer.asset");
+        // metadataPath = Path.Combine(path, "MetadataContainer.asset");
 
         radarSettings = AssetDatabase.LoadAssetAtPath<RadarSettingsData>(settingsPath);
         if (radarSettings == null)
@@ -105,7 +106,7 @@ public class RadarSettingsEditorWindow : EditorWindow
             string fullUserId = $"{radarSettings.userId}_{Application.platform}";
             EditorGUILayout.LabelField(fullUserId, greyLabelStyle, GUILayout.Width(200));
         }
-        
+
         EditorGUILayout.EndHorizontal();
 
         radarSettings.enableDebugging = EditorGUILayout.Toggle(new GUIContent("Enable Debugging", "Enable debugging to show logs in the console."), radarSettings.enableDebugging);
@@ -124,46 +125,46 @@ public class RadarSettingsEditorWindow : EditorWindow
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider); // Separator line
 
-        // Metadata Section
-        EditorGUILayout.BeginVertical("box");
+        // // Metadata Section
+        // EditorGUILayout.BeginVertical("box");
 
-        GUILayout.Label("Metadata", sectionStyle);
+        // GUILayout.Label("Metadata", sectionStyle);
 
-        // Display metadata preview if it exists
-        if (radarSettings.metadata != null)
-        {
-            // Display metadata contents as a read-only preview
-            string metadataPreview = JsonUtility.ToJson(radarSettings.metadata, true);
-            EditorGUILayout.LabelField(metadataPreview, greyLabelStyle, GUILayout.MaxHeight(100));
-        }
+        // // Display metadata preview if it exists
+        // if (radarSettings.metadata != null)
+        // {
+        //     // Display metadata contents as a read-only preview
+        //     string metadataPreview = JsonUtility.ToJson(radarSettings.metadata, true);
+        //     EditorGUILayout.LabelField(metadataPreview, greyLabelStyle, GUILayout.MaxHeight(100));
+        // }
 
-        // Edit metadata button
-        if (radarSettings.metadata == null)
-        {
-            if (GUILayout.Button("Create Metadata"))
-            {
-                radarSettings.metadata = CreateInstance<MetadataContainer>();
-                AssetDatabase.CreateAsset(radarSettings.metadata, metadataPath);
-                AssetDatabase.SaveAssets();
-                Debug.Log("New MetadataContainer created and assigned.");
-            }
-        }
-        else
-        {
-            if (metadataEditor == null || metadataEditor.target != radarSettings.metadata)
-            {
-                metadataEditor = Editor.CreateEditor(radarSettings.metadata);
-            }
+        // // Edit metadata button
+        // if (radarSettings.metadata == null)
+        // {
+        //     if (GUILayout.Button("Create Metadata"))
+        //     {
+        //         radarSettings.metadata = CreateInstance<MetadataContainer>();
+        //         AssetDatabase.CreateAsset(radarSettings.metadata, metadataPath);
+        //         AssetDatabase.SaveAssets();
+        //         Debug.Log("New MetadataContainer created and assigned.");
+        //     }
+        // }
+        // else
+        // {
+        //     if (metadataEditor == null || metadataEditor.target != radarSettings.metadata)
+        //     {
+        //         metadataEditor = Editor.CreateEditor(radarSettings.metadata.Entries);
+        //     }
 
-            if (GUILayout.Button("Edit Metadata", GUILayout.Height(30)))
-            {
-                Selection.activeObject = radarSettings.metadata;
-            }
-        }
+        //     if (GUILayout.Button("Edit Metadata", GUILayout.Height(30)))
+        //     {
+        //         Selection.activeObject = radarSettings.metadata;
+        //     }
+        // }
 
-        EditorGUILayout.EndVertical();
+        // EditorGUILayout.EndVertical();
 
-        GUILayout.Space(15);
+        // GUILayout.Space(15);
 
         // Save button
         if (GUILayout.Button("Save Settings", saveButtonStyle))
@@ -202,5 +203,5 @@ public class RadarSettingsEditorWindow : EditorWindow
         AssetDatabase.SaveAssets();
         Debug.Log("Radar SDK settings saved.");
     }
-} 
-# endif
+}
+#endif

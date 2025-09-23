@@ -4,7 +4,7 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 
 #### 1. `RadarExample.cs`
 
-> **Description**:  
+> **Description**:
 > Main script used in demo scene. Demonstrates how to initialize and configure the Radar SDK in Unity. This script provides a basic setup and can be used as a starting template for integrating Radar SDK functionality.
 
 | **Functionality**                                                                              | **Related Scripts**                                                                                  |
@@ -14,7 +14,7 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 
 #### 2. `Radar.cs`
 
-> **Description**:  
+> **Description**:
 > The main class for interacting with the Radar SDK, `Radar.cs` bridges Unity and the Radar service, handling core setup, user identification, and tracking operations.
 
 | **Functionality**                                                                              | **Related Scripts**                                                                                  |
@@ -24,7 +24,7 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 
 #### 3. `AndroidAdapter.cs`
 
-> **Description**:  
+> **Description**:
 > Adapter class for Android, bridging Unity and the Radar SDK’s Android `.aar` library. Ensures compatibility with Android-specific integration requirements.
 
 | **Functionality**                                                                              | **Related Scripts**                                                                                  |
@@ -34,7 +34,7 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 
 #### 4. `iOSAdapter.cs`
 
-> **Description**:  
+> **Description**:
 > Adapter class for iOS, bridging Unity and the Radar SDK’s iOS `.xcframework` library. Ensures Radar SDK functionality works seamlessly on iOS devices.
 
 | **Functionality**                                                                              | **Related Scripts**                                                                                  |
@@ -44,7 +44,7 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 
 #### 5. `RadarUsageExample.cs`
 
-> **Description**:  
+> **Description**:
 > Example script showing how to use each method available in the Radar SDK, providing a practical reference for developers integrating Radar into their Unity project.
 
 | **Functionality**                                                                              | **Related Scripts**                                                                                  |
@@ -64,10 +64,10 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 3. **Error Handling**:
    - Errors encountered during SDK usage are sent to `RadarErrorHandler.cs` through a callback set up in `Radar.cs`.
    - `RadarErrorHandler.cs` logs errors and optionally displays messages to the user.
-   
+
    **Handling Track Verified Callbacks via `IosTrackVerifiedHandler.cs`**
 
-      `IosTrackVerifiedHandler` manages asynchronous Radar SDK callbacks by linking each request to a unique `requestId`. It uses `TaskCompletionSource` to integrate native responses into C# async workflows, converting JSON data into `VerifiedLocationData` for seamless handling of track verification and location token requests.
+      `IosTrackVerifiedHandler` manages asynchronous Radar SDK callbacks by linking each request to a unique `requestId`. It uses `TaskCompletionSource` to integrate native responses into C# async workflows, converting JSON data into `RadarVerifiedLocationToken` for seamless handling of track verification and location token requests.
 
 4. **Example Implementation**:
    - `RadarUsageExample.cs` provides a comprehensive example of SDK functions, making it easy for developers to integrate and use the Radar SDK in their projects.
@@ -75,5 +75,3 @@ This section provides an overview of the main scripts in the Radar SDK for Unity
 ### Summary
 
 This architecture enables robust cross-platform support within Unity. With `Radar.cs` handling core SDK functionality and `AndroidAdapter.cs`/`iOSAdapter.cs` managing platform-specific operations, The example scripts (`RadarExample.cs` and `RadarUsageExample.cs`) illustrate how to integrate these features, making it easy for developers to get started.
-
-

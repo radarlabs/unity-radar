@@ -12,11 +12,11 @@ namespace RadarSDK.Android
         /// Initializes a new instance of the <see cref="AndroidTrackVerifiedHandler"/> class.
         public AndroidTrackVerifiedHandler() : base("io.radar.sdk.Radar$RadarTrackVerifiedCallback")
         {
-            _currentTcs = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
+            _currentTcs = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)>();
         }
 
-        public Task<(RadarStatus, VerifiedLocationData?)> CompletionTask => _currentTcs.Task;
-        private readonly TaskCompletionSource<(RadarStatus, VerifiedLocationData?)> _currentTcs;
+        public Task<(RadarStatus, RadarVerifiedLocationToken)> CompletionTask => _currentTcs.Task;
+        private readonly TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)> _currentTcs;
 
         /// <summary>
         /// Handles the completion of the radar track verification process.
@@ -33,11 +33,11 @@ namespace RadarSDK.Android
 
             if (radarStatus == RadarStatus.SUCCESS && results != null)
             {
-                // Convert the results to JSON and deserialize to VerifiedLocationData
+                // Convert the results to JSON and deserialize to RadarVerifiedLocationToken
                 AndroidJavaObject json = results.Call<AndroidJavaObject>("toJson");
                 string jsonString = json.Call<string>("toString");
 
-                // Use Utils to parse JSON into VerifiedLocationData
+                // Use Utils to parse JSON into RadarVerifiedLocationToken
                 var locationData = Utils.GetTrackDataFromJson(jsonString);
 
                 _currentTcs.TrySetResult((radarStatus, locationData));

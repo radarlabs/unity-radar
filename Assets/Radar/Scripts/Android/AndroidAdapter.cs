@@ -36,67 +36,64 @@ namespace RadarSDK.Android
             _instance.CallStatic("initialize", @params);
         }
 
-
-        public void SetUserID(string userId)
+        public string UserId
         {
-            if (string.IsNullOrEmpty(userId))
+            get => _instance.CallStatic<string>("getUserId");
+            set => _instance.CallStatic("setUserId", new object[] { value });
+        }
+
+        public Dictionary<string, object> Metadata
+        {
+            // get
+            // {
+            //     var metadataJson = _instance.CallStatic<string>("getMetadata");
+            //     return JsonUtility.FromJson<Dictionary<string, object>>(metadataJson);
+            // }
+            set
             {
-                LogManager.Instance.Log("User ID is null or empty. Skipping SetUserID.", LogType.Warning);
-                return;
+                // Serialize the metadata to JSON format
+                string jsonString = JsonUtility.ToJson(value);
+                AndroidJavaObject jsonObject = new AndroidJavaObject("org.json.JSONObject", jsonString);
+                _instance.CallStatic("setMetadata", jsonObject);
             }
-            object[] parameters = new object[1];
-            parameters[0] = userId;
-            _instance.CallStatic("setUserId", parameters);
         }
 
 
-        public string GetUserID()
+        public void RequestLocationPermissions()
         {
-            string userId = _instance.CallStatic<string>("getUserId");
-            if (string.IsNullOrEmpty(userId))
-            {
-                LogManager.Instance.Log("User ID not set or unavailable.", LogType.Warning);
-                return null;
-            }
-            return userId;
+            UnityEngine.Android.Permission.RequestUserPermission(UnityEngine.Android.Permission.FineLocation);
         }
 
 
-        public void SetMetadata(MetadataContainer metadata)
+        public Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation()
         {
-            // Serialize to JSON using Unity's JsonUtility
-            string jsonString = JsonUtility.ToJson(metadata);
 
-            AndroidJavaObject jsonObject = new AndroidJavaObject("org.json.JSONObject", jsonString);
+            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarLocation, bool)>();
 
-            // Call the setMetadata method in Radar.kt
-            _instance.CallStatic("setMetadata", jsonObject);
-        }
-
-
-        public void GetLocation(Action<Location> onLocationReceived)
-        {
-            if (_instance == null)
+            // Create a callback proxy to handle the completion
+            var callbackProxy = new RadarLocationCallbackProxy((status, location, stopped) =>
             {
-                LogManager.Instance.Log("Radar SDK is not initialized", LogType.Error);
-                return;
-            }
-            // Create a proxy for the RadarLocationCallback
-            AndroidJavaProxy callbackProxy = new RadarLocationCallbackProxy(onLocationReceived);
+                // Set the result for the task
+                taskCompletionSource.SetResult((status, location, stopped));
+            });
+
+            // Call getLocation on the Radar SDK
             _instance.CallStatic("getLocation", callbackProxy);
+
+            return taskCompletionSource.Task;
         }
 
 
-        public async Task<(RadarStatus Status, VerifiedLocationData? Data)> TrackVerifiedAsync(
-            bool beacons = false, 
-            string desiredAccuracy = "MEDIUM")
+        public async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(
+            bool beacons = false,
+            RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
             // Instantiate AndroidTrackVerifiedHandler to handle the callback
             var handler = new AndroidTrackVerifiedHandler();
 
             // Find the RadarTrackingOptionsDesiredAccuracy enum value in the Kotlin SDK
             AndroidJavaClass trackingOptionsClass = new AndroidJavaClass("io.radar.sdk.RadarTrackingOptions$RadarTrackingOptionsDesiredAccuracy");
-            AndroidJavaObject desiredAccuracyEnum = trackingOptionsClass.CallStatic<AndroidJavaObject>("valueOf", desiredAccuracy.ToUpper());
+            AndroidJavaObject desiredAccuracyEnum = trackingOptionsClass.CallStatic<AndroidJavaObject>("valueOf", desiredAccuracy.ToString().ToUpper());
 
             // Call the trackVerified method on the Radar SDK, passing in the parameters and handler
             _instance.CallStatic("trackVerified", beacons, desiredAccuracyEnum, handler);
@@ -111,37 +108,22 @@ namespace RadarSDK.Android
 
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> StartTrackingVerifiedAsync(int interval, bool beacons)
+        public void StartTrackingVerified(int interval, bool beacons)
         {
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
-
-            // Create a callback proxy to handle the completion
-            var callbackProxy = new RadarVerifiedLocationCallbackProxy((status, locationData) =>
-            {
-                taskCompletionSource.SetResult((status, locationData));
-            });
-            // Call startTrackingVerified on the Radar SDK
             _instance.CallStatic("startTrackingVerified", interval, beacons);
-            return taskCompletionSource.Task;
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> StopTrackingAsync()
+        public void StopTrackingVerified()
         {
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
-
-            // Call stopTracking on the Radar SDK
-            _instance.CallStatic("stopTracking");
-            // Assume stop tracking does not return location data, just a status
-            taskCompletionSource.SetResult((RadarStatus.SUCCESS, null)); // Replace with appropriate status if needed
-            return taskCompletionSource.Task;
+            _instance.CallStatic("stopTrackingVerified");
         }
 
 
-        public Task<(RadarStatus Status, VerifiedLocationData? Data)> GetVerifiedLocationTokenAsync()
+        public Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> GetVerifiedLocationToken()
         {
             // Create a TaskCompletionSource to return a Task
-            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, VerifiedLocationData?)>();
+            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarVerifiedLocationToken)>();
 
             // Create an instance of the RadarVerifiedLocationCallbackProxy, passing the callback
             var callbackProxy = new RadarVerifiedLocationCallbackProxy((status, locationData) =>
@@ -179,9 +161,9 @@ namespace RadarSDK.Android
 
     public class RadarVerifiedLocationCallbackProxy : AndroidJavaProxy
     {
-        private readonly Action<RadarStatus, VerifiedLocationData?> _onComplete;
+        private readonly Action<RadarStatus, RadarVerifiedLocationToken> _onComplete;
 
-        public RadarVerifiedLocationCallbackProxy(Action<RadarStatus, VerifiedLocationData?> onComplete)
+        public RadarVerifiedLocationCallbackProxy(Action<RadarStatus, RadarVerifiedLocationToken> onComplete)
             : base("io.radar.sdk.Radar$RadarTrackVerifiedCallback")
         {
             _onComplete = onComplete;
@@ -192,20 +174,20 @@ namespace RadarSDK.Android
         {
             // Convert Java objects to C# types
             RadarStatus radarStatus = (RadarStatus)status.Call<int>("ordinal");
-            VerifiedLocationData? verifiedLocationToken = null;
+            RadarVerifiedLocationToken verifiedLocationToken = null;
 
             if (token != null)
             {
                 // Retrieve and convert token data from Java to C#
 
-                verifiedLocationToken = new VerifiedLocationData
+                verifiedLocationToken = new RadarVerifiedLocationToken
                 {
-                    passed = token.Call<bool>("getPassed"),
-                    token = token.Call<string>("getToken"),
-                    expiresIn = token.Call<int>("getExpiresIn")
+                    Passed = token.Call<bool>("getPassed"),
+                    Token = token.Call<string>("getToken"),
+                    ExpiresIn = token.Call<int>("getExpiresIn")
                 };
-                
-                // Convert the VerifiedLocationData to JSON format
+
+                // Convert the RadarVerifiedLocationToken to JSON format
                 var json = JsonUtility.ToJson(verifiedLocationToken);
             }
             else
@@ -221,9 +203,9 @@ namespace RadarSDK.Android
 
     public class RadarLocationCallbackProxy : AndroidJavaProxy
     {
-        private Action<Location> _onLocationReceived;
+        private Action<RadarStatus, RadarLocation, bool> _onLocationReceived;
 
-        public RadarLocationCallbackProxy(Action<Location> onLocationReceived)
+        public RadarLocationCallbackProxy(Action<RadarStatus, RadarLocation, bool> onLocationReceived)
             : base("io.radar.sdk.Radar$RadarLocationCallback")
         {
             _onLocationReceived = onLocationReceived;
@@ -231,23 +213,13 @@ namespace RadarSDK.Android
 
         public void onComplete(AndroidJavaObject status, AndroidJavaObject location, bool stopped)
         {
-            if (location != null)
+            RadarStatus radarStatus = (RadarStatus)status.Call<int>("ordinal");
+            var radarLocation = location != null ? new RadarLocation()
             {
-                double latitude = location.Call<double>("getLatitude");
-                double longitude = location.Call<double>("getLongitude");
-                // Create the Location struct and assign the coordinates
-                var radarLocation = new Location
-                {
-                    type = "Point",
-                    coordinates = new double[] { longitude, latitude }
-                };
-                // Invoke the callback to pass the location data to Unity
-                _onLocationReceived?.Invoke(radarLocation);
-            }
-            else
-            {
-                LogManager.Instance.Log("Location is null", LogType.Error);
-            }
+                Latitude = location.Call<double>("getLatitude"),
+                Longitude = location.Call<double>("getLongitude"),
+            } : null;
+            _onLocationReceived?.Invoke(radarStatus, radarLocation, stopped);
         }
     }
 
@@ -274,8 +246,8 @@ namespace RadarSDK.Android
             {
                 Passed = token.Call<bool>("getPassed"),
                 Token = token.Call<string>("getToken"),
-                ExpiresAt = expiresAt, // Use the converted Unix timestamp
-                ExpiresIn = expiresIn // Retrieve as int
+                ExpiresAt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(expiresAt),
+                ExpiresIn = expiresIn
             };
             _onTokenUpdated?.Invoke(verifiedLocationToken);
         }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace RadarSDK
 {
@@ -26,7 +27,7 @@ namespace RadarSDK
         [Tooltip("Interval in seconds for tracking updates")]
         public int trackingInterval = 60;
 
-        [Tooltip("Metadata container to store/pass additional information")]
-        public MetadataContainer metadata;
+        // [Tooltip("Metadata container to store/pass additional information")]
+        // public MetadataContainer metadata;
     }
 }

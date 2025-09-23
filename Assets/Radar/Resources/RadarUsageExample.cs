@@ -2,12 +2,13 @@
 using UnityEngine;
 using RadarSDKBridge;
 using System.Threading.Tasks;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace RadarSDK
 {
     /// <summary>
     /// Example script that shows usage of each method
+    /// todo: delete this class, RadarExample.cs should be sufficient
     /// </summary>
     public class RadarUsageExample : MonoBehaviour
     {
@@ -16,43 +17,24 @@ namespace RadarSDK
             InitializeRadar();
         }
 
-
         private void InitializeRadar()
         {
             string publishableKey = Debug.isDebugBuild ? RadarSDKManager.TestPublishableKey : RadarSDKManager.LivePublishableKey;
             Radar.Initialize(publishableKey, fraud: true);
         }
 
+        private void StartTrackingVerified()
+            => Radar.StartTrackingVerified(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
 
-        private async Task StartTrackingVerifiedAsync()
+        private void StopTrackingVerified()
+            => Radar.StopTrackingVerified();
+
+        private async Task GetVerifiedLocationToken()
         {
-            await Radar.StartTrackingVerified(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
-        }
-
-
-        private async Task StopTrackingAsync()
-        {
-            await Radar.StopTracking();
-        }
-
-
-        private void GetVerifiedLocationToken()
-        {
-            StartCoroutine(GetVerifiedLocationTokenCoroutine());
-        }
-
-        private IEnumerator GetVerifiedLocationTokenCoroutine()
-        {
-            var task = Radar.GetVerifiedLocationToken();
-
-            while (!task.IsCompleted)
+            var (status, data) = await Radar.GetVerifiedLocationToken();
+            if (status == RadarStatus.SUCCESS)
             {
-                yield return null;
-            }
-
-            if (task.IsCompleted && task.Result.Data != null)
-            {
-                Debug.Log($"Verified Location Token received: Status = {task.Result.Status}");
+                Debug.Log($"Verified Location Token received: {data.Token}, ExpiresAt: {data.ExpiresAt}, ExpiresIn: {data.ExpiresIn}");
             }
             else
             {
@@ -60,57 +42,34 @@ namespace RadarSDK
             }
         }
 
-
-        private async Task GetVerifiedLocationTokenAsync()
+        private async Task GetLocation()
         {
-            var result = await Radar.GetVerifiedLocationToken();
-            if (result.Data != null)
+            var (status, location, stopped) = await Radar.GetLocation();
+
+            if (status == RadarStatus.SUCCESS)
             {
-                Debug.Log($"Verified Location Token received: Status = {result.Status}");
+                LogManager.Instance.Log($"Location received: Latitude = {location.Latitude}, Longitude = {location.Longitude}", LogType.Warning);
             }
             else
             {
-                Debug.LogError("Failed to retrieve verified location token.");
+                LogManager.Instance.Log("Failed to get location", LogType.Error);
             }
         }
-
-        private Task<Location?> GetLocation()
-        {
-            var tcs = new TaskCompletionSource<Location?>();
-
-            Radar.GetLocation(location =>
-            {
-                if (location.coordinates != null)
-                {
-                    LogManager.Instance.Log($"Location received: Latitude = {location.latitude}, Longitude = {location.longitude}", LogType.Warning);
-                }
-                else
-                {
-                    LogManager.Instance.Log("Failed to get location", LogType.Error);
-                }
-            });
-
-            return tcs.Task;
-        }
-
 
         private void SetUserId(string userId)
         {
-            Radar.SetUserId(userId);
+            Radar.UserId = userId;
         }
 
-
-        private void SetMetadata(MetadataContainer metadata)
+        private void SetMetadata(Dictionary<string, object> metadata)
         {
-            Radar.SetMetadata(metadata);
+            Radar.Metadata = metadata;
         }
-
 
         private void SetVerifiedReceiver()
         {
             Radar.SetVerifiedReceiver(OnVerifiedLocationTokenReceived);
         }
-
 
         private void OnVerifiedLocationTokenReceived(RadarVerifiedLocationToken token)
         {
