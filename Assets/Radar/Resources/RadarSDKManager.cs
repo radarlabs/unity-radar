@@ -99,7 +99,8 @@ namespace RadarSDKBridge
         {
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
             LogManager.Instance.SetLogConsole(IsDebuggingEnabled);
-            RadarErrorHandler.InitializeErrorHandling();
+            Radar.Error += status => LogManager.Instance.Log($"Error: {status}", LogType.Error);
+            Radar.Log += message => LogManager.Instance.Log(message, LogType.Log);
             Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
         }
 

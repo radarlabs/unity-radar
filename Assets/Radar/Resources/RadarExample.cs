@@ -59,7 +59,6 @@ namespace RadarSDKBridge
         private readonly Color _orangeColor = new Color(1f, 0.65f, 0f);
         private readonly Color _greenColor = Color.green;
 
-        private Queue<Action> TODO = new Queue<Action>();
         int callbacksTotal = 0;
         bool requestBluetoothPermissions = false;
 
@@ -94,11 +93,7 @@ namespace RadarSDKBridge
             _stopTrackingButton.onClick.AddListener(() => StopTracking());
             _getVerifiedLocationTokenButton.onClick.AddListener(() => _ = GetVerifiedLocationToken());
             RadarSDKManager.Initialize();
-#if UNITY_IOS
-            Radar.SetVerifiedReceiver(DidUpdateToken);
-#else
-            Radar.SetVerifiedReceiver(OnTokenUpdated);
-#endif
+            Radar.TokenUpdated += OnTokenUpdated;
             Radar.RequestLocationPermissions();
             LogManager.Instance.Log("RadarInitializeExample Completed", LogType.Log);
         }
@@ -128,20 +123,6 @@ namespace RadarSDKBridge
 
         void Update()
         {
-            lock (TODO)
-            {
-                while (TODO.Count > 0)
-                {
-                    TODO.Dequeue().Invoke();
-                }
-            }
-            lock (Radar._mainThreadActions)
-            {
-                while (Radar._mainThreadActions.Count > 0)
-                {
-                    Radar._mainThreadActions.Dequeue().Invoke();
-                }
-            }
             _onTokenUpdatedText.text = _onTokenUpdatedTempText;
         }
 
@@ -388,26 +369,12 @@ namespace RadarSDKBridge
             LogManager.Instance.Log("GetVerifiedLocationToken Completed", LogType.Log);
         }
 
-
-        [MonoPInvokeCallback(typeof(Action<RadarVerifiedLocationToken>))]
-        public static void DidUpdateToken(RadarVerifiedLocationToken token)
-        {
-            _instance?.OnTokenUpdated(token);
-        }
-
-
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {
             callbacksTotal += 1;
             _onTokenUpdatedTempText = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
 
             LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
-        }
-
-
-        private void EnqueueMainThreadAction(System.Action action)
-        {
-            lock (TODO) { TODO.Enqueue(action); }
         }
 
 

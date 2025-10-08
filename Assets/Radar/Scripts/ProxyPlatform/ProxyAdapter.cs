@@ -21,6 +21,10 @@ namespace RadarSDK.ProxyPlatform
         private Dictionary<string, object> _mockMetadata;
         private Action<RadarVerifiedLocationToken> _onTokenUpdatedCallback;
 
+        public event Action<RadarVerifiedLocationToken> TokenUpdated;
+        public event Action<string> Log;
+        public event Action<RadarStatus> Error;
+
         public string UserId
         {
             get => _mockUserId;

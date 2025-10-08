@@ -8,14 +8,9 @@ namespace RadarSDK
     /// </summary>
     public static class Utils
     {
-        public static RadarVerifiedLocationToken GetTrackDataFromJson(string jsonStr)
-        {
-            return JsonUtility.FromJson<RadarVerifiedLocationToken>(jsonStr);
-        }
-
         public static RadarStatus StatusStringToEnum(string enumStr)
         {
-            return (RadarStatus)System.Enum.Parse(typeof(RadarStatus), enumStr, ignoreCase: true);
+            return System.Enum.TryParse(enumStr, true, out RadarStatus status) ? status : RadarStatus.ERROR_UNKNOWN;
         }
     }
 }

@@ -38,7 +38,7 @@ namespace RadarSDK.Android
                 string jsonString = json.Call<string>("toString");
 
                 // Use Utils to parse JSON into RadarVerifiedLocationToken
-                var locationData = Utils.GetTrackDataFromJson(jsonString);
+                var locationData = JsonUtility.FromJson<RadarVerifiedLocationToken>(jsonString);
 
                 _currentTcs.TrySetResult((radarStatus, locationData));
             }
