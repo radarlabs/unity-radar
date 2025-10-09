@@ -15,7 +15,6 @@ namespace RadarSDK
         public Text logTextBox;
         public int maxLines = 20;
         private string logContent = ""; // To keep track of all messages
-        private bool logConsole;
         private ConcurrentQueue<string> logQueue = new ConcurrentQueue<string>();
 
 
@@ -31,12 +30,6 @@ namespace RadarSDK
             {
                 Destroy(gameObject);
             }
-        }
-
-
-        public void SetLogConsole(bool isLogEnabled)
-        {
-            logConsole = isLogEnabled;
         }
 
 
@@ -83,17 +76,17 @@ namespace RadarSDK
             switch (logType)
             {
                 case LogType.Error:
-                    if (logConsole) Debug.LogError(message);
+                    Debug.LogError(message);
                     return $"<color=red>Error: {message}</color>";
                 case LogType.Warning:
-                    if (logConsole) Debug.LogWarning(message);
+                    Debug.LogWarning(message);
                     return $"<color=yellow>Warning: {message}</color>";
                 case LogType.Attention:
-                    if (logConsole) Debug.LogWarning(message);
+                    Debug.LogWarning(message);
                     return $"<color=orange>Attention: {message}</color>";
                 case LogType.Log:
                 default:
-                    if (logConsole) Debug.Log(message);
+                    Debug.Log(message);
                     return $"<color=white>{message}</color>";
             }
         }

@@ -43,8 +43,6 @@ namespace RadarSDKBridge
         [SerializeField] private Text _locationText;
         [SerializeField] private Text _jsonText;
 
-        private string _onTokenUpdatedTempText;
-
 
         [Header("Visuals")]
         [SerializeField] private Color[] _colors;
@@ -59,19 +57,9 @@ namespace RadarSDKBridge
         private readonly Color _orangeColor = new Color(1f, 0.65f, 0f);
         private readonly Color _greenColor = Color.green;
 
-        int callbacksTotal = 0;
         bool requestBluetoothPermissions = false;
 
         #endregion
-
-
-        private void OnValidate()
-        {
-            ResetImagesToRed();
-            var a = JsonUtility.ToJson(new RadarVerifiedLocationToken());
-            var b = JsonFormatter.FormatJson(a, _colors);
-            _jsonText.text = b;
-        }
 
 
         private void Awake()
@@ -85,14 +73,16 @@ namespace RadarSDKBridge
             if (requestBluetoothPermissions)
                 RequestBluetoothPermissions();
 
-            _setUserIdButton.onClick.AddListener(() => { SetUserIdButtonHandler(); });
-            _setMetadataButton.onClick.AddListener(() => SetMetadata());
             _getLocationButton.onClick.AddListener(() => GetLocation());
             _verifyTrackButton.onClick.AddListener(() => _ = TrackVerified());
             _startTrackingButton.onClick.AddListener(() => StartTrackingVerified());
             _stopTrackingButton.onClick.AddListener(() => StopTracking());
             _getVerifiedLocationTokenButton.onClick.AddListener(() => _ = GetVerifiedLocationToken());
-            RadarSDKManager.Initialize();
+            Radar.Initialize("prj_test_pk_2124dafb5f863addc19b93d7ed9e84af8ca9397b");
+            Radar.UserId = "test_user_unity";
+            Radar.Metadata = new Dictionary<string, object> { { "test_key", "test_value" } };
+            Radar.Error += status => LogManager.Instance.Log($"Error: {status}", LogType.Error);
+            Radar.Log += message => LogManager.Instance.Log($"Log: {message.Substring(0, 5)}...", LogType.Log);
             Radar.TokenUpdated += OnTokenUpdated;
             Radar.RequestLocationPermissions();
             LogManager.Instance.Log("RadarInitializeExample Completed", LogType.Log);
@@ -118,12 +108,6 @@ namespace RadarSDKBridge
                     currentActivity.Call("requestPermissions", new object[] { permissions, 1001 });
                 }
 #endif
-        }
-
-
-        void Update()
-        {
-            _onTokenUpdatedText.text = _onTokenUpdatedTempText;
         }
 
 
@@ -154,89 +138,6 @@ namespace RadarSDKBridge
         }
 
 
-        private void SetUserIdButtonHandler()
-        {
-            SetUserId();
-        }
-
-
-        private string SetUserId(string userId = RadarSDKManager.TEMP_UNIQUE_USER_ID)
-        {
-            _timeText.text = _userIdText.text = "...";
-
-            SetImageColor(_setUserIdImage, _orangeColor); // Task in progress
-            StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
-            StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
-
-            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-
-            if (userId == RadarSDKManager.TEMP_UNIQUE_USER_ID) userId = RadarSDKManager.UserId;
-            string uniqueUserId = $"{userId}";
-            if (RadarSDKManager.AddUserIdExtension)
-                uniqueUserId += $"_{Enum.GetName(typeof(RuntimePlatform), Application.platform)}";
-            try
-            {
-                Radar.UserId = uniqueUserId;
-                _statusText.text = $"Status: Success";
-            }
-            catch
-            {
-                _statusText.text = $"Status: Failed";
-            }
-
-            stopWatch.Stop();
-            _timeText.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
-
-            StopLoadingAnimation(ref _timeLoadingCoroutine);
-            StopLoadingAnimation(ref _statusLoadingCoroutine);
-            SetImageColor(_setUserIdImage, _greenColor); // Task completed successfully
-
-#if UNITY_ANDROID
-            userId = Radar.UserId;
-#endif
-            _userIdText.text = $"UserId: {userId}";
-
-            LogManager.Instance.Log("SetUserId Completed", LogType.Log);
-            return userId;
-        }
-
-
-        private void SetMetadata(Dictionary<string, object> metadata = null)
-        {
-            // metadata ??= RadarSDKManager.Metadata;
-            _timeText.text = "...";
-
-            SetImageColor(_setMetadataImage, _orangeColor); // Task in progress
-            StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
-            StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
-
-            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-
-            try
-            {
-                Radar.Metadata = metadata;
-                _statusText.text = $"Status: Success";
-                SetImageColor(_setMetadataImage, _greenColor); // Task completed successfully
-            }
-            catch (Exception ex)
-            {
-                _statusText.text = $"Status: Failed - {ex.Message}";
-                SetImageColor(_setMetadataImage, _redColor); // Task failed or timed out
-            }
-
-            stopWatch.Stop();
-            _timeText.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
-
-            StopLoadingAnimation(ref _timeLoadingCoroutine);
-            StopLoadingAnimation(ref _statusLoadingCoroutine);
-
-            string jsonString = JsonUtility.ToJson(metadata);
-            _metadataText.text = $"Metadata: {jsonString}";
-
-            LogManager.Instance.Log("SetMetadata Completed", LogType.Log);
-        }
-
-
         private async Task TrackVerified()
         {
             _timeText.text = _statusText.text = _jsonText.text = "...";
@@ -245,11 +146,9 @@ namespace RadarSDKBridge
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
             StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
 
-            _onTokenUpdatedTempText = "...";
+            _onTokenUpdatedText.text = "...";
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-
-            if (userId == String.Empty) SetUserId();
 
             var (status, track) = await Radar.TrackVerified();
             if (status == RadarStatus.SUCCESS)
@@ -286,10 +185,10 @@ namespace RadarSDKBridge
             StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
             StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
 
-            _onTokenUpdatedTempText = "...";
+            _onTokenUpdatedText.text = "...";
 
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-            Radar.StartTrackingVerified(RadarSDKManager.TrackingInterval, RadarSDKManager.UseBeacons);
+            Radar.StartTrackingVerified(120, true);
 
             SetImageColor(_startTrackingImage, _greenColor); // Task completed successfully
             StopLoadingAnimation(ref _timeLoadingCoroutine);
@@ -362,8 +261,7 @@ namespace RadarSDKBridge
 
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {
-            callbacksTotal += 1;
-            _onTokenUpdatedTempText = $"OnTokenUpdated Callback {callbacksTotal}. Token: " + token.Token.Substring(0, 5) + "...";
+            _onTokenUpdatedText.text = $"Token: " + token.Token.Substring(0, 5) + "...";
 
             LogManager.Instance.Log("OnTokenUpdated Callback. Token: " + token.Token.Substring(0, 5) + "...", LogType.Log);
         }

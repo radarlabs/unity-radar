@@ -18,6 +18,14 @@ namespace RadarSDK.Android
         public event Action<string> Log;
         public event Action<RadarStatus> Error;
 
+        public AndroidAdapter()
+        {
+            using (var radarClass = new AndroidJavaClass("io.radar.sdk.Radar"))
+            {
+                _instance = radarClass.GetStatic<AndroidJavaObject>("INSTANCE");
+            }
+        }
+
 
         public void Initialize(string publishableKey)
         {
@@ -29,14 +37,10 @@ namespace RadarSDK.Android
             using var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             using var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
             using var context = activity.Call<AndroidJavaObject>("getApplicationContext");
-            using (var radarClass = new AndroidJavaClass("io.radar.sdk.Radar"))
-            {
-                _instance = radarClass.GetStatic<AndroidJavaObject>("INSTANCE");
-            }
 
             var locationServicesProvider2 = new AndroidJavaClass("io.radar.sdk.Radar$RadarLocationServicesProvider");
             var locationServicesProvider = locationServicesProvider2.GetStatic<AndroidJavaObject>("GOOGLE");
-            object[] @params = { context, publishableKey, null, locationServicesProvider, Radar.Settings.Fraud };
+            object[] @params = { context, publishableKey, null, locationServicesProvider, true };
             _instance.CallStatic("initialize", @params);
             AndroidJavaObject receiver = new AndroidJavaObject(
                 "io.radar.sdk.CustomReceiver",
@@ -45,9 +49,15 @@ namespace RadarSDK.Android
                     status => Error?.Invoke(status)
                 )
             );
-
-            // Set the receiver in the Radar SDK
             _instance.CallStatic("setReceiver", receiver);
+
+            AndroidJavaObject verifiedReceiver = new AndroidJavaObject(
+                "io.radar.sdk.CustomVerifiedReceiver",
+                new CustomVerifiedReceiverCallback(
+                    token => TokenUpdated?.Invoke(token)
+                )
+            );
+            _instance.CallStatic("setVerifiedReceiver", verifiedReceiver);
         }
 
         public string UserId
@@ -151,24 +161,6 @@ namespace RadarSDK.Android
 
             return taskCompletionSource.Task;
         }
-
-
-        public void SetVerifiedReceiver(Action<RadarVerifiedLocationToken> onTokenUpdated)
-        {
-            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-            {
-                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-
-                // Create an instance of CustomVerifiedReceiver with the callback
-                AndroidJavaObject receiver = new AndroidJavaObject(
-                    "io.radar.sdk.CustomVerifiedReceiver",
-                    new CustomVerifiedReceiverCallback(onTokenUpdated)
-                );
-
-                // Set the receiver in the Radar SDK
-                _instance.CallStatic("setVerifiedReceiver", receiver);
-            }
-        }
     }
 
 
@@ -271,7 +263,7 @@ namespace RadarSDK.Android
     {
         private readonly Action<string> _onLog;
         private readonly Action<RadarStatus> _onError;
-        
+
         public CustomReceiverCallback(Action<string> onLog, Action<RadarStatus> onError)
             : base("io.radar.sdk.CustomReceiver$Listener")
         {
