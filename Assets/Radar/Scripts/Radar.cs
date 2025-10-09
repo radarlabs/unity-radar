@@ -19,25 +19,22 @@ namespace RadarSDK
         private static IRadarPlatformAdapter _platformAdapter;
         private static Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> _cachedTrackVerifiedTask;
         public static bool Initialized { get; private set; }
-        public static ClientSettings Settings { get; private set; }
         #endregion
 
 
-        public static void Initialize(string publishableKey, bool fraud = true)
+        public static void Initialize(string publishableKey)
         {
             if (Initialized)
             {
                 return;
             }
 
-            Settings = new ClientSettings(fraud: fraud);
             CreatePlatformAdapter();
             _platformAdapter.Initialize(publishableKey);
             _platformAdapter.TokenUpdated += token => TokenUpdated?.Invoke(token);
             _platformAdapter.Log += log => Log?.Invoke(log);
             _platformAdapter.Error += error => Error?.Invoke(error);
             Initialized = true;
-            LogManager.Instance.Log($"Radar Initialization Completed");
         }
 
         public static void RequestLocationPermissions() 
@@ -61,16 +58,12 @@ namespace RadarSDK
         {
 #if UNITY_EDITOR
             _platformAdapter = new ProxyPlatform.ProxyAdapter();
-            LogManager.Instance.Log($"Radar: '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
 #elif UNITY_ANDROID
             _platformAdapter = new Android.AndroidAdapter();
-            LogManager.Instance.Log($"Radar: '{nameof(Android.AndroidAdapter)}' was created");
 #elif UNITY_IOS
             _platformAdapter = new iOS.IosAdapter();
-            LogManager.Instance.Log($"Radar: '{nameof(iOS.IosAdapter)}' was created");
 #else
             _platformAdapter = new ProxyPlatform.ProxyAdapter();
-            LogManager.Instance.Log($"Radar: Fallback! '{nameof(ProxyPlatform.ProxyAdapter)}' was created");
 #endif
         }
 

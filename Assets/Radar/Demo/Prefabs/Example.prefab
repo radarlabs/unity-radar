@@ -832,7 +832,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2165065658417967367}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdf95470d3832214aae0560f110b3db5, type: 3}
+  m_Script: {fileID: 11500000, guid: fc24253f056ad4469a68e55d21259699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _setUserIdImage: {fileID: 0}
@@ -870,7 +870,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2165065658417967367}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4387592706a5c1442b1033b581d72895, type: 3}
+  m_Script: {fileID: 11500000, guid: d13272d009fe14547835cca4f7276126, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   logTextBox: {fileID: 6641045753066182153}

@@ -82,7 +82,7 @@ namespace RadarSDKBridge
             Radar.UserId = "test_user_unity";
             Radar.Metadata = new Dictionary<string, object> { { "test_key", "test_value" } };
             Radar.Error += status => LogManager.Instance.Log($"Error: {status}", LogType.Error);
-            Radar.Log += message => LogManager.Instance.Log($"Log: {message.Substring(0, 5)}...", LogType.Log);
+            Radar.Log += message => LogManager.Instance.Log($"Log: {( message.Length > 20 ? message.Substring(0, 20) : message)}...", LogType.Log);
             Radar.TokenUpdated += OnTokenUpdated;
             Radar.RequestLocationPermissions();
             LogManager.Instance.Log("RadarInitializeExample Completed", LogType.Log);

@@ -126,7 +126,6 @@ namespace RadarSDK.iOS
         {
             if (string.IsNullOrEmpty(publishableKey))
             {
-                LogManager.Instance.Log("Publishable key is missing. Initialization failed.", LogType.Error);
                 return;
             }
             _instance = this;
