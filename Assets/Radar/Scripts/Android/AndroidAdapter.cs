@@ -14,6 +14,10 @@ namespace RadarSDK.Android
     {
         private AndroidJavaObject _instance;
 
+        public event Action<RadarVerifiedLocationToken> TokenUpdated;
+        public event Action<string> Log;
+        public event Action<RadarStatus> Error;
+
 
         public void Initialize(string publishableKey)
         {
@@ -34,6 +38,16 @@ namespace RadarSDK.Android
             var locationServicesProvider = locationServicesProvider2.GetStatic<AndroidJavaObject>("GOOGLE");
             object[] @params = { context, publishableKey, null, locationServicesProvider, Radar.Settings.Fraud };
             _instance.CallStatic("initialize", @params);
+            AndroidJavaObject receiver = new AndroidJavaObject(
+                "io.radar.sdk.CustomReceiver",
+                new CustomReceiverCallback(
+                    message => Log?.Invoke(message),
+                    status => Error?.Invoke(status)
+                )
+            );
+
+            // Set the receiver in the Radar SDK
+            _instance.CallStatic("setReceiver", receiver);
         }
 
         public string UserId
@@ -250,6 +264,29 @@ namespace RadarSDK.Android
                 ExpiresIn = expiresIn
             };
             _onTokenUpdated?.Invoke(verifiedLocationToken);
+        }
+    }
+
+    public class CustomReceiverCallback : AndroidJavaProxy
+    {
+        private readonly Action<string> _onLog;
+        private readonly Action<RadarStatus> _onError;
+        
+        public CustomReceiverCallback(Action<string> onLog, Action<RadarStatus> onError)
+            : base("io.radar.sdk.CustomReceiver$Listener")
+        {
+            _onLog = onLog;
+            _onError = onError;
+        }
+
+        public void onLog(AndroidJavaObject context, string message)
+        {
+            _onLog?.Invoke(message);
+        }
+
+        public void onError(AndroidJavaObject context, AndroidJavaObject status)
+        {
+            _onError?.Invoke((RadarStatus)status.Call<int>("ordinal"));
         }
     }
 }

@@ -335,26 +335,17 @@ namespace RadarSDKBridge
             SetImageColor(_getVerifiedLocationTokenImage, _orangeColor); // Task in progress
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
-            // Call the RadarSDKManager to get the token
-            var tokenResult = await RadarSDKManager.GetVerifiedLocationTokenAsync();
-            if (tokenResult != null)
+            var (status, tokenResult) = await Radar.GetVerifiedLocationToken();
+            if (status == RadarStatus.SUCCESS)
             {
-                if (tokenResult.Value.Status == RadarStatus.SUCCESS)
-                {
-                    LogManager.Instance.Log("Token received: " + tokenResult.Value.Data, LogType.Log);
-                    var json = JsonUtility.ToJson(tokenResult.Value.Data);
-                    _jsonText.text = $"{JsonFormatter.FormatJson(json, _colors)}";
-                    SetImageColor(_getVerifiedLocationTokenImage.GetComponent<Image>(), _greenColor); // Task success
-                }
-                else
-                {
-                    LogManager.Instance.Log("Failed to get the token. Status: " + tokenResult.Value.Status, LogType.Error);
-                    SetImageColor(_getVerifiedLocationTokenImage.GetComponent<Image>(), _redColor); // Task failed
-                }
+                LogManager.Instance.Log("Token received: " + tokenResult, LogType.Log);
+                var json = JsonUtility.ToJson(tokenResult);
+                _jsonText.text = $"{JsonFormatter.FormatJson(json, _colors)}";
+                SetImageColor(_getVerifiedLocationTokenImage.GetComponent<Image>(), _greenColor); // Task success
             }
             else
             {
-                LogManager.Instance.Log("Error retrieving token.", LogType.Error);
+                LogManager.Instance.Log("Failed to get the token. Status: " + status, LogType.Error);
                 SetImageColor(_getVerifiedLocationTokenImage.GetComponent<Image>(), _redColor); // Task failed
             }
 
@@ -364,7 +355,7 @@ namespace RadarSDKBridge
 
             stopWatch.Stop();
             _timeText.text = $"Time taken: {stopWatch.Elapsed.TotalSeconds:N3} seconds";
-            _statusText.text = $"Status: {tokenResult.Value.Status}";
+            _statusText.text = $"Status: {status}";
 
             LogManager.Instance.Log("GetVerifiedLocationToken Completed", LogType.Log);
         }

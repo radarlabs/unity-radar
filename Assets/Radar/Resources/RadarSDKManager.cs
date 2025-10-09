@@ -100,23 +100,12 @@ namespace RadarSDKBridge
             radarSettings = Resources.Load<RadarSettingsData>("Settings/RadarSettings");
             LogManager.Instance.SetLogConsole(IsDebuggingEnabled);
             Radar.Error += status => LogManager.Instance.Log($"Error: {status}", LogType.Error);
-            Radar.Log += message => LogManager.Instance.Log(message, LogType.Log);
+            Radar.Log += message => LogManager.Instance.Log($"Log: {message}", LogType.Log);
             Radar.Initialize(Debug.isDebugBuild ? TestPublishableKey : LivePublishableKey, fraud: true);
         }
 
         #endregion
 
 
-        #region Async Methods
-        // Async versions of the methods
-
-
-        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)?> GetVerifiedLocationTokenAsync()
-        {
-            return await Radar.GetVerifiedLocationToken();
-        }
-
-
-        #endregion
     }
 }
