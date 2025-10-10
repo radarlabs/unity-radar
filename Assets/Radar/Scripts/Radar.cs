@@ -17,7 +17,6 @@ namespace RadarSDK
         public static event Action<RadarStatus> Error;
 
         private static IRadarPlatformAdapter _platformAdapter;
-        private static Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> _cachedTrackVerifiedTask;
         public static bool Initialized { get; private set; }
         #endregion
 
@@ -70,21 +69,8 @@ namespace RadarSDK
         public static void StartTrackingVerified(int interval, bool beacons)
             => _platformAdapter.StartTrackingVerified(interval, beacons);
 
-        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(
-            bool beacons = false,
-            RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
-        {
-            // todo: do we need to cache the call?
-            if (_cachedTrackVerifiedTask != null)
-            {
-                return await _cachedTrackVerifiedTask;
-            }
-            _cachedTrackVerifiedTask = _platformAdapter.TrackVerified(beacons, desiredAccuracy);
-            var completedTask = await _cachedTrackVerifiedTask;
-            _cachedTrackVerifiedTask = null;
-
-            return completedTask;
-        }
+        public static async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(bool beacons = false, RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium)
+            => await _platformAdapter.TrackVerified(beacons, desiredAccuracy);
 
         public static void StopTrackingVerified()
             => _platformAdapter.StopTrackingVerified();

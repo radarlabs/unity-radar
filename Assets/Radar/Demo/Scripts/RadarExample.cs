@@ -15,6 +15,7 @@ namespace RadarSDKBridge
     {
         #region Variables
         private static RadarExample _instance;
+        [SerializeField] private string _publishableKey;
 
         [Header("Status Lights")]
         [SerializeField] private Image _setUserIdImage;
@@ -78,7 +79,9 @@ namespace RadarSDKBridge
             _startTrackingButton.onClick.AddListener(() => StartTrackingVerified());
             _stopTrackingButton.onClick.AddListener(() => StopTracking());
             _getVerifiedLocationTokenButton.onClick.AddListener(() => _ = GetVerifiedLocationToken());
-            Radar.Initialize("prj_test_pk_2124dafb5f863addc19b93d7ed9e84af8ca9397b");
+
+            // Setup Radar SDK
+            Radar.Initialize(_publishableKey);
             Radar.UserId = "test_user_unity";
             Radar.Metadata = new Dictionary<string, object> { { "test_key", "test_value" } };
             Radar.Error += status => LogManager.Instance.Log($"Error: {status}", LogType.Error);

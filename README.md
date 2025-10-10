@@ -5,13 +5,21 @@
 
 [Radar](https://radar.com) is the leading geofencing and location tracking platform.
 
-The Radar SDK abstracts away cross-platform differences between location services, allowing you to add geofencing, location tracking, trip tracking, geocoding, and search to your apps with just a few lines of code.
+The Radar SDK abstracts away cross-platform differences between location services, allowing you to add geofencing, location tracking, trip tracking, geocoding, and search to your apps with just a few lines of code:
+
+```
+using RadarSDK;
+
+Radar.Initialize(PUBLISHABLE_KEY);
+Radar.RequestLocationPermissions();
+Radar.UserId = "unity-user";
+Radar.Log += Logger.Log;
+await Radar.TrackVerified();
+```
 
 ## Documentation
 
 See the Radar overview documentation [here](https://radar.com/documentation). See the Radar SDK documentation [here](https://radar.com/documentation/sdk).
-
-You can also see a detailed SDK reference [here](https://example.com).
 
 ## Migrating
 
@@ -19,11 +27,7 @@ See migration guides in [`MIGRATION.md`](/MIGRATION.md).
 
 ## Examples
 
-See the scripts overview here: [`scripts`](Assets/Radar/Scripts/README.md).
-
-See the demo scene overview here: [`demo`](Assets/Radar/Demo/README.md).
-
-To run the example app, clone this repository, add your publishable API key in Radar SDK settings inside Unity Editor (`Radar -> Settings`), and build the app.
+To run the example app, clone this repository, set your publishable API key on the `Example` game object, and build the app.
 
 ## Support
 
