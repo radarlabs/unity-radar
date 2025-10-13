@@ -37,7 +37,7 @@ namespace RadarSDK.Android
 
             var locationServicesProvider2 = new AndroidJavaClass("io.radar.sdk.Radar$RadarLocationServicesProvider");
             var locationServicesProvider = locationServicesProvider2.GetStatic<AndroidJavaObject>("GOOGLE");
-            object[] @params = { context, publishableKey, null, locationServicesProvider, true };
+            object[] @params = { context, publishableKey, null, locationServicesProvider, true, null, null, activity };
             _instance.CallStatic("initialize", @params);
             _instance.CallStatic("setReceiver", new AndroidJavaObject(
                 "io.radar.sdk.CustomReceiver",
