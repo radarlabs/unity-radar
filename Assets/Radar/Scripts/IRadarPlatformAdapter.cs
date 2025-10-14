@@ -10,7 +10,7 @@ namespace RadarSDK
         event Action<string> Log;
         event Action<RadarStatus> Error;
         
-        string UserId { get; set; }
+        string UserId { /*get;*/ set; }
         Dictionary<string, object> Metadata { /*get;*/ set; }
 
         void Initialize(string publishableKey);

@@ -43,7 +43,7 @@ namespace RadarSDK
 
         public static string UserId
         {
-            get => _platformAdapter.UserId;
+            // get => _platformAdapter.UserId;
             set => _platformAdapter.UserId = value;
         }
 
@@ -61,6 +61,8 @@ namespace RadarSDK
             _platformAdapter = new Android.AndroidAdapter();
 #elif UNITY_IOS
             _platformAdapter = new iOS.IosAdapter();
+#elif UNITY_WEBGL
+            _platformAdapter = new Web.WebAdapter();
 #else
             _platformAdapter = new ProxyPlatform.ProxyAdapter();
 #endif

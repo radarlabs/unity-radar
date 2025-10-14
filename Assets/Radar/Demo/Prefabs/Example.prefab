@@ -835,6 +835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc24253f056ad4469a68e55d21259699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _publishableKey: 
   _setUserIdImage: {fileID: 0}
   _setMetadataImage: {fileID: 0}
   _trackVerifiedImage: {fileID: 2165065659006706083}
@@ -1238,7 +1239,7 @@ MonoBehaviour:
   m_Content: {fileID: 741271402182775333}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 0
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
