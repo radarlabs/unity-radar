@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RadarSDK
@@ -7,81 +9,54 @@ namespace RadarSDK
     /// Check out the <a href="https://radar.com/documentation">documentation</a> for more information.
     /// </summary>
     [System.Serializable]
-    public struct RadarUser
+    public class RadarUser
     {
         [SerializeField] private string _id;
         [SerializeField] private string userId;
         [SerializeField] private string deviceId;
+        [SerializeField] private string description;
+        [SerializeField] private JSONObject metadata;
         [SerializeField] private RadarLocation location;
+        [SerializeField] private RadarActivityType activityType;
+        [SerializeField] private RadarGeofence[] geofences;
+        [SerializeField] private RadarPlace place;
+        [SerializeField] private RadarBeacon[] beacons;
         [SerializeField] private bool stopped;
         [SerializeField] private bool foreground;
         [SerializeField] private RadarRegion country;
         [SerializeField] private RadarRegion state;
-        [SerializeField] private string source;
-        [SerializeField] private bool debug;
+        [SerializeField] private RadarRegion dma;
+        [SerializeField] private RadarRegion postalCode;
+        [SerializeField] private RadarChain[] nearbyPlaceChains;
+        [SerializeField] private RadarSegment[] segments;
+        [SerializeField] private RadarChain[] topChains;
+        [SerializeField] private RadarLocationSource source;
+        [SerializeField] private RadarTrip trip;
         [SerializeField] private RadarFraud fraud;
+        [SerializeField] private bool debug;
 
-        /// <summary>
-        /// The Radar ID of the user.
-        /// </summary>
         public string Id { get => _id; set => _id = value; }
-
-        /// <summary>
-        /// The unique ID of the user, provided when you identified the user. May be `null` if the user has not been identified.
-        /// </summary>
         public string UserId { get => userId; set => userId = value; }
-
-        /// <summary>
-        /// The device ID of the user.
-        /// </summary>
         public string DeviceId { get => deviceId; set => deviceId = value; }
-
-        /// <summary>
-        /// The user's current location.
-        /// </summary>
+        public string Description { get => description; set => description = value; }
+        public JSONObject Metadata { get => metadata; set => metadata = value; }
         public RadarLocation Location { get => location; set => location = value; }
-
-        /// <summary>
-        /// A boolean indicating whether the user is stopped.
-        /// </summary>
+        public RadarActivityType ActivityType { get => activityType; set => activityType = value; }
+        public IEnumerable<RadarGeofence> Geofences { get => geofences; set => geofences = value as RadarGeofence[]; }
+        public RadarPlace Place { get => place; set => place = value; }
+        public IEnumerable<RadarBeacon> Beacons { get => beacons; set => beacons = value as RadarBeacon[]; }
         public bool Stopped { get => stopped; set => stopped = value; }
-
-        /// <summary>
-        /// A boolean indicating whether the user was last updated in the foreground.
-        /// </summary>
         public bool Foreground { get => foreground; set => foreground = value; }
-
-        /// <summary>
-        /// The user's current country. May be `null` if the country is not available or if Regions is not enabled.
-        /// </summary>
         public RadarRegion Country { get => country; set => country = value; }
-
-        /// <summary>
-        /// The user's current state. May be `null` if the state is not available or if Regions is not enabled. See <a href="https://radar.com/documentation/regions">regions documentation</a> for more information.
-        /// </summary>
         public RadarRegion State { get => state; set => state = value; }
-
-        /// <summary>
-        /// The source of the user's current location.
-        /// </summary>
-        public string Source { get => source; set => source = value; }
-
-        /// <summary>
-        /// A boolean indicating whether the user has been "Marked as Debug" in the dashboard.
-        /// </summary>
-        public bool Debug { get => debug; set => debug = value; }
-
-        /// <summary>
-        /// The user's current fraud state. May be `null` if fraud detection is not enabled.
-        /// </summary>
+        public RadarRegion DMA { get => dma; set => dma = value; }
+        public RadarRegion PostalCode { get => postalCode; set => postalCode = value; }
+        public IEnumerable<RadarChain> NearbyPlaceChains { get => nearbyPlaceChains; set => nearbyPlaceChains = value as RadarChain[]; }
+        public IEnumerable<RadarSegment> Segments { get => segments; set => segments = value as RadarSegment[]; }
+        public IEnumerable<RadarChain> TopChains { get => topChains; set => topChains = value as RadarChain[]; }
+        public RadarLocationSource Source { get => source; set => source = value; }
+        public RadarTrip Trip { get => trip; set => trip = value; }
         public RadarFraud Fraud { get => fraud; set => fraud = value; }
-
-        // The commented out fields are not currently in use.
-        // Prefer to leave them commented out due to case sensitivity.
-
-        /// <summary>
-        /// The optional description of the user.
-        /// </summary>
-        //public string description;
+        public bool Debug { get => debug; set => debug = value; }
     }
 }
