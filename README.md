@@ -29,6 +29,8 @@ See migration guides in [`MIGRATION.md`](/MIGRATION.md).
 
 To run the example app, clone this repository, set your publishable API key on the `Example` game object, and build the app.
 
+If running on the web platform, you will need a Radar Verify desktop app running to support `trackVerified()` calls.
+
 ## Support
 
 Have questions? We're here to help! Email us at [support@radar.com](mailto:support@radar.com).
