@@ -24,6 +24,7 @@ namespace RadarSDK.iOS
         private delegate void TokenCallback(int requestId, string statusStr, string jsonStr);
         private delegate void LocationCallback(int requestId, string statusStr, string locationStr, bool stopped);
         private delegate void TokenUpdatedCallback(string jsonData);
+        private delegate void TrackOnceCallback(int requestId, string statusStr, string locationStr, string eventsStr, string userStr);
 
         #endregion
 
@@ -61,6 +62,14 @@ namespace RadarSDK.iOS
 
         [DllImport("__Internal")]
         private static extern void Radar_getLocation(int requestId, LocationCallback callback);
+
+        [DllImport("__Internal")]
+        private static extern void Radar_trackOnce(
+            int requestId,
+            TrackOnceCallback response,
+            string desiredAccuracy,
+            bool beacons
+        );
 
         #endregion
 
@@ -113,6 +122,37 @@ namespace RadarSDK.iOS
                 location = JsonUtility.FromJson<RadarLocation>(locationStr);
             }
             tcs.TrySetResult((status, location, stopped));
+            tasks.Remove(requestId);
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(TrackOnceCallback))]
+        private static void OnTrackOnceUpdated(int requestId, string statusStr, string locationStr, string eventsStr, string userStr)
+        {
+            if (!tasks.TryGetValue(requestId, out var obj) || obj is not TaskCompletionSource<(RadarStatus, RadarLocation, IEnumerable<RadarEvent>, RadarUser)> tcs) return;
+
+            var status = Utils.StatusStringToEnum(statusStr);
+            RadarLocation location = null;
+            IEnumerable<RadarEvent> events = null;
+            RadarUser user = null;
+            
+            if (status == RadarStatus.SUCCESS)
+            {
+                if (!string.IsNullOrEmpty(locationStr))
+                {
+                    location = JsonUtility.FromJson<RadarLocation>(locationStr);
+                }
+                if (!string.IsNullOrEmpty(eventsStr))
+                {
+                    RadarEvent[] eventArray = JsonUtility.FromJson<RadarEvent[]>(eventsStr);
+                    events = eventArray;
+                }
+                if (!string.IsNullOrEmpty(userStr))
+                {
+                    user = JsonUtility.FromJson<RadarUser>(userStr);
+                }
+            }
+            
+            tcs.TrySetResult((status, location, events, user));
             tasks.Remove(requestId);
         }
 
@@ -186,6 +226,18 @@ namespace RadarSDK.iOS
                 var tcs = new TaskCompletionSource<(RadarStatus, RadarLocation, bool)>();
                 tasks[currentTaskId] = tcs;
                 Radar_getLocation(currentTaskId, OnLocationUpdated);
+                currentTaskId++;
+                return tcs.Task;
+            }
+        }
+
+        public Task<(RadarStatus Status, RadarLocation Location, IEnumerable<RadarEvent> Events, RadarUser User)> TrackOnce(RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium, bool beacons = false)
+        {
+            lock (tasks)
+            {
+                var tcs = new TaskCompletionSource<(RadarStatus, RadarLocation, IEnumerable<RadarEvent>, RadarUser)>();
+                tasks[currentTaskId] = tcs;
+                Radar_trackOnce(currentTaskId, OnTrackOnceUpdated, desiredAccuracy.ToString().ToUpper(), beacons);
                 currentTaskId++;
                 return tcs.Task;
             }

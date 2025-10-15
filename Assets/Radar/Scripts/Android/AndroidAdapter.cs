@@ -128,6 +128,18 @@ namespace RadarSDK.Android
             _instance.CallStatic("getVerifiedLocationToken", callbackProxy);
             return taskCompletionSource.Task;
         }
+
+        public Task<(RadarStatus Status, RadarLocation Location, IEnumerable<RadarEvent> Events, RadarUser User)> TrackOnce(RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium, bool beacons = false)
+        {
+            var taskCompletionSource = new TaskCompletionSource<(RadarStatus, RadarLocation, IEnumerable<RadarEvent>, RadarUser)>();
+
+            var callbackProxy = new RadarTrackOnceCallback(res => taskCompletionSource.SetResult(res));
+            AndroidJavaClass trackingOptionsClass = new AndroidJavaClass("io.radar.sdk.RadarTrackingOptions$RadarTrackingOptionsDesiredAccuracy");
+            AndroidJavaObject desiredAccuracyEnum = trackingOptionsClass.CallStatic<AndroidJavaObject>("valueOf", desiredAccuracy.ToString().ToUpper());
+
+            _instance.CallStatic("trackOnce", desiredAccuracyEnum, beacons, callbackProxy);
+            return taskCompletionSource.Task;
+        }
     }
 
     // Handle every native interface, cast tuple to type T
@@ -146,6 +158,9 @@ namespace RadarSDK.Android
 
         public void onComplete(AndroidJavaObject obj1, AndroidJavaObject obj2, bool obj3)
             => OnComplete((obj1, obj2, obj3));
+
+        public void onComplete(AndroidJavaObject obj1, AndroidJavaObject obj2, AndroidJavaObject[] obj3, AndroidJavaObject obj4)
+            => OnComplete((obj1, obj2, obj3, obj4));
 
         private void OnComplete(object obj)
             => _onComplete?.Invoke((T)obj);
@@ -237,6 +252,58 @@ namespace RadarSDK.Android
         {
             _onError?.Invoke((RadarStatus)status.Call<int>("ordinal"));
         }
+    }
+
+    public class RadarTrackOnceCallback : RadarCallbackProxy<(AndroidJavaObject, AndroidJavaObject, AndroidJavaObject[], AndroidJavaObject)>
+    {
+        public RadarTrackOnceCallback(Action<(RadarStatus, RadarLocation, IEnumerable<RadarEvent>, RadarUser)> onComplete)
+            : base("io.radar.sdk.Radar$RadarTrackCallback", res => {
+                var (status, location, events, user) = res;
+                RadarStatus radarStatus = (RadarStatus)status.Call<int>("ordinal");
+                RadarLocation radarLocation = null;
+                IEnumerable<RadarEvent> radarEvents = null;
+                RadarUser radarUser = null;
+                
+                if (radarStatus == RadarStatus.SUCCESS)
+                {
+                    if (location != null)
+                    {
+                        radarLocation = new RadarLocation()
+                        {
+                            Latitude = location.Call<double>("getLatitude"),
+                            Longitude = location.Call<double>("getLongitude"),
+                        };
+                    }
+                    
+                    if (events != null && events.Length > 0)
+                    {
+                        List<RadarEvent> eventList = new List<RadarEvent>();
+                        foreach (var eventObj in events)
+                        {
+                            if (eventObj != null)
+                            {
+                                AndroidJavaObject json = eventObj.Call<AndroidJavaObject>("toJson");
+                                string jsonString = json.Call<string>("toString");
+                                RadarEvent radarEvent = JsonUtility.FromJson<RadarEvent>(jsonString);
+                                if (radarEvent != null)
+                                {
+                                    eventList.Add(radarEvent);
+                                }
+                            }
+                        }
+                        radarEvents = eventList;
+                    }
+                    
+                    if (user != null)
+                    {
+                        AndroidJavaObject json = user.Call<AndroidJavaObject>("toJson");
+                        string jsonString = json.Call<string>("toString");
+                        radarUser = JsonUtility.FromJson<RadarUser>(jsonString);
+                    }
+                }
+                
+                onComplete?.Invoke((radarStatus, radarLocation, radarEvents, radarUser));
+            }) {}
     }
 }
 #endif

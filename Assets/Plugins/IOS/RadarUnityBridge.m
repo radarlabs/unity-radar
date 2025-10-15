@@ -63,6 +63,7 @@ extern "C" {
 
     typedef void (*TokenHandlerPtr)(int requestId, const char* statusStr, const char* tokenStr);
     typedef void (*LocationHandlerPtr)(int requestId, const char* statusStr, const char* locationStr, bool stopped);
+    typedef void (*TrackOnceHandlerPtr)(int requestId, const char* statusStr, const char* locationStr, const char* eventsStr, const char* userStr);
 
 
     void Radar_initializeWithPublishableKey(const char* publishableKey) {
@@ -215,6 +216,82 @@ extern "C" {
             }
 
             handler(requestId, statusStr, locationStr, stopped);
+        }];
+    }
+
+    void Radar_trackOnce(
+        int requestId,
+        TrackOnceHandlerPtr handler,
+        const char* desiredAccuracy,
+        bool beacons
+    )
+    {
+        NSString *desiredAccuracyStr = [NSString stringWithUTF8String:desiredAccuracy];
+        RadarTrackingOptionsDesiredAccuracy accuracyEnum;
+
+        // Map the string to the corresponding enum value
+        if ([desiredAccuracyStr isEqualToString:@"HIGH"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyHigh;
+        } else if ([desiredAccuracyStr isEqualToString:@"LOW"]) {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyLow;
+        } else {
+            accuracyEnum = RadarTrackingOptionsDesiredAccuracyMedium; // Default to MEDIUM
+        }
+
+        [Radar trackOnceWithCompletionHandler:^(RadarStatus status, CLLocation * _Nullable location, NSArray<RadarEvent *> * _Nullable events, RadarUser * _Nullable user)
+        {
+            const char *statusStr = [[Radar stringForStatus:status] UTF8String];
+            const char *locationStr = NULL;
+            const char *eventsStr = NULL;
+            const char *userStr = NULL;
+
+            if (status == RadarStatusSuccess)
+            {
+                if (location != nil)
+                {
+                    NSArray *coordinates = @[@(location.coordinate.longitude), @(location.coordinate.latitude)];
+                    NSDictionary *dict = @{
+                        @"coordinates": coordinates,
+                    };
+                    NSError *error;
+                    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
+
+                    if (!error) {
+                        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                        locationStr = [jsonString UTF8String];
+                    }
+                }
+
+                if (events != nil && events.count > 0)
+                {
+                    NSMutableArray *eventsArray = [NSMutableArray array];
+                    for (RadarEvent *event in events) {
+                        NSDictionary *eventDict = [event dictionaryValue];
+                        [eventsArray addObject:eventDict];
+                    }
+                    NSError *error;
+                    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventsArray options:0 error:&error];
+
+                    if (!error) {
+                        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                        eventsStr = [jsonString UTF8String];
+                    }
+                }
+
+                if (user != nil)
+                {
+                    NSDictionary *dict = [user dictionaryValue];
+                    NSError *error;
+                    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&error];
+
+                    if (!error) {
+                        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                        userStr = [jsonString UTF8String];
+                    }
+                }
+            }
+
+            handler(requestId, statusStr, locationStr, eventsStr, userStr);
         }];
     }
 

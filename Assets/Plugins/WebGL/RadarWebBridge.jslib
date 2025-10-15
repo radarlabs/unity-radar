@@ -189,5 +189,69 @@ mergeInto(LibraryManager.library, {
             _free(statusBuffer);
             _free(jsonBuffer);
         });
+    },
+    
+    Radar_trackOnce: function(requestId, callback, desiredAccuracy, beacons) {
+        var accuracy = UTF8ToString(desiredAccuracy);
+        
+        // Convert accuracy string to Radar SDK format
+        var accuracyOptions = {
+            'HIGH': { desiredAccuracy: 'high' },
+            'MEDIUM': { desiredAccuracy: 'medium' },
+            'LOW': { desiredAccuracy: 'low' },
+            'NONE': { desiredAccuracy: 'none' }
+        };
+        
+        var params = accuracyOptions[accuracy] || { desiredAccuracy: 'medium' };
+        // params.beacons = beacons; // looks like this isn't used
+        
+        window.Radar.trackOnce(params)
+        .then(function(response) {
+            var locationStr = '';
+            var eventsStr = '';
+            var userStr = '';
+            
+            if (response.location) {
+                locationStr = JSON.stringify({
+                    coordinates: [response.location.longitude, response.location.latitude],
+                    accuracy: response.location.accuracy
+                });
+            }
+            
+            if (response.events && response.events.length > 0) {
+                eventsStr = JSON.stringify(response.events);
+            }
+            
+            if (response.user) {
+                userStr = JSON.stringify(response.user);
+            }
+            
+            const statusBuffer = stringToNewUTF8('SUCCESS');
+            const locationBuffer = stringToNewUTF8(locationStr);
+            const eventsBuffer = stringToNewUTF8(eventsStr);
+            const userBuffer = stringToNewUTF8(userStr);
+            
+            console.log('Track once response:', response);
+            {{{ makeDynCall('viiiii', 'callback') }}} (requestId, statusBuffer, locationBuffer, eventsBuffer, userBuffer);
+            
+            _free(statusBuffer);
+            _free(locationBuffer);
+            _free(eventsBuffer);
+            _free(userBuffer);
+        }).catch(function(error) {
+            console.error('Failed to track once:', error);
+            var status = 'ERROR_UNKNOWN';
+            const statusBuffer = stringToNewUTF8(status);
+            const locationBuffer = stringToNewUTF8('');
+            const eventsBuffer = stringToNewUTF8('');
+            const userBuffer = stringToNewUTF8('');
+            
+            {{{ makeDynCall('viiiii', 'callback') }}} (requestId, statusBuffer, locationBuffer, eventsBuffer, userBuffer);
+            
+            _free(statusBuffer);
+            _free(locationBuffer);
+            _free(eventsBuffer);
+            _free(userBuffer);
+        });
     }
 });

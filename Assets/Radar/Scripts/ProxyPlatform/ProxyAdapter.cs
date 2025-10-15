@@ -16,6 +16,16 @@ namespace RadarSDK.ProxyPlatform
             ExpiresAt = DateTime.Now.AddMinutes(1),
             ExpiresIn = 60
         };
+        private static RadarEvent[] _mockEvents = new RadarEvent[]
+        {
+            new RadarEvent
+            {
+                Id = "mock_event_1",
+                Type = RadarEventType.UserEnteredPlace,
+                CreatedAt = DateTime.Now.AddMinutes(-5),
+                Location = _mockLocation
+            }
+        };
 
         private string _mockUserId = "proxy_user_id";
         private Dictionary<string, object> _mockMetadata;
@@ -78,6 +88,12 @@ namespace RadarSDK.ProxyPlatform
         public async Task<(RadarStatus Status, RadarVerifiedLocationToken Data)> TrackVerified(bool _ = false, RadarTrackingOptionsDesiredAccuracy __ = RadarTrackingOptionsDesiredAccuracy.Medium)
         {
             return (RadarStatus.SUCCESS, _mockToken);
+        }
+
+        public async Task<(RadarStatus Status, RadarLocation Location, IEnumerable<RadarEvent> Events, RadarUser User)> TrackOnce(RadarTrackingOptionsDesiredAccuracy _ = RadarTrackingOptionsDesiredAccuracy.Medium, bool __ = false)
+        {
+            await Task.Delay(1000); // Simulate delay
+            return (RadarStatus.SUCCESS, _mockLocation, _mockEvents, _mockUser);
         }
     }
 }

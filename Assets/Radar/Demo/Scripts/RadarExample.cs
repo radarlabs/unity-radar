@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using RadarSDK;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RadarSDKBridge
 {
@@ -18,22 +19,20 @@ namespace RadarSDKBridge
         [SerializeField] private string _publishableKey;
 
         [Header("Status Lights")]
-        [SerializeField] private Image _setUserIdImage;
-        [SerializeField] private Image _setMetadataImage;
         [SerializeField] private Image _trackVerifiedImage;
         [SerializeField] private Image _startTrackingImage;
         [SerializeField] private Image _stopTrackingImage;
         [SerializeField] private Image _getVerifiedLocationTokenImage;
         [SerializeField] private Image _getLocationImage;
+        [SerializeField] private Image _trackOnceImage;
 
         [Header("Test Buttons")]
-        [SerializeField] private Button _setUserIdButton;
         [SerializeField] private Button _verifyTrackButton;
         [SerializeField] private Button _startTrackingButton;
         [SerializeField] private Button _stopTrackingButton;
-        [SerializeField] private Button _setMetadataButton;
         [SerializeField] private Button _getVerifiedLocationTokenButton;
         [SerializeField] private Button _getLocationButton;
+        [SerializeField] private Button _trackOnceButton;
 
         [Header("Info Text")]
         [SerializeField] private Text _statusText;
@@ -79,6 +78,7 @@ namespace RadarSDKBridge
             _startTrackingButton.onClick.AddListener(() => StartTrackingVerified());
             _stopTrackingButton.onClick.AddListener(() => StopTracking());
             _getVerifiedLocationTokenButton.onClick.AddListener(() => _ = GetVerifiedLocationToken());
+            _trackOnceButton.onClick.AddListener(() => _ = TrackOnce());
 
             // Setup Radar SDK
             Radar.Initialize(_publishableKey);
@@ -262,6 +262,43 @@ namespace RadarSDKBridge
             LogManager.Instance.Log("GetVerifiedLocationToken Completed", LogType.Log);
         }
 
+        private async Task TrackOnce()
+        {
+            _timeText.text = _statusText.text = _jsonText.text = "...";
+
+            SetImageColor(_trackOnceImage.GetComponent<Image>(), _orangeColor); // Task in progress
+            StartLoadingAnimation(_timeText, ref _timeLoadingCoroutine);
+            StartLoadingAnimation(_statusText, ref _statusLoadingCoroutine);
+
+            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
+
+            var (status, location, events, user) = await Radar.TrackOnce();
+            if (status == RadarStatus.SUCCESS)
+            {
+                LogManager.Instance.Log($"TrackOnce received: Location = {location?.Latitude:N3}, {location?.Longitude:N3}, Events = {events?.Count()}, User = {user?.Id}", LogType.Warning);
+                
+                var result = new { Status = status, Location = location, Events = events, User = user };
+                var json = JsonUtility.ToJson(result);
+                _jsonText.text = $"{JsonFormatter.FormatJson(json, _colors)}";
+                SetImageColor(_trackOnceImage.GetComponent<Image>(), _greenColor); // Task completed successfully
+
+                _statusText.text = $"Status: {status.ToString()}";
+            }
+            else
+            {
+                SetImageColor(_trackOnceImage.GetComponent<Image>(), _redColor); // Task failed or timed out
+                _statusText.text = $"Status: {status.ToString()}";
+            }
+
+            StopLoadingAnimation(ref _timeLoadingCoroutine);
+            StopLoadingAnimation(ref _statusLoadingCoroutine);
+
+            stopWatch.Stop();
+            _timeText.text = string.Format("Time taken: {0:N3} seconds", stopWatch.Elapsed.TotalSeconds);
+
+            LogManager.Instance.Log("TrackOnce Completed", LogType.Log);
+        }
+
         private void OnTokenUpdated(RadarVerifiedLocationToken token)
         {
             _onTokenUpdatedText.text = $"Token: " + token.Token.Substring(0, 5) + "...";
@@ -318,11 +355,9 @@ namespace RadarSDKBridge
 
         private void ResetImagesToRed()
         {
-            SetImageColor(_setUserIdImage, _redColor);
             SetImageColor(_trackVerifiedImage, _redColor);
             SetImageColor(_startTrackingImage, _redColor);
             SetImageColor(_stopTrackingImage, _redColor);
-            SetImageColor(_setMetadataImage, _redColor);
             SetImageColor(_getVerifiedLocationTokenImage, _redColor);
         }
 

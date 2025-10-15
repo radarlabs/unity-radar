@@ -82,5 +82,8 @@ namespace RadarSDK
 
         public static async Task<(RadarStatus status, RadarLocation location, bool stopped)> GetLocation()
             => await _platformAdapter.GetLocation();
+
+        public static async Task<(RadarStatus Status, RadarLocation Location, IEnumerable<RadarEvent> Events, RadarUser User)> TrackOnce(RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.Medium, bool beacons = false)
+            => await _platformAdapter.TrackOnce(desiredAccuracy, beacons);
     }
 }
