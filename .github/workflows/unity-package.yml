@@ -2,47 +2,25 @@ name: Build and Attach .unitypackage
 
 on:
   release:
-    # types: [created, published, prereleased]
     types: [created]
-  workflow_dispatch:
 
 jobs:
-  build-unity-package:
-    name: Export & Attach Unity Package
+
+  build-and-upload-package:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
+      - name: 'Build Package'
+        uses: ncipollo/unity-action@master
+        with: 
+          username: ${{ secrets.username }}
+          password: ${{ secrets.password }}
+          serial: ${{ secrets.serial }}
+          license: ${{ secrets.license }}
+          mode: build
+          build_method: ExportPackage.Run
 
-      # 1. Check out the repository
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          lfs: true
-
-      # 3. Cache the Library folder (optional)
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-standalone
-          restore-keys: Library-
-
-      # 5. Run Unity to export the .unitypackage
-      - name: Export Unity Package
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          targetPlatform: StandaloneLinux64
-          unityVersion: 6000.0.35f1
-          dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0
-          customParameters: >
-            -nographics -logFile unity_export.log -ignoreCompilerErrors
-            -exportPackage "Assets/ExternalDependencyManager" "Assets/Plugins" "Assets/Radar" "Assets/Settings" "RadarUnitySDK.unitypackage"
-
-      # 6. Upload the .unitypackage to the GitHub Release
-      - name: Upload release asset
+      - name: Upload Package
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
