@@ -28,8 +28,6 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: StandaloneLinux64
-          unityVersion: 6000.0.35f1
-          customImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0
           buildMethod: ExportPackage.Run
           customParameters: -quit -batchmode -nographics
 
