@@ -13,7 +13,6 @@ public class ExportPackage
             "Assets/Plugins",
             "Assets/Radar",
             "Assets/Settings",
-            "Packages/com.unity.textmeshpro",
         };
 
         AssetDatabase.ExportPackage(assetPaths, packagePath, ExportPackageOptions.Recurse);

@@ -19,13 +19,6 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      # 3. Cache the Library folder (optional)
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-standalone
-          restore-keys: Library-
-
       # 5. Run Unity to export the .unitypackage
       - name: Export Unity Package
         uses: game-ci/unity-builder@v4
@@ -35,11 +28,8 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: StandaloneLinux64
-          unityVersion: 6000.0.35f1
-          dockerImage: unityci/editor-ubuntu-6000.0.35f1-base-3.1.0
-          customParameters: >
-            -nographics -logFile unity_export.log -ignoreCompilerErrors
-            -exportPackage "Assets/ExternalDependencyManager" "Assets/Plugins" "Assets/Radar" "Assets/Settings" "Packages/com.unity.textmeshpro" "RadarUnitySDK.unitypackage"
+          buildMethod: ExportPackage.Run
+          customParameters: -quit -batchmode -nographics
 
       # 6. Upload the .unitypackage to the GitHub Release
       - name: Upload release asset

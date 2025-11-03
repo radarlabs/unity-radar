@@ -19,6 +19,7 @@ namespace RadarSDK
         [SerializeField] private bool inExclusionZone;
         [SerializeField] private bool inBufferZone;
         [SerializeField] private double distanceToBorder;
+        [SerializeField] private bool expected;
 
         /// <summary>
         /// The Radar ID of the region.
@@ -69,5 +70,10 @@ namespace RadarSDK
         /// The distance in meters to the border of the jurisdiction. May be 0 if Fraud is not enabled.
         /// </summary>
         public double DistanceToBorder { get => distanceToBorder; set => distanceToBorder = value; }
+
+        /// <summary>
+        /// A boolean indicating whether the region is expected.
+        /// </summary>
+        public bool Expected { get => expected; set => expected = value; }
     }
 }
